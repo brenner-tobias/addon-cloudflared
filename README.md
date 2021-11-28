@@ -19,12 +19,12 @@ Cloudflared.
 ## About
 
 Cloudflared connects your Home Assistant Instance via a secure tunnel to a domain
-or subdomain at Cloudflare. Doing that, you can expose your Home Assitant to the
+or subdomain at Cloudflare. Doing that, you can expose your Home Assistant to the
 Internet without opening ports in your router. Additionally, you can utilize
 Cloudflare Teams, their Zero Trust platform to further secure your Home Assistant
 connection.
 
-**To use this add-on you have to own a domain name (e.g. example.com) and use the
+**To use this add-on, you have to own a domain name (e.g. example.com) and use the
 DNS servers of cloudflare. If you do not have a domain name, you can register a
 free one at [freenom][freenom]**.
 

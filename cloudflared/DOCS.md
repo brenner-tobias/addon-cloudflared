@@ -6,7 +6,7 @@ Internet without opening ports in your router. Additionally, you can utilize
 Cloudflare Teams, their Zero Trust platform to further secure your Home Assistant
 connection.
 
-**To use this add-on you have to own a domain name (e.g. example.com) and use the
+**To use this add-on, you have to own a domain name (e.g. example.com) and use the
 DNS servers of cloudflare.**
 
 ## Installation
@@ -28,7 +28,7 @@ and a manual step at the first set-up:
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
-1. A tunnel and a DNS entry will be created and show up in your cloudflare DNS /
+1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
    Teams dashboard.
 
 ## Configuration
@@ -49,7 +49,7 @@ tunnel_name: homeassistant
 
 Since HomeAssistant blocks requests via proxies or reverse proxies, you have to tell
 your instance to allow requests from the Cloudflared Add-On. The add-on runs locally,
-so HA hasto trust the docker network. In order to do so, add the following lines
+so HA has to trust the docker network. In order to do so, add the following lines
 to your /config/configuration.yaml (if you need assistance changing the config,
 please follow the [Advanced Configuration Tutorial][advancedconfiguration]):
 
@@ -62,12 +62,13 @@ http:
 
 ### Option: `reset_cloudflared_files`
 
-In case something went wrong or you want to reset your cloudflared connection
-for some reason (e.g. switch to another cloudflare account), you can reset all
-your local cloudflare files by setting this option. After that, please start
+In case something went wrong, or you want to reset your cloudflared connection
+for some reason (e.g., switch to another Cloudflare account), you can reset all
+your local Cloudflare files by setting this option. After that, please start
 the app and check the logs. The add-on should run through and let you know that
 all the files are deleted.
-**After that, you have to unset the `reset_cloudflared_files` option again and restart
+
+**You have to unset the `reset_cloudflared_files` option again and restart
 the add-on to start the onboarding process.**
 
 ### Option: `log_level`
@@ -95,7 +96,7 @@ DNS entries.
 
 ### Domain Name
 
-If you do not already have a domain name, get one. In case you dont want
+If you do not already have a domain name, get one. In case you don't want
 to pay for a domain name, you can look for a free domain name at
 [freenom][freenom].
 
