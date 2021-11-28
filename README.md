@@ -13,7 +13,8 @@
 [![Github Actions][github-actions-shield]][github-actions]
 ![Project Maintenance][maintenance-shield]
 
-Connect remotely to your Home Assistant instance without opening any ports.
+Connect remotely to your Home Assistant instance without opening any ports using
+Cloudflared.
 
 ## About
 
