@@ -30,13 +30,13 @@ LABEL \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version=${BUILD_VERSION} \
-    maintainer="Tobias Brenner <brenner.tobias@gmx.de>" \
+    maintainer="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
     org.opencontainers.image.vendor="Brenner.tech" \
-    org.opencontainers.image.authors="Tobias Brenner <brenner.tobias@gmx.de>" \
+    org.opencontainers.image.authors="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://brenner.tech" \
+    org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
     org.opencontainers.image.created=${BUILD_DATE} \
