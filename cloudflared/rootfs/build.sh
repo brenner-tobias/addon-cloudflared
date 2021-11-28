@@ -5,8 +5,11 @@
 # Container build of Cloudflared
 # ==============================================================================
 
-# Get the the machine architecture as first parameter
+# Machine architecture as first parameter
 arch=$1
+
+# Cloudflared Release to build from
+cloudfalredRelease="2021.11.0"
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
@@ -30,7 +33,7 @@ case $arch in
 esac
 
 # Download the needed cloudflared version
-curl -L -o /opt/cloudflared "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${arch}"
+curl -L -o /opt/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudfalredRelease}/cloudflared-linux-${arch}"
 
 # Make the downloaded file executeable
 chmod +x /opt/cloudflared
