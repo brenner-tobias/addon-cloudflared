@@ -60,6 +60,15 @@ http:
     - 172.30.33.0/24
 ```
 
+### Option: `reset_cloudflared_files`
+
+In case you want to reset your cloudflared connection for some reason (e.g.
+switch to another cloudflare account), you can reset all your local cloudflare
+files by setting this option. After that, please start the app and check the logs.
+The add-on should run through and let you know that all the files are deleted.
+**After that, you have to unset the `reset_cloudflared_files` option again and restart
+the add-on to start the onboarding process.**
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can

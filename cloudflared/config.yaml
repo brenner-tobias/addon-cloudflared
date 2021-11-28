@@ -18,7 +18,6 @@ options:
   external_hostname: ""
   internal_ha_port: "8123"
   tunnel_name: homeassistant
-  reset_cloudflared_files: false
 schema:
   external_hostname: str
   internal_ha_port: port
