@@ -1,5 +1,6 @@
 # Home Assistant Add-on: Cloudflared
 
+[![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
 [![License][license-shield]](LICENSE.md)
 
@@ -9,7 +10,8 @@
 ![Supports armv7 Architecture][armv7-shield]
 ![Supports i386 Architecture][i386-shield]
 
-![Maintenance][maintenance-shield]
+[![Github Actions][github-actions-shield]][github-actions]
+![Project Maintenance][maintenance-shield]
 
 Connect remotely to your Home Assistant instance without opening any ports.
 
@@ -67,9 +69,13 @@ SOFTWARE.
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [docs]: cloudflared/DOCS.md
 [freenom]: https://freenom.com
+[github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
+[github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
 [issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
-[license-shield]: https://img.shields.io/github/license/hassio-addons/addon-base.svg
+[license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
+[releases-shield]: https://img.shields.io/github/release/brenner-tobias/addon-cloudflared
+[releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
 [tobias]: https://github.com/brenner-tobias
