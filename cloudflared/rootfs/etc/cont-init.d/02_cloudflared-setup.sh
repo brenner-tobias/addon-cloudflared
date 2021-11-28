@@ -7,12 +7,42 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Delete all Cloudflared config files
+# ------------------------------------------------------------------------------
+resetCloudflareFiles() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.warning "Deleting all existing Cloudflared config files..."
+
+    if bashio::fs.file_exists "/data/cert.pem" ; then
+        bashio::log.debug "Deleting certificate file"
+        rm -f /data/cert.pem || bashio::exit.nok "Failed to delete certificate file"
+    fi
+
+    if bashio::fs.file_exists "/data/tunnel.json" ; then
+        bashio::log.debug "Deleting tunnel file"
+        rm -f /data/tunnel.json || bashio::exit.nok "Failed to delete tunnel file"
+    fi
+
+    if bashio::fs.file_exists "/data/config.yml" ; then
+        bashio::log.debug "Deleting config file"
+        rm -f /data/config.yml || bashio::exit.nok "Failed to delete config file"
+    fi
+
+    if bashio::fs.file_exists "/data/cert.pem" \
+        || bashio::fs.file_exists "/data/tunnel.json" \
+        || bashio::fs.file_exists "/data/config.yml";
+    then
+        bashio::exit.nok "Failed to delete cloudflared files"
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Check if Cloudflared certificate (authorization) is available
 # ------------------------------------------------------------------------------
 hasCertificate() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Checking for existing certificate..."
-    if bashio::fs.file_exists "/root/.cloudflared/cert.pem" ; then
+    if bashio::fs.file_exists "/data/cert.pem" ; then
         bashio::log.info "Existing certificate found"
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -30,7 +60,9 @@ createCertificate() {
     bashio::log.notice "Please follow the Cloudflare Auth-Steps:"
     /opt/cloudflared tunnel login
 
-    bashio::log.green "Authentication successfull"
+    bashio::log.green "Authentication successfull, moving auth file to config folder"
+
+    mv /root/.cloudflared/cert.pem /data/cert.pem || bashio::exit.nok "Failed to move auth file"
 
     hasCertificate || bashio::exit.nok "Failed to create certificate"
 }
@@ -42,37 +74,28 @@ hasTunnel() {
     bashio::log.trace "${FUNCNAME[0]}:"
     bashio::log.info "Checking for existing tunnel..."
 
-    tunnel_file="$(ls /root/.cloudflared/*.json)"
-    tunnel_file_no_path="${tunnel_file##*/}"
     # Check if tunnel file(s) exist
-    if bashio::var.is_empty "${tunnel_file_no_path}" ; then
+    if ! bashio::fs.file_exists "/data/tunnel.json" ; then
         bashio::log.notice "No tunnel file found"
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    # Remove ending of file name to get tunnel UUID
-    tunnel_uuid="${tunnel_file_no_path%.*}"
-
-    # Check if multiple tunnel files exist and remove them if so
-    if [[ $tunnel_uuid == *"json"* ]]; then
-        bashio::log.warning "Multiple tunnel files found, removing them"
-        rm -f /root/.cloudflared/*.json
-        return "${__BASHIO_EXIT_NOK}"
-    fi
+    # Get tunnel UUID from JSON
+    tunnel_uuid="$(bashio::jq "/data/tunnel.json" .TunnelID)"
 
     bashio::log.info "Existing tunnel with ID ${tunnel_uuid} found"
 
     # Check if tunnel name in file matches config value
     bashio::log.info "Checking if existing tunnel matches name given in config"
     local tunnel_name_from_file
-    tunnel_name_from_file="$(bashio::jq "/root/.cloudflared/${tunnel_uuid}.json" .TunnelName)"
+    tunnel_name_from_file="$(bashio::jq "/data/tunnel.json" .TunnelName)"
     bashio::log.debug "Tunnnel name read from file: $tunnel_name_from_file"
     if [[ $tunnel_name != "$tunnel_name_from_file" ]]; then
-        bashio::log.warning "Tunnel name in file does not match config, removing tunnel file(s)"
-        rm -f /root/.cloudflared/*.json
+        bashio::log.warning "Tunnel name in file does not match config, removing tunnel file"
+        rm -f /data/tunnel.json  || bashio::exit.nok "Failed to remove tunnel file"
         return "${__BASHIO_EXIT_NOK}"
     fi
-    bashio::log.info "Tunnnel name read from file tunnel matches config, proceeding with existing tunnel file"
+    bashio::log.info "Tunnnel name read from file matches config, proceeding with existing tunnel file"
 
     return "${__BASHIO_EXIT_OK}"
 }
@@ -83,16 +106,16 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    /opt/cloudflared tunnel create "${tunnel_name}" \
+    /opt/cloudflared --origincert=/data/cert.pem --cred-file=/data/tunnel.json tunnel create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
 
-    bashio::log.info "Created new tunnel: $(ls /root/.cloudflared/*.json)"
+    bashio::log.debug "Created new tunnel: $(cat /data/tunnel.json)"
 
     bashio::log.info "Checking for old config"
-    if bashio::fs.file_exists "/root/.cloudflared/config.yml" ; then
-        rm -f /root/.cloudflared/config.yml
+    if bashio::fs.file_exists "/data/config.yml" ; then
+        rm -f /data/config.yml || bashio::exit.nok "Failed to remove old config"
         bashio::log.notice "Old config found and removed"
     else bashio::log.info "No old config found"
     fi
@@ -106,12 +129,12 @@ createTunnel() {
 createConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new config file..."
-    cat << EOF > /root/.cloudflared/config.yml
+    cat << EOF > /data/config.yml
         url: http://homeassistant:${internal_ha_port}
         tunnel: ${tunnel_uuid}
-        credentials-file: /root/.cloudflared/${tunnel_uuid}.json
+        credentials-file: /data/tunnel.json
 EOF
-    bashio::log.debug "Sucessfully created config file: $(cat /root/.cloudflared/config.yml)"
+    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 
     createDNS
 }
@@ -122,9 +145,10 @@ EOF
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    /opt/cloudflared tunnel route dns "${tunnel_uuid}" "${external_hostname}" \
-    || bashio::exit.ok "Failed to create DNS entry. Assuming entry for ${external_hostname} is alredy existing."
-    bashio::log.info "Sucessfully creted DNS entry ${external_hostname}"
+    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns "${tunnel_uuid}" "${external_hostname}" \
+    || bashio::exit.nok "Failed to create DNS entry.
+    Please check the Cloudflare Dashboard for an existing DNS entry with the name ${external_hostname} and delete it:
+    https://dash.cloudflare.com/ Website / DNS"
 }
 
 # ==============================================================================
@@ -141,6 +165,13 @@ main() {
     external_hostname="$(bashio::config 'external_hostname')"
     internal_ha_port="$(bashio::config 'internal_ha_port')"
     tunnel_name="$(bashio::config 'tunnel_name')"
+
+    if bashio::config.true 'reset_cloudflared_files' ; then
+        resetCloudflareFiles
+        bashio::log.info "Succesfully deleted cloudflared files"
+        bashio::log.warning "Please disable the reset function and restart the add-on"
+        bashio::exit.nok "Fail to preserve the logs"
+    fi
 
     if ! hasCertificate ; then
         createCertificate
