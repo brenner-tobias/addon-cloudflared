@@ -32,7 +32,7 @@ createCertificate() {
 
     bashio::log.green "Authentication successfull"
 
-    hasCertif   icate || bashio::exit.nok "Failed to create certificate"
+    hasCertificate || bashio::exit.nok "Failed to create certificate"
 }
 
 # ------------------------------------------------------------------------------
