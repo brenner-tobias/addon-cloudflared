@@ -12,7 +12,11 @@ DNS servers of cloudflare.**
 ## Installation
 
 The installation of this add-on is pretty straightforward but requires some prerequisites
-and a manual step at the first set-up:
+and a manual step at the first set-up.
+
+**Before starting, please make sure to remove all other add-ons or configuration entries
+handling SSL certificates, domain names and so on (e.g. DuckDNS) and resatrt your
+HomeAssistant instance.**
 
 1. (Optional if you don't yet have a working Cloudflare set-up):
    Get a domain name and set-up Cloudflare. See section
@@ -50,8 +54,9 @@ tunnel_name: homeassistant
 Since HomeAssistant blocks requests via proxies or reverse proxies, you have to tell
 your instance to allow requests from the Cloudflared Add-On. The add-on runs locally,
 so HA has to trust the docker network. In order to do so, add the following lines
-to your /config/configuration.yaml (if you need assistance changing the config,
-please follow the [Advanced Configuration Tutorial][advancedconfiguration]):
+to your /config/configuration.yaml and restart your HA instance.
+(if you need assistance changing the config, please follow the
+[Advanced Configuration Tutorial][advancedconfiguration]):
 
 ```yaml
 http:

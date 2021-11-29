@@ -25,8 +25,7 @@ Cloudflare Teams, their Zero Trust platform to further secure your Home Assistan
 connection.
 
 **To use this add-on, you have to own a domain name (e.g. example.com) and use the
-DNS servers of cloudflare. If you do not have a domain name, you can register a
-free one at [freenom][freenom]**.
+DNS servers of cloudflare.**
 
 [:books: Read the full add-on documentation][docs]
 
@@ -69,7 +68,6 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [docs]: cloudflared/DOCS.md
-[freenom]: https://freenom.com
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
