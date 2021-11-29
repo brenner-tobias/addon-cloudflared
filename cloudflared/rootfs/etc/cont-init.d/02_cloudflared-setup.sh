@@ -34,6 +34,11 @@ resetCloudflareFiles() {
     then
         bashio::exit.nok "Failed to delete cloudflared files"
     fi
+
+    bashio::log.info "Succesfully deleted cloudflared files"
+
+    bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
+    bashio::addon.option 'reset_database'
 }
 
 # ------------------------------------------------------------------------------
@@ -168,9 +173,6 @@ main() {
 
     if bashio::config.true 'reset_cloudflared_files' ; then
         resetCloudflareFiles
-        bashio::log.info "Succesfully deleted cloudflared files"
-        bashio::log.warning "Please disable the reset function and restart the add-on"
-        bashio::exit.nok "Fail to preserve the logs"
     fi
 
     if ! hasCertificate ; then

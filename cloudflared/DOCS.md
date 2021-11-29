@@ -67,14 +67,12 @@ http:
 
 ### Option: `reset_cloudflared_files`
 
-In case something went wrong, or you want to reset your cloudflared connection
-for some reason (e.g., switch to another Cloudflare account), you can reset all
-your local Cloudflare files by setting this option. After that, please start
-the app and check the logs. The add-on should run through and let you know that
-all the files are deleted.
+In case something went wrong or you want to reset your cloudflared connection
+for some other reason (e.g., switch to another Cloudflare account), you can reset
+all your local Cloudflare files by setting this option to `true`.
 
-**You have to unset the `reset_cloudflared_files` option again and restart
-the add-on to start the onboarding process.**
+**Note**: _After deleting the files, the option `reset_cloudflared_files` will
+automaticaly be removed from the add-on configuration._
 
 ### Option: `log_level`
 
