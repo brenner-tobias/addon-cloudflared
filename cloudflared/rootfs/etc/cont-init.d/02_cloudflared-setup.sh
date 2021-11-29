@@ -38,7 +38,7 @@ resetCloudflareFiles() {
     bashio::log.info "Succesfully deleted cloudflared files"
 
     bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
-    bashio::addon.option 'reset_database'
+    bashio::addon.option 'reset_cloudflared_files'
 }
 
 # ------------------------------------------------------------------------------
