@@ -14,9 +14,9 @@ DNS servers of cloudflare.**
 The installation of this add-on is pretty straightforward but requires some prerequisites
 and a manual step at the first set-up.
 
-**Before starting, please make sure to remove all other add-ons or configuration entries
-handling SSL certificates, domain names and so on (e.g. DuckDNS) and resatrt your
-HomeAssistant instance.**
+**Before starting, please make sure to remove all other add-ons or configuration
+entries handling SSL certificates, domain names and so on (e.g. DuckDNS) and
+restart your HomeAssistant instance.**
 
 1. (Optional if you don't yet have a working Cloudflare set-up):
    Get a domain name and set-up Cloudflare. See section
