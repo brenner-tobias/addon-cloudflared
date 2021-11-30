@@ -156,6 +156,41 @@ createDNS() {
     https://dash.cloudflare.com/ Website / DNS"
 }
 
+# ------------------------------------------------------------------------------
+# Create cloudflare config for connection to Nginxproxymanager
+# ------------------------------------------------------------------------------
+setupNPM() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.info "Runing with Nginxproxymanager support"
+
+    local npm_ip
+    local npm_name
+
+    bashio::log.info "Addons: $(bashio::addons.installed)"
+    # todo: FInd addon name in existing add-ons list
+    npm_name="a0d7b954_nginxproxymanager"
+
+    # Check if Nginxproxymanager is installed
+    if ! bashio::addons.installed "$npm_name"  \
+        || ! bashio::addon.available "$npm_name" ; then
+        bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
+        nginxproxymanager in the add-on config"
+    else bashio::log.info "Add-On $npm_name installed and available"
+    fi
+
+    npm_ip="$(bashio::addon.ip_address "$npm_name")"
+    bashio::log.info "nginxproxymanager IP: ${npm_ip}"
+
+    bashio::log.info "Creating new npm config file..."
+
+    cat << EOF > /data/config_npm.yml
+        url: http://${npm_ip}:80
+        tunnel: ${tunnel_uuid}
+        credentials-file: /data/tunnel.json
+EOF
+    bashio::log.debug "Sucessfully created config file: $(cat /data/config_npm.yml)"
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -184,6 +219,10 @@ main() {
     fi
 
     createConfig
+
+    if bashio::config.true 'nginxproxymanager' ; then
+        setupNPM
+    fi
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
