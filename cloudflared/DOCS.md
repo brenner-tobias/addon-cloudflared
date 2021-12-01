@@ -76,8 +76,7 @@ and any other incoming domain to Nginx Proxy Manager._
 In order to route multiple sub-domains through the tunnel, you have to create individual
 CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
 (or directly to the tunnel URL that you can get from the CNAME entry of
-`external_hostname`). You could also set-up wildcart CNAME entries if you like,
-but I do not recommend doing that.
+`external_hostname`).
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
@@ -116,9 +115,7 @@ DNS entries.
 
 ### Domain Name
 
-If you do not already have a domain name, get one. In case you don't want
-to pay for a domain name, you can look for a free domain name at
-[freenom][freenom].
+If you do not already have a domain name, get one.
 
 ### Cloudflare
 
