@@ -70,14 +70,14 @@ http:
 If you want to use the Cloudflare Tunnel with the Add-On
 [Nginx Proxy Manager][nginxproxymanager], you can do so by setting this option.
 
-**Note**: _This will still route your defined `external_hostname` to HomeAssistant and
-any other incoming domain to Nginx Proxy Manager._
+**Note**: _This will still route your defined `external_hostname` to HomeAssistant
+and any other incoming domain to Nginx Proxy Manager._
 
 In order to route multiple sub-domains through the tunnel, you have to create individual
-CNAME records in Cloudflare for all of them, pointing to your `external_hostname` (or
-directly to the tunnel URL that you can get from the CNAME entry of `external_hostname`).
-You could also set-up wildcart CNAME entries if you like, but I do not recommend
-doing that.
+CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
+(or directly to the tunnel URL that you can get from the CNAME entry of
+`external_hostname`). You could also set-up wildcart CNAME entries if you like,
+but I do not recommend doing that.
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
