@@ -7,7 +7,7 @@ Cloudflare Teams, their Zero Trust platform to further secure your Home Assistan
 connection.
 
 **To use this add-on, you have to own a domain name (e.g. example.com) and use the
-DNS servers of cloudflare.**
+DNS servers of Cloudflare.**
 
 ## Installation
 
@@ -30,7 +30,7 @@ restart your HomeAssistant instance.**
    no existing tunnel with your desired tunnel name at Cloudflare**.
 1. Start the "Cloudflare" add-on.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
-   at cloudflare**.
+   at Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
 1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
    Teams dashboard.
@@ -101,7 +101,7 @@ you are troubleshooting.
 
 ### Option: `reset_cloudflared_files`
 
-In case something went wrong or you want to reset your cloudflared connection
+In case something went wrong or you want to reset your Cloudflare tunnel
 for some other reason (e.g., switch to another Cloudflare account), you can reset
 all your local Cloudflare files by setting this option to `true`.
 
