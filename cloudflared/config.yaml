@@ -8,6 +8,8 @@ description: >
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
 startup: services
 init: false
+hassio_api: true
+hassio_role: admin
 arch:
   - aarch64
   - amd64
@@ -22,5 +24,6 @@ schema:
   external_hostname: str
   internal_ha_port: port
   tunnel_name: str
-  reset_cloudflared_files: bool?
+  nginxproxymanager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
+  reset_cloudflared_files: bool?

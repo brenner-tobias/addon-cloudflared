@@ -1,12 +1,12 @@
 #!/usr/bin/with-contenv bashio
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
-# Connects and runs the Cloudfalred tunnel
+# Connects and runs the Cloudfalred tunnel for HomeAssistant
 # ==============================================================================
 certificate="/data/cert.pem"
 config="/data/config.yml"
 tunnel_name="$(bashio::config 'tunnel_name')"
 
-bashio::log.info "Starting Cloudflared Tunnel..."
+bashio::log.info "Connecting Cloudflared Tunnel..."
 
 exec /opt/cloudflared --origincert=${certificate} tunnel --config=${config} run "${tunnel_name}"

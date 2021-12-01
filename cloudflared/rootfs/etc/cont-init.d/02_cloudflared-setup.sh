@@ -129,19 +129,75 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
+# Create cloudflare config for connection to HomeAssistant and Nginxproxymanager
+# ------------------------------------------------------------------------------
+createFullConfig() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.info "Runing with Nginxproxymanager support"
+
+    local npm_name
+    local npm_ip
+
+    # Get full name of Nginxproxymanager from add-on list
+    npm_name="$(grep nginxproxymanager <<< "$(bashio::addons.installed)")"
+
+    bashio::log.debug "Nginxproxymanager add-on name: ${npm_name}"
+
+    bashio::log.info "Looking for Nginxproxymanager add-on"
+
+    # Check if Nginxproxymanager is installed and available
+    if ! bashio::addons.installed "$npm_name" \
+        || ! bashio::addon.available "$npm_name" ; then
+        bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
+        nginxproxymanager in the add-on config"
+    fi
+
+    bashio::log.debug "Nginxproxymanager add-on found: $npm_name"
+
+    npm_ip="$(bashio::addon.ip_address "$npm_name")"
+
+    if bashio::var.is_empty "$npm_ip" ; then
+        bashio::exit.nok "Internal IP of Nginxproxymanager not found, please
+        install / reset the Add-On"
+    fi
+
+    bashio::log.debug "nginxproxymanager IP: ${npm_ip}"
+
+    bashio::log.info "All information about Nginxproxymanager Add-On found"
+
+    bashio::log.info "Creating full config file..."
+
+    cat << EOF > /data/config.yml
+    tunnel: ${tunnel_uuid}
+    credentials-file: /data/tunnel.json
+
+    ingress:
+      - hostname: ${external_hostname}
+        service: http://homeassistant:${internal_ha_port}
+      - service: http://${npm_ip}:80
+EOF
+
+    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
+}
+
+# ------------------------------------------------------------------------------
 # Create cloudflare config with variables from HA-Add-on-Config and Cloudfalred set-up
 # ------------------------------------------------------------------------------
-createConfig() {
+createHAonlyConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Creating new config file..."
-    cat << EOF > /data/config.yml
-        url: http://homeassistant:${internal_ha_port}
-        tunnel: ${tunnel_uuid}
-        credentials-file: /data/tunnel.json
-EOF
-    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
+    bashio::log.info "Creating HA-only config file..."
 
-    createDNS
+    cat << EOF > /data/config.yml
+    tunnel: ${tunnel_uuid}
+    credentials-file: /data/tunnel.json
+
+    ingress:
+      - hostname: ${external_hostname}
+        service: http://homeassistant:${internal_ha_port}
+      - service: http_status:404
+EOF
+
+    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
 
 # ------------------------------------------------------------------------------
@@ -183,7 +239,13 @@ main() {
         createTunnel
     fi
 
-    createConfig
+    if bashio::config.true 'nginxproxymanager' ; then
+        createFullConfig
+    else
+        createHAonlyConfig
+    fi
+
+    createDNS
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
