@@ -9,7 +9,6 @@ url: "https://github.com/brenner-tobias/addon-cloudflared/"
 startup: services
 init: false
 hassio_api: true
-homeassistant_api: true
 hassio_role: admin
 arch:
   - aarch64
@@ -21,11 +20,10 @@ options:
   external_hostname: ""
   internal_ha_port: "8123"
   tunnel_name: homeassistant
-  nginxproxymanager: false
 schema:
   external_hostname: str
   internal_ha_port: port
   tunnel_name: str
-  nginxproxymanager: bool
-  reset_cloudflared_files: bool?
+  nginxproxymanager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
+  reset_cloudflared_files: bool?

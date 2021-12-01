@@ -65,14 +65,22 @@ http:
     - 172.30.33.0/24
 ```
 
-### Option: `reset_cloudflared_files`
+### Option: `nginxproxymanager`
 
-In case something went wrong or you want to reset your cloudflared connection
-for some other reason (e.g., switch to another Cloudflare account), you can reset
-all your local Cloudflare files by setting this option to `true`.
+If you want to use the Cloudflare Tunnel with the Add-On
+[Nginx Proxy Manager][nginxproxymanager], you can do so by setting this option.
 
-**Note**: _After deleting the files, the option `reset_cloudflared_files` will
-automaticaly be removed from the add-on configuration._
+**Note**: _This will still route your defined `external_hostname` to HomeAssistant and
+any other incoming domain to Nginx Proxy Manager._
+
+In order to route multiple sub-domains through the tunnel, you have to create individual
+CNAME records in Cloudflare for all of them, pointing to your `external_hostname` (or
+directly to the tunnel URL that you can get from the CNAME entry of `external_hostname`).
+You could also set-up wildcart CNAME entries if you like, but I do not recommend
+doing that.
+
+Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
+them to wherever you like.
 
 ### Option: `log_level`
 
@@ -91,6 +99,15 @@ Please note that each level automatically includes log messages from a
 more severe level, e.g., `debug` also shows `info` messages. By default,
 the `log_level` is set to `info`, which is the recommended setting unless
 you are troubleshooting.
+
+### Option: `reset_cloudflared_files`
+
+In case something went wrong or you want to reset your cloudflared connection
+for some other reason (e.g., switch to another Cloudflare account), you can reset
+all your local Cloudflare files by setting this option to `true`.
+
+**Note**: _After deleting the files, the option `reset_cloudflared_files` will
+automaticaly be removed from the add-on configuration._
 
 ## Domain Name and Cloudlfare Set-Up
 
@@ -140,4 +157,5 @@ SOFTWARE.
 [cloudflare]: https://www.cloudflare.com/
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
 [freenom]: https://freenom.com
+[nginxproxymanager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
