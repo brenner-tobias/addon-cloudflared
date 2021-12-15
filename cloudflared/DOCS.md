@@ -42,8 +42,8 @@ restart your HomeAssistant instance.**
 Example add-on configuration:
 
 ```yaml
-internal_ha_port: "8123"
 external_hostname: "ha.example.com"
+internal_ha_port: "8123"
 tunnel_name: homeassistant
 ```
 
