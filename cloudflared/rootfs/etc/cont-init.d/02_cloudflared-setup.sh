@@ -206,7 +206,7 @@ EOF
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns "${tunnel_uuid}" "${external_hostname}" \
+    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
     || bashio::exit.nok "Failed to create DNS entry.
     Please check the Cloudflare Dashboard for an existing DNS entry with the name ${external_hostname} and delete it:
     https://dash.cloudflare.com/ Website / DNS"
