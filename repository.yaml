@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
+name: Cloudflared
+url: "https://github.com/brenner-tobias/addon-cloudflared"
+maintainer: Tobias Brenner <tobias.brenner1981@gmail.com>
