@@ -9,7 +9,7 @@
 arch=$1
 
 # Cloudflared Release to build from
-cloudfalredRelease="2021.12.0"
+cloudfalredRelease="2022.1.0"
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list

@@ -173,7 +173,7 @@ createFullConfig() {
 
     ingress:
       - hostname: ${external_hostname}
-        service: http://homeassistant:${internal_ha_port}
+        service: http://homeassistant:$(bashio::core.port)
       - service: http://${npm_ip}:80
 EOF
 
@@ -193,7 +193,7 @@ createHAonlyConfig() {
 
     ingress:
       - hostname: ${external_hostname}
-        service: http://homeassistant:${internal_ha_port}
+        service: http://homeassistant:$(bashio::core.port)
       - service: http_status:404
 EOF
 
@@ -214,7 +214,6 @@ createDNS() {
 # RUN LOGIC
 # ------------------------------------------------------------------------------
 external_hostname=""
-internal_ha_port=""
 tunnel_name=""
 tunnel_uuid=""
 
@@ -222,7 +221,6 @@ main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     external_hostname="$(bashio::config 'external_hostname')"
-    internal_ha_port="$(bashio::core.port)"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     if bashio::config.true 'reset_cloudflared_files' ; then
