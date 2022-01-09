@@ -222,7 +222,7 @@ main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     external_hostname="$(bashio::config 'external_hostname')"
-    internal_ha_port="$(bashio::config 'internal_ha_port')"
+    internal_ha_port="$(bashio::core.port)"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     if bashio::config.true 'reset_cloudflared_files' ; then

@@ -23,8 +23,6 @@ restart your HomeAssistant instance.**
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
 1. Set the "external_hostname" add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
-1. (Optional) Change the "internal_ha_port" add-on option with the internal Port
-   to reach Home Assistant in your network (default: 8123).
 1. (Optional) Change the "tunnel_name" add-on option (default: homeassistant).
 1. **Make sure that there is no DNS entry with your desired external hostname and
    no existing tunnel with your desired tunnel name at Cloudflare**.
@@ -43,7 +41,6 @@ Example add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
-internal_ha_port: "8123"
 tunnel_name: homeassistant
 ```
 
