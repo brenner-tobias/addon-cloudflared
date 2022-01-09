@@ -127,7 +127,7 @@ The original setup of this repository is by [Tobias Brenner][tobias].
 
 MIT License
 
-Copyright (c) 2021 Tobias Brenner
+Copyright (c) 2022 Tobias Brenner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

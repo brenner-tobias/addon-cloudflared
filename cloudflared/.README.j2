@@ -29,6 +29,11 @@ DNS servers of cloudflare.**
 
 [:books: Read the full add-on documentation][docs]
 
+## Installation
+
+**To install this Add-On, please add my HA-Addons repository to Home Assistant using
+[this GitHub repository][ha-addons].**
+
 ## Support
 
 Got questions?
@@ -43,7 +48,7 @@ Feel free to [open an issue here][issue] on GitHub.
 
 MIT License
 
-Copyright (c) 2021 Tobias Brenner
+Copyright (c) 2022 Tobias Brenner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -70,6 +75,7 @@ SOFTWARE.
 [docs]: cloudflared/DOCS.md
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
+[ha-addons]: https://github.com/brenner-tobias/ha-addons
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
 [issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
 [license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
