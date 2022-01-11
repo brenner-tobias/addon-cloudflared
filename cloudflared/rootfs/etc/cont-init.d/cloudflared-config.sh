@@ -172,7 +172,7 @@ createFullConfig() {
     credentials-file: /data/tunnel.json
 
     ingress:
-      - hostname: ${external_hostname}
+      - hostname: ${external_ha_hostname}
         service: http://homeassistant:$(bashio::core.port)
       - service: http://${npm_ip}:80
 EOF
@@ -192,7 +192,7 @@ createHAonlyConfig() {
     credentials-file: /data/tunnel.json
 
     ingress:
-      - hostname: ${external_hostname}
+      - hostname: ${external_ha_hostname}
         service: http://homeassistant:$(bashio::core.port)
       - service: http_status:404
 EOF
@@ -205,22 +205,22 @@ EOF
 # ------------------------------------------------------------------------------
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
+    bashio::log.info "Creating new DNS entry ${external_ha_hostname}..."
+    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
     || bashio::exit.nok "Failed to create DNS entry."
 }
 
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
-external_hostname=""
+external_ha_hostname=""
 tunnel_name=""
 tunnel_uuid=""
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    external_hostname="$(bashio::config 'external_hostname')"
+    external_ha_hostname="$(bashio::config 'external_ha_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     if bashio::config.true 'reset_cloudflared_files' ; then
