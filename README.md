@@ -74,7 +74,7 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [docs]: cloudflared/DOCS.md
-[domainarticle]: https://www.linkedin.com/feed/update/urn:li:ugcPost:6886392241577893888?updateEntityUrn=urn%3Ali%3Afs_updateV2%3A%28urn%3Ali%3AugcPost%3A6886392241577893888%2CFEED_DETAIL%2CEMPTY%2CDEFAULT%2Cfalse%29
+[domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions

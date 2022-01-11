@@ -151,7 +151,7 @@ SOFTWARE.
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare]: https://www.cloudflare.com/
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
-[domainarticle]: https://www.linkedin.com/feed/update/urn:li:ugcPost:6886392241577893888?updateEntityUrn=urn%3Ali%3Afs_updateV2%3A%28urn%3Ali%3AugcPost%3A6886392241577893888%2CFEED_DETAIL%2CEMPTY%2CDEFAULT%2Cfalse%29
+[domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
 [nginxproxymanager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
