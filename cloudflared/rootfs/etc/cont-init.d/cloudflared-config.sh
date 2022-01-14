@@ -63,7 +63,7 @@ createCertificate() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new certificate..."
     bashio::log.notice "Please follow the Cloudflare Auth-Steps:"
-    /opt/cloudflared tunnel login
+    cloudflared tunnel login
 
     bashio::log.green "Authentication successfull, moving auth file to config folder"
 
@@ -111,7 +111,7 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    /opt/cloudflared --origincert=/data/cert.pem --cred-file=/data/tunnel.json tunnel create "${tunnel_name}" \
+    cloudflared --origincert=/data/cert.pem --cred-file=/data/tunnel.json tunnel create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
@@ -197,6 +197,12 @@ createHAonlyConfig() {
       - service: http_status:404
 EOF
 
+    yq e -n ".tunnel = '${tunnel_uuid}'" > /data/config_test.yml
+    yq e -i '.credentials-file = "/data/tunnel.json"' /data/config_test.yml
+    yq e -i '.credentials-file = "/data/tunnel.json"' /data/config_test.yml
+
+    bashio::log.info "Sucessfully created config file: $(cat /data/config_test.yml)"
+
     bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
 
@@ -206,7 +212,7 @@ EOF
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new DNS entry ${external_ha_hostname}..."
-    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
+    cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
     || bashio::exit.nok "Failed to create DNS entry."
 }
 
@@ -215,7 +221,7 @@ createDNS() {
 # ------------------------------------------------------------------------------
 external_ha_hostname=""
 tunnel_name=""
-tunnel_uuid=""
+tunnel_uuid="12345"
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -223,17 +229,17 @@ main() {
     external_ha_hostname="$(bashio::config 'external_ha_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
-    if bashio::config.true 'reset_cloudflared_files' ; then
-        resetCloudflareFiles
-    fi
+    #if bashio::config.true 'reset_cloudflared_files' ; then
+    #    resetCloudflareFiles
+    #fi
 
-    if ! hasCertificate ; then
-        createCertificate
-    fi
+    #if ! hasCertificate ; then
+    #    createCertificate
+    #fi
 
-    if ! hasTunnel ; then
-        createTunnel
-    fi
+    #if ! hasTunnel ; then
+    #    createTunnel
+    #fi
 
     if bashio::config.true 'nginxproxymanager' ; then
         createFullConfig
@@ -241,7 +247,7 @@ main() {
         createHAonlyConfig
     fi
 
-    createDNS
+    #createDNS
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }

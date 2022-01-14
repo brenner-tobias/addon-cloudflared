@@ -16,12 +16,15 @@ arch:
   - armv7
   - i386
 options:
-  external_ha_hostname: ""
-  tunnel_name: "homeassistant"
+  external_ha_hostname: "ha-test.example.com"
+  tunnel_name: "homeassistant-test"
+  hosts:
+    - hostname: "fritz.example.com"
+      service: "http://fritz.box"
 schema:
   external_ha_hostname: str
   tunnel_name: str
-  additional_hosts:
+  hosts:
     - hostname: str?
       service: str?
   nginxproxymanager: bool?
