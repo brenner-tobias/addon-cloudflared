@@ -203,7 +203,10 @@ EOF
     yq e -i '.credentials-file = "/data/tunnel.json"' /data/config_test.yml
 
     #yq e -i '.additional_hosts = [{"name": "test", "value": "valuetest"}]' /data/config_test.yml
-    yq e -i ".ingress = [{hostname: ${external_ha_hostname}, service: http://homeassistant:$(bashio::core.port)}]" /data/config_test.yml
+    yq e -i  ".ingress = [{hostname: ${external_ha_hostname}, service: http://homeassistant}]" /data/config_test.yml
+    #yq e -i --arg external_ha_hostname "$external_ha_hostname" '.ingress = [{"hostname": $external_ha_hostname, "service": "http://homeassistant:$(bashio::core.port)"}]' /data/config_test.yml
+
+
     yq e -i '.ingress += [{"hostname": "name2", "service": "service2"}]' /data/config_test.yml
     yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config_test.yml
 
