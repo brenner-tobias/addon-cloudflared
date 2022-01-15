@@ -197,11 +197,26 @@ createHAonlyConfig() {
       - service: http_status:404
 EOF
 
-    yq e -n ".tunnel = '${tunnel_uuid}'" > /data/config_test.yml
-    yq e -i '.credentials-file = "/data/tunnel.json"' /data/config_test.yml
+    bashio::log.info "Additional_Hosts: ${additional_hosts}"
+
+    yq e -n ".tunnel = ${tunnel_uuid}" > /data/config_test.yml
     yq e -i '.credentials-file = "/data/tunnel.json"' /data/config_test.yml
 
+    #yq e -i '.additional_hosts = [{"name": "test", "value": "valuetest"}]' /data/config_test.yml
+    yq e -i ".ingress = [{hostname: ${external_ha_hostname}, service: http://homeassistant:$(bashio::core.port)}]" /data/config_test.yml
+    yq e -i '.ingress += [{"hostname": "name2", "service": "service2"}]' /data/config_test.yml
+    yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config_test.yml
+
     bashio::log.info "Sucessfully created config file: $(cat /data/config_test.yml)"
+
+    for i in "${additional_hosts[@]}"
+    do
+        bashio::log.info "Test array loop"
+    done
+
+    #bashio::log.info "Additional_Hosts 0: ${additional_hosts[0]}"
+
+    #yq e '.additional_hosts' -P /data/options.json >> /data/config_test.yml
 
     bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
@@ -222,12 +237,14 @@ createDNS() {
 external_ha_hostname=""
 tunnel_name=""
 tunnel_uuid="12345"
+additional_hosts=""
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     external_ha_hostname="$(bashio::config 'external_ha_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
+    additional_hosts=$(bashio::config 'additional_hosts')
 
     #if bashio::config.true 'reset_cloudflared_files' ; then
     #    resetCloudflareFiles
