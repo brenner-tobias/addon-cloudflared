@@ -16,11 +16,15 @@ arch:
   - armv7
   - i386
 options:
-  external_hostname: ""
-  tunnel_name: homeassistant
+  external_ha_hostname: "ha-test.example.com"
+  tunnel_name: "homeassistant-test"
+  additional_hosts: []
 schema:
-  external_hostname: str
+  external_ha_hostname: str
   tunnel_name: str
+  additional_hosts:
+    - hostname: str
+      service: str
   nginxproxymanager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?

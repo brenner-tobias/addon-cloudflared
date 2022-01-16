@@ -30,6 +30,13 @@ DNS servers of Cloudflare. If you do not have one, you can get one for free at
 
 [:books: Read the full add-on documentation][docs]
 
+## Disclaimer
+
+Please make sure to be compliant with the
+[Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
+add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
+mainly streaming videos or other Non-HTML content.
+
 ## Installation
 
 **To install this Add-On, please add my HA-Addons repository to Home Assistant using
@@ -73,6 +80,8 @@ SOFTWARE.
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
+[cloudflare-sssa]: https://www.cloudflare.com/terms/
+[cloudflare-sssa-28]: https://www.cloudflare.com/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com

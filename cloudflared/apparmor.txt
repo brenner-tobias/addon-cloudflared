@@ -19,9 +19,9 @@ profile cloudflared flags=(attach_disconnected,mediate_deleted) {
   /root/.cloudflared/** rw,
 
   # Start new profile for cloudflared service
-  /opt/cloudflared cx,
+  cloudflared cx,
 
-  profile /opt/cloudflared flags=(attach_disconnected,mediate_deleted) {
+  profile cloudflared flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/base>
 
     # Receive signals from S6-Overlay

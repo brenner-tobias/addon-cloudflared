@@ -33,7 +33,7 @@ LABEL \
     maintainer="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
-    org.opencontainers.image.vendor="Brenner.tech" \
+    org.opencontainers.image.vendor="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.authors="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \

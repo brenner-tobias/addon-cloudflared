@@ -8,8 +8,9 @@
 # Machine architecture as first parameter
 arch=$1
 
-# Cloudflared Release to build from
+# Dependency releases to build from
 cloudfalredRelease="2022.1.0"
+yqRelease="v4.16.2"
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
@@ -28,12 +29,14 @@ case $arch in
     ;;
 
     "i386")
-        arch="arm64"
+        arch="386"
     ;;
 esac
 
-# Download the needed cloudflared version
-curl -L -o /opt/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudfalredRelease}/cloudflared-linux-${arch}"
+# Download the needed cloudflared and yq bins
+wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudfalredRelease}/cloudflared-linux-${arch}"
+wget -O /usr/bin/yq "https://github.com/mikefarah/yq/releases/download/${yqRelease}/yq_linux_${arch}"
 
-# Make the downloaded file executeable
-chmod +x /opt/cloudflared
+# Make the downloaded bins executeable
+chmod +x /usr/bin/cloudflared
+chmod +x /usr/bin/yq

@@ -63,7 +63,7 @@ createCertificate() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new certificate..."
     bashio::log.notice "Please follow the Cloudflare Auth-Steps:"
-    /opt/cloudflared tunnel login
+    cloudflared tunnel login
 
     bashio::log.green "Authentication successfull, moving auth file to config folder"
 
@@ -111,7 +111,7 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    /opt/cloudflared --origincert=/data/cert.pem --cred-file=/data/tunnel.json tunnel create "${tunnel_name}" \
+    cloudflared --origincert=/data/cert.pem --cred-file=/data/tunnel.json tunnel create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
@@ -129,98 +129,100 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
-# Create cloudflare config for connection to HomeAssistant and Nginxproxymanager
+# Create cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
-createFullConfig() {
+createConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Runing with Nginxproxymanager support"
+    bashio::log.info "Creating config file..."
 
-    local npm_name
-    local npm_ip
+    # Add tunnel information
+    yq e -n ".tunnel = \"${tunnel_uuid}\"" > /data/config.yml
+    yq e -i '.credentials-file = "/data/tunnel.json"' /data/config.yml
 
-    # Get full name of Nginxproxymanager from add-on list
-    npm_name="$(grep nginxproxymanager <<< "$(bashio::addons.installed)")"
+    # Add Service for Home-Assistant
+    yq e -i ".ingress = [{\"hostname\": \"${external_ha_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]" /data/config.yml
 
-    bashio::log.debug "Nginxproxymanager add-on name: ${npm_name}"
-
-    bashio::log.info "Looking for Nginxproxymanager add-on"
-
-    # Check if Nginxproxymanager is installed and available
-    if ! bashio::addons.installed "$npm_name" \
-        || ! bashio::addon.available "$npm_name" ; then
-        bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
-        nginxproxymanager in the add-on config"
+    # Check for configured additional hosts and add them if existing
+    if bashio::config.has_value 'additional_hosts' ; then
+        additional_hosts=$(jq -r '.additional_hosts' /data/options.json)
+        yq e -i ".ingress += ${additional_hosts}" /data/config.yml
     fi
 
-    bashio::log.debug "Nginxproxymanager add-on found: $npm_name"
+    # Check if NGINX Proxy Manager is used to finalize configuration
+    if bashio::config.true 'nginxproxymanager' ; then
 
-    npm_ip="$(bashio::addon.ip_address "$npm_name")"
+        bashio::log.info "Runing with Nginxproxymanager support"
 
-    if bashio::var.is_empty "$npm_ip" ; then
-        bashio::exit.nok "Internal IP of Nginxproxymanager not found, please
-        install / reset the Add-On"
+        local npm_name
+        local npm_ip
+
+        # Get full name of Nginxproxymanager from add-on list
+        npm_name="$(grep nginxproxymanager <<< "$(bashio::addons.installed)")"
+
+        bashio::log.debug "Nginxproxymanager add-on name: ${npm_name}"
+
+        bashio::log.info "Looking for Nginxproxymanager add-on"
+
+        # Check if Nginxproxymanager is installed and available
+        if ! bashio::addons.installed "$npm_name" \
+            || ! bashio::addon.available "$npm_name" ; then
+            bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
+            nginxproxymanager in the add-on config"
+        fi
+
+        bashio::log.debug "Nginxproxymanager add-on found: $npm_name"
+
+        npm_ip="$(bashio::addon.ip_address "$npm_name")"
+
+        if bashio::var.is_empty "$npm_ip" ; then
+            bashio::exit.nok "Internal IP of Nginxproxymanager not found, please
+            install / reset the Add-On"
+        fi
+
+        bashio::log.debug "nginxproxymanager IP: ${npm_ip}"
+
+        bashio::log.info "All information about Nginxproxymanager Add-On found"
+        yq e -i ".ingress += [{\"service\": \"http://${npm_ip}:80\"}]" /data/config.yml
+    else
+        # Finalize config without NPM support, sending all other requests to HTTP:404
+        yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config.yml
     fi
-
-    bashio::log.debug "nginxproxymanager IP: ${npm_ip}"
-
-    bashio::log.info "All information about Nginxproxymanager Add-On found"
-
-    bashio::log.info "Creating full config file..."
-
-    cat << EOF > /data/config.yml
-    tunnel: ${tunnel_uuid}
-    credentials-file: /data/tunnel.json
-
-    ingress:
-      - hostname: ${external_hostname}
-        service: http://homeassistant:$(bashio::core.port)
-      - service: http://${npm_ip}:80
-EOF
 
     bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
 
 # ------------------------------------------------------------------------------
-# Create cloudflare config with variables from HA-Add-on-Config and Cloudfalred set-up
-# ------------------------------------------------------------------------------
-createHAonlyConfig() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Creating HA-only config file..."
-
-    cat << EOF > /data/config.yml
-    tunnel: ${tunnel_uuid}
-    credentials-file: /data/tunnel.json
-
-    ingress:
-      - hostname: ${external_hostname}
-        service: http://homeassistant:$(bashio::core.port)
-      - service: http_status:404
-EOF
-
-    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
-}
-
-# ------------------------------------------------------------------------------
-# Create cloudflare DNS entry for external hostname
+# Create cloudflare DNS entry for external hostname and additional hosts
 # ------------------------------------------------------------------------------
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    /opt/cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
-    || bashio::exit.nok "Failed to create DNS entry."
+
+    # Create DNS entry for external hostname of HomeAssistant
+    bashio::log.info "Creating new DNS entry ${external_ha_hostname}..."
+    cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
+    || bashio::exit.nok "Failed to create DNS entry ${external_ha_hostname}."
+
+    # Check for configured additional hosts and create DNS entries for them if existing
+    if bashio::config.has_value 'additional_hosts' ; then
+        for host in $(jq -r '.additional_hosts[].hostname' /data/options.json); do
+            bashio::log.info "Creating new DNS entry ${host}..."
+            cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
+            || bashio::exit.nok "Failed to create DNS entry ${host}."
+        done
+    fi
 }
 
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
-external_hostname=""
+external_ha_hostname=""
 tunnel_name=""
 tunnel_uuid=""
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    external_hostname="$(bashio::config 'external_hostname')"
+    external_ha_hostname="$(bashio::config 'external_ha_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     if bashio::config.true 'reset_cloudflared_files' ; then
@@ -235,11 +237,7 @@ main() {
         createTunnel
     fi
 
-    if bashio::config.true 'nginxproxymanager' ; then
-        createFullConfig
-    else
-        createHAonlyConfig
-    fi
+    createConfig
 
     createDNS
 
