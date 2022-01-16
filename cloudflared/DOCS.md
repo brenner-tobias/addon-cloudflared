@@ -34,10 +34,11 @@ restart your HomeAssistant instance.**
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
    (see [detailed description below](#Option:-`additional_hosts`).
-1. (Optional) Add the `nginxproxymanager` flag to use the CLoudflare tunnel with the
-   Nginxproxymanager add-on (see [detailed description below](#Option:-`nginxproxymanager`)..
-1. **Any existing DNS entries with your desired external hostname and additional hosts
-   will be overridden at Cloudflare**.
+1. (Optional) Add the `nginxproxymanager` flag to use the Cloudflare tunnel with
+   the Nginxproxymanager add-on (see
+   [detailed description below](#Option:-`nginxproxymanager`).
+1. **Any existing DNS entries with your desired external hostname and additional
+   hosts will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at Cloudflare**.
