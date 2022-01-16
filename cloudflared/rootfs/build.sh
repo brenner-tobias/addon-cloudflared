@@ -9,7 +9,7 @@
 arch=$1
 
 # Dependency releases to build from
-cloudfalredRelease="2022.1.0"
+cloudfalredRelease="2022.1.2"
 yqRelease="v4.16.2"
 
 # Adapt the architecture to the cloudflared specific names if needed

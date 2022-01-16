@@ -16,8 +16,8 @@ arch:
   - armv7
   - i386
 options:
-  external_ha_hostname: "ha-test.example.com"
-  tunnel_name: "homeassistant-test"
+  external_ha_hostname: ""
+  tunnel_name: "homeassistant"
   additional_hosts: []
 schema:
   external_ha_hostname: str
