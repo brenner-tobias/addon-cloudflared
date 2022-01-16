@@ -9,4 +9,4 @@ tunnel_name="$(bashio::config 'tunnel_name')"
 
 bashio::log.info "Connecting Cloudflared Tunnel..."
 
-#exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${config} run "${tunnel_name}"
+exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${config} run "${tunnel_name}"

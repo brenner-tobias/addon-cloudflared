@@ -23,8 +23,8 @@ schema:
   external_ha_hostname: str
   tunnel_name: str
   additional_hosts:
-    - hostname: str?
-      service: str?
+    - hostname: str
+      service: str
   nginxproxymanager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?

@@ -10,6 +10,13 @@ connection.
 DNS servers of Cloudflare. If you do not have one, you can get one for free at
 [Freenom][freenom] following [this article][domainarticle].**
 
+## Disclaimer
+
+Please make sure to be compliant with the
+[Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
+add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
+mainly streaming videos or other Non-HTML content.
+
 ## Installation
 
 The installation of this add-on is pretty straightforward but requires some prerequisites
@@ -38,14 +45,15 @@ restart your HomeAssistant instance.**
 
 **Note**: _Remember to restart the add-on when the configuration is changed._
 
-Example add-on basic configuration:
+Example basic add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
 tunnel_name: "homeassistant"
+additional_hosts: []
 ```
 
-Example add-on extended configuration:
+Example extended add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
@@ -77,13 +85,42 @@ http:
     - 172.30.33.0/24
 ```
 
+### Option: `additional_hosts`
+
+You can use the internal reverse proxy of Cloudflare Tunnel to define additional
+hosts next to home assistant. That way, you can use the tunnel to also access
+other systems like a diskstation, router or anything else.
+
+Like with the `external_hostname` of HomeAssistant, DNS entries at will be
+automatically created at Cloudflare.
+
+Please find below an examplary entry for two additional hosts:
+
+```yaml
+additional_hosts:
+  - hostname: "diskstation.example.com"
+    service: "http://192.168.1.2"
+  - hostname: "router.example.com"
+    service: "http://192.168.1.1"
+```
+
+**Note**: _If you delete a hostname from the list, it will not be served
+anymore (the request will run agains the default route). Nevertheless,
+you should also manually delete the DNS entry from Cloudflare since it can not
+be deleted by the Add-On._
+
 ### Option: `nginxproxymanager`
 
 If you want to use the Cloudflare Tunnel with the Add-On
 [Nginx Proxy Manager][nginxproxymanager], you can do so by setting this option.
 
-**Note**: _This will still route your defined `external_hostname` to HomeAssistant
-and any other incoming domain to Nginx Proxy Manager._
+```yaml
+nginxproxymanager: true
+```
+
+**Note**: _This will still route your defined `external_hostname`to HomeAssistant
+as well as any potential `additional_hosts` to where you defined in the config.
+Any other incoming traffic will be routed to Nginx Proxy Manager._
 
 In order to route multiple sub-domains through the tunnel, you have to create individual
 CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
@@ -97,7 +134,13 @@ them to wherever you like.
 
 The `log_level` option controls the level of log output by the addon and can
 be changed to be more or less verbose, which might be useful when you are
-dealing with an unknown issue. Possible values are:
+dealing with an unknown issue.
+
+```yaml
+log_level: debug
+```
+
+Possible values are:
 
 - `trace`: Show every detail, like all called internal functions.
 - `debug`: Shows detailed debug information.
@@ -116,6 +159,10 @@ you are troubleshooting.
 In case something went wrong or you want to reset your Cloudflare tunnel
 for some other reason (e.g., switch to another Cloudflare account), you can reset
 all your local Cloudflare files by setting this option to `true`.
+
+```yaml
+reset_cloudflared_files: true
+```
 
 **Note**: _After deleting the files, the option `reset_cloudflared_files` will
 automaticaly be removed from the add-on configuration._

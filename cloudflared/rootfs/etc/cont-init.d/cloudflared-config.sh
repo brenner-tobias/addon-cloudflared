@@ -136,7 +136,7 @@ createConfig() {
     bashio::log.info "Creating config file..."
 
     # Add tunnel information
-    yq e -n ".tunnel = ${tunnel_uuid}" > /data/config.yml
+    yq e -n ".tunnel = \"${tunnel_uuid}\"" > /data/config.yml
     yq e -i '.credentials-file = "/data/tunnel.json"' /data/config.yml
 
     # Add Service for Home-Assistant
@@ -188,17 +188,28 @@ createConfig() {
         yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config.yml
     fi
 
-    bashio::log.info "Sucessfully created config file: $(cat /data/config.yml)"
+    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
 
 # ------------------------------------------------------------------------------
-# Create cloudflare DNS entry for external hostname
+# Create cloudflare DNS entry for external hostname and additional hosts
 # ------------------------------------------------------------------------------
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
+
+    # Create DNS entry for external hostname of HomeAssistant
     bashio::log.info "Creating new DNS entry ${external_ha_hostname}..."
     cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
-    || bashio::exit.nok "Failed to create DNS entry."
+    || bashio::exit.nok "Failed to create DNS entry ${external_ha_hostname}."
+
+    # Check for configured additional hosts and create DNS entries for them if existing
+    if bashio::config.has_value 'additional_hosts' ; then
+        for host in $(jq -r '.additional_hosts[].hostname' /data/options.json); do
+            bashio::log.info "Creating new DNS entry ${host}..."
+            cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
+            || bashio::exit.nok "Failed to create DNS entry ${host}."
+        done
+    fi
 }
 
 # ==============================================================================
@@ -206,7 +217,7 @@ createDNS() {
 # ------------------------------------------------------------------------------
 external_ha_hostname=""
 tunnel_name=""
-tunnel_uuid="12345"
+tunnel_uuid=""
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -214,21 +225,21 @@ main() {
     external_ha_hostname="$(bashio::config 'external_ha_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
-    #if bashio::config.true 'reset_cloudflared_files' ; then
-    #    resetCloudflareFiles
-    #fi
+    if bashio::config.true 'reset_cloudflared_files' ; then
+        resetCloudflareFiles
+    fi
 
-    #if ! hasCertificate ; then
-    #    createCertificate
-    #fi
+    if ! hasCertificate ; then
+        createCertificate
+    fi
 
-    #if ! hasTunnel ; then
-    #    createTunnel
-    #fi
+    if ! hasTunnel ; then
+        createTunnel
+    fi
 
     createConfig
 
-    #createDNS
+    createDNS
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
