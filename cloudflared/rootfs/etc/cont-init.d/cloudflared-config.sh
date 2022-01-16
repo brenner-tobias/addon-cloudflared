@@ -135,11 +135,12 @@ createConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating config file..."
 
+    # Add tunnel information
     yq e -n ".tunnel = ${tunnel_uuid}" > /data/config.yml
     yq e -i '.credentials-file = "/data/tunnel.json"' /data/config.yml
 
+    # Add Service for Home-Assistant
     yq e -i ".ingress = [{\"hostname\": \"${external_ha_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]" /data/config.yml
-    yq e -i '.ingress += [{"hostname": "name2", "service": "service2"}]' /data/config.yml
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
