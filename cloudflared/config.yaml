@@ -16,11 +16,11 @@ arch:
   - armv7
   - i386
 options:
-  external_ha_hostname: ""
+  external_hostname: ""
   tunnel_name: "homeassistant"
   additional_hosts: []
 schema:
-  external_ha_hostname: str
+  external_hostname: str
   tunnel_name: str
   additional_hosts:
     - hostname: str

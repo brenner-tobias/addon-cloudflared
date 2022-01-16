@@ -140,7 +140,7 @@ createConfig() {
     yq e -i '.credentials-file = "/data/tunnel.json"' /data/config.yml
 
     # Add Service for Home-Assistant
-    yq e -i ".ingress = [{\"hostname\": \"${external_ha_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]" /data/config.yml
+    yq e -i ".ingress = [{\"hostname\": \"${external_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]" /data/config.yml
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
@@ -198,9 +198,9 @@ createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     # Create DNS entry for external hostname of HomeAssistant
-    bashio::log.info "Creating new DNS entry ${external_ha_hostname}..."
-    cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_ha_hostname}" \
-    || bashio::exit.nok "Failed to create DNS entry ${external_ha_hostname}."
+    bashio::log.info "Creating new DNS entry ${external_hostname}..."
+    cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
+    || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
 
     # Check for configured additional hosts and create DNS entries for them if existing
     if bashio::config.has_value 'additional_hosts' ; then
@@ -215,14 +215,14 @@ createDNS() {
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
-external_ha_hostname=""
+external_hostname=""
 tunnel_name=""
 tunnel_uuid=""
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    external_ha_hostname="$(bashio::config 'external_ha_hostname')"
+    external_hostname="$(bashio::config 'external_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     if bashio::config.true 'reset_cloudflared_files' ; then
