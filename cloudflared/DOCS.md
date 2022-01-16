@@ -31,9 +31,12 @@ restart your HomeAssistant instance.**
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
 1. Set the `additional_hosts` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
-1. (Optional) Change the "tunnel_name" add-on option (default: homeassistant).
-1. **Make sure that there is no DNS entry with your desired external hostname and
-   no existing tunnel with your desired tunnel name at Cloudflare**.
+1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
+1. (Optional) Add additional hosts to forward to in the `additional_hosts` array.
+1. (Optional) Add the `nginxproxymanager` flag to use the CLoudflare tunnel with the
+   Nginxproxymanager add-on.
+1. **Any existing DNS entries with your desired external hostname and additional hosts
+   will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at Cloudflare**.
