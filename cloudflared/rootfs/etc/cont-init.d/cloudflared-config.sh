@@ -188,6 +188,9 @@ createConfig() {
         yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config.yml
     fi
 
+    # Deactivate TLS verification for all services
+    #yq e -i '.ingress[] += {"originRequest": {"noTLSVerify": "true"}}' /data/config.yml
+
     bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
 }
 
