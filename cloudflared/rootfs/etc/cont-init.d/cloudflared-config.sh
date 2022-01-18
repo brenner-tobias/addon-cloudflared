@@ -86,7 +86,7 @@ hasTunnel() {
     fi
 
     # Get tunnel UUID from JSON
-    tunnel_uuid="$(bashio::jq "/data/tunnel.json" .TunnelID)"
+    tunnel_uuid="$(bashio::jq "/data/tunnel.json" ".TunnelID")"
 
     bashio::log.info "Existing tunnel with ID ${tunnel_uuid} found"
 
@@ -144,7 +144,8 @@ createConfig() {
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
-        additional_hosts=$(jq -r '.additional_hosts' /data/options.json)
+        additional_hosts=$(bashio::jq "/data/options.json" ".additional_hosts")
+        #additional_hosts=$(jq -r '.additional_hosts' /data/options.json)
         yq e -i ".ingress += ${additional_hosts}" /data/config.yml
     fi
 
@@ -207,7 +208,8 @@ createDNS() {
 
     # Check for configured additional hosts and create DNS entries for them if existing
     if bashio::config.has_value 'additional_hosts' ; then
-        for host in $(jq -r '.additional_hosts[].hostname' /data/options.json); do
+        #for host in $(jq -r '.additional_hosts[].hostname' /data/options.json); do
+        for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
             bashio::log.info "Creating new DNS entry ${host}..."
             cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
