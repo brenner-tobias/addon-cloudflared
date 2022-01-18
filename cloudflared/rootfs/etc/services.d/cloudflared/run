@@ -4,7 +4,7 @@
 # Connects and runs the Cloudfalred tunnel for HomeAssistant
 # ==============================================================================
 certificate="/data/cert.pem"
-config="/data/config.yml"
+config="/data/config.json"
 tunnel_name="$(bashio::config 'tunnel_name')"
 
 bashio::log.info "Connecting Cloudflared Tunnel..."

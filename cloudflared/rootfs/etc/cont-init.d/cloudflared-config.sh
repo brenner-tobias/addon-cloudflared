@@ -23,14 +23,14 @@ resetCloudflareFiles() {
         rm -f /data/tunnel.json || bashio::exit.nok "Failed to delete tunnel file"
     fi
 
-    if bashio::fs.file_exists "/data/config.yml" ; then
+    if bashio::fs.file_exists "/data/config.json" ; then
         bashio::log.debug "Deleting config file"
-        rm -f /data/config.yml || bashio::exit.nok "Failed to delete config file"
+        rm -f /data/config.json || bashio::exit.nok "Failed to delete config file"
     fi
 
     if bashio::fs.file_exists "/data/cert.pem" \
         || bashio::fs.file_exists "/data/tunnel.json" \
-        || bashio::fs.file_exists "/data/config.yml";
+        || bashio::fs.file_exists "/data/config.json";
     then
         bashio::exit.nok "Failed to delete cloudflared files"
     fi
@@ -86,7 +86,7 @@ hasTunnel() {
     fi
 
     # Get tunnel UUID from JSON
-    tunnel_uuid="$(bashio::jq "/data/tunnel.json" .TunnelID)"
+    tunnel_uuid="$(bashio::jq "/data/tunnel.json" ".TunnelID")"
 
     bashio::log.info "Existing tunnel with ID ${tunnel_uuid} found"
 
@@ -119,8 +119,8 @@ createTunnel() {
     bashio::log.debug "Created new tunnel: $(cat /data/tunnel.json)"
 
     bashio::log.info "Checking for old config"
-    if bashio::fs.file_exists "/data/config.yml" ; then
-        rm -f /data/config.yml || bashio::exit.nok "Failed to remove old config"
+    if bashio::fs.file_exists "/data/config.json" ; then
+        rm -f /data/config.json || bashio::exit.nok "Failed to remove old config"
         bashio::log.notice "Old config found and removed"
     else bashio::log.info "No old config found"
     fi
@@ -132,20 +132,21 @@ createTunnel() {
 # Create cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
+    local config
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating config file..."
 
     # Add tunnel information
-    yq e -n ".tunnel = \"${tunnel_uuid}\"" > /data/config.yml
-    yq e -i '.credentials-file = "/data/tunnel.json"' /data/config.yml
+    config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
+    config=$(bashio::jq "${config}" ".\"credentials-file\" += \"/data/tunnel.json\"")
 
     # Add Service for Home-Assistant
-    yq e -i ".ingress = [{\"hostname\": \"${external_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]" /data/config.yml
+    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]")
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
-        additional_hosts=$(jq -r '.additional_hosts' /data/options.json)
-        yq e -i ".ingress += ${additional_hosts}" /data/config.yml
+        additional_hosts=$(bashio::jq "/data/options.json" ".additional_hosts")
+        config=$(bashio::jq "${config}" ".\"ingress\" += ${additional_hosts}")
     fi
 
     # Check if NGINX Proxy Manager is used to finalize configuration
@@ -182,16 +183,19 @@ createConfig() {
         bashio::log.debug "nginxproxymanager IP: ${npm_ip}"
 
         bashio::log.info "All information about Nginxproxymanager Add-On found"
-        yq e -i ".ingress += [{\"service\": \"http://${npm_ip}:80\"}]" /data/config.yml
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://${npm_ip}:80\"}]")
     else
         # Finalize config without NPM support, sending all other requests to HTTP:404
-        yq e -i '.ingress += [{"service": "http_status:404"}]' /data/config.yml
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
     fi
 
     # Deactivate TLS verification for all services
-    #yq e -i '.ingress[] += {"originRequest": {"noTLSVerify": "true"}}' /data/config.yml
+    config=$(bashio::jq "${config}" ".ingress[] += {\"originRequest\": {\"noTLSVerify\": true}}")
 
-    bashio::log.debug "Sucessfully created config file: $(cat /data/config.yml)"
+    # Write content of config variable to config file for cloudflared
+    bashio::jq "${config}" "." > /data/config.json
+
+    bashio::log.debug "Sucessfully created config file: $(bashio::jq "/data/config.json" ".")"
 }
 
 # ------------------------------------------------------------------------------
@@ -207,7 +211,7 @@ createDNS() {
 
     # Check for configured additional hosts and create DNS entries for them if existing
     if bashio::config.has_value 'additional_hosts' ; then
-        for host in $(jq -r '.additional_hosts[].hostname' /data/options.json); do
+        for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
             bashio::log.info "Creating new DNS entry ${host}..."
             cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
