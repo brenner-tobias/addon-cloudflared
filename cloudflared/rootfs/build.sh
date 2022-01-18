@@ -9,8 +9,7 @@
 arch=$1
 
 # Dependency releases to build from
-cloudfalredRelease="2022.1.2"
-yqRelease="v4.16.2"
+cloudflaredRelease="2022.1.2"
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
@@ -34,9 +33,7 @@ case $arch in
 esac
 
 # Download the needed cloudflared and yq bins
-wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudfalredRelease}/cloudflared-linux-${arch}"
-wget -O /usr/bin/yq "https://github.com/mikefarah/yq/releases/download/${yqRelease}/yq_linux_${arch}"
+wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudflaredRelease}/cloudflared-linux-${arch}"
 
 # Make the downloaded bins executeable
 chmod +x /usr/bin/cloudflared
-chmod +x /usr/bin/yq
