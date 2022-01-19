@@ -109,7 +109,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: 🚀 Build
-        uses: docker/build-push-action@v2.7.0
+        uses: docker/build-push-action@v2.8.0
         with:
           load: true
           # yamllint disable rule:line-length
