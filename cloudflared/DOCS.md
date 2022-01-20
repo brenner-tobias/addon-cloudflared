@@ -64,10 +64,12 @@ Example extended add-on configuration:
 external_hostname: "ha.example.com"
 tunnel_name: "homeassistant"
 additional_hosts:
+  - hostname: "router.example.com"
+    service: "http://192.168.1.1"
   - hostname: "diskstation.example.com"
-    service: "http://192.168.1.5"
+    service: "https://192.168.1.2:5001"
   - hostname: "website.example.com"
-    service: "http://192.168.1.2"
+    service: "http://192.168.1.3:8080"
 nginxproxymanager: true
 log_level: "debug"
 ```
@@ -103,10 +105,12 @@ Please find below an examplary entry for two additional hosts:
 
 ```yaml
 additional_hosts:
-  - hostname: "diskstation.example.com"
-    service: "http://192.168.1.2"
   - hostname: "router.example.com"
     service: "http://192.168.1.1"
+  - hostname: "diskstation.example.com"
+    service: "https://192.168.1.2:5001"
+  - hostname: "website.example.com"
+    service: "http://192.168.1.3:8080"
 ```
 
 **Note**: _If you delete a hostname from the list, it will not be served
