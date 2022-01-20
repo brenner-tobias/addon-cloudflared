@@ -8,7 +8,7 @@ description: >
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
 init: false
 hassio_api: true
-hassio_role: admin
+hassio_role: manager
 arch:
   - aarch64
   - amd64
