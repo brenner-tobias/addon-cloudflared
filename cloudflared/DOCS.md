@@ -67,7 +67,7 @@ additional_hosts:
   - hostname: "router.example.com"
     service: "http://192.168.1.1"
   - hostname: "diskstation.example.com"
-    service: "http://192.168.1.2"
+    service: "https://192.168.1.2:5001"
   - hostname: "website.example.com"
     service: "http://192.168.1.3:8080"
 nginxproxymanager: true
@@ -108,7 +108,7 @@ additional_hosts:
   - hostname: "router.example.com"
     service: "http://192.168.1.1"
   - hostname: "diskstation.example.com"
-    service: "http://192.168.1.2"
+    service: "https://192.168.1.2:5001"
   - hostname: "website.example.com"
     service: "http://192.168.1.3:8080"
 ```
