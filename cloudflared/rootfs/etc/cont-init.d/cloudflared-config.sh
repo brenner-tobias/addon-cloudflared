@@ -148,14 +148,14 @@ createConfig() {
         # Loop additional_hosts to create json config
         while read -r additional_host; do
             # Check for originRequest configuration option: disableChunkedEncoding
-            disableChunkedEncoding=$( echo ${additional_host} | jq ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
+            disableChunkedEncoding=$( echo "${additional_host}" | jq ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
             if ! [[ ${disableChunkedEncoding} == "" ]]  ; then
                 additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
                 additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
             fi
             # Add additional_host config to ingress config
             config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
-        done <<< "$( cat /data/options.json | jq -c '.additional_hosts[]' )"
+        done <<< "$(jq -c '.additional_hosts[]' /data/options.json )"
 
     fi
 
