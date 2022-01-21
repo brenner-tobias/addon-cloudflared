@@ -200,7 +200,7 @@ createConfig() {
     fi
 
     # Deactivate TLS verification for all services
-    config=$(bashio::jq "${config}" ".ingress[] | .originRequest += {\"noTLSVerify\": true}")
+    config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
 
     # Write content of config variable to config file for cloudflared
     bashio::jq "${config}" "." > /data/config.json
