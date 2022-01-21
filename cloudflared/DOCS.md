@@ -105,7 +105,7 @@ automatically created at Cloudflare.
 Add the (optional) `disableChunkedEncoding` option to a hostname, to disable
 chunked transfer encoding. This is useful if you are running a WSGI server,
 like Proxmox for example. Visit [Cloudflare Docs][disablechunkedencoding] for
-further information. 
+further information.
 
 Please find below an examplary entry for two additional hosts:
 
