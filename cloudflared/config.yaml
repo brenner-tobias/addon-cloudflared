@@ -25,6 +25,7 @@ schema:
   additional_hosts:
     - hostname: str
       service: str
+      disableChunkedEncoding: bool?
   nginxproxymanager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?
