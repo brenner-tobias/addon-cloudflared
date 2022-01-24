@@ -3,15 +3,14 @@ name: Deploy
 
 # yamllint disable-line rule:truthy
 on:
-  workflow_call:
-    inputs:
-      slug:
-        description: Overrides the detected slug
-        required: false
-        type: string
-    secrets:
-      DISPATCH_TOKEN:
-        required: true
+  release:
+    types:
+      - published
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
 
 jobs:
   information:
