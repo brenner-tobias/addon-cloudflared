@@ -63,6 +63,7 @@ jobs:
           fi
           echo "::set-output name=environment::${environment}"
           echo "::set-output name=version::${version}"
+
   deploy:
     name: 👷 Build & Deploy ${{ matrix.architecture }}
     needs: information
@@ -157,7 +158,8 @@ jobs:
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.environment }}"
           docker push \
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}"
-   publish-edge:
+
+  publish-edge:
     name: 📢 Publish to edge repository
     if: needs.information.outputs.environment == 'edge'
     needs:
