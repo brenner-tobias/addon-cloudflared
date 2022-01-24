@@ -172,7 +172,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v1.1.3
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/ha-addons-beta
+          repository: ${{ github.repository_owner }}/ha-addons-test
           event-type: update
           client-payload: >
             {
