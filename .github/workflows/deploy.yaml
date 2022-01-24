@@ -157,11 +157,9 @@ jobs:
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.environment }}"
           docker push \
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}"
-  publish-beta:
-    name: 📢 Publish to beta repository
-    if: |
-      needs.information.outputs.environment == 'beta' ||
-      needs.information.outputs.environment == 'stable'
+   publish-edge:
+    name: 📢 Publish to edge repository
+    if: needs.information.outputs.environment == 'edge'
     needs:
       - information
       - deploy
@@ -173,12 +171,12 @@ jobs:
         uses: peter-evans/repository-dispatch@v1.1.3
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/repository-beta
+          repository: ${{ github.repository_owner }}/ha-addons-beta
           event-type: update
           client-payload: >
             {
               "addon": "${{ needs.information.outputs.slug }}",
               "name": "${{ needs.information.outputs.name }}",
               "repository": "${{ github.repository }}",
-              "version": "${{ github.event.release.tag_name }}"
+              "version": "${{ needs.information.outputs.version }}"
             }
