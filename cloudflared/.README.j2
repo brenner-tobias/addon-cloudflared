@@ -2,15 +2,6 @@
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
-[![License][license-shield]](LICENSE.md)
-
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
-![Supports armhf Architecture][armhf-shield]
-![Supports armv7 Architecture][armv7-shield]
-![Supports i386 Architecture][i386-shield]
-
-[![Github Actions][github-actions-shield]][github-actions]
 ![Project Maintenance][maintenance-shield]
 
 Connect remotely to your Home Assistant instance without opening any ports using
@@ -28,7 +19,8 @@ connection.
 DNS servers of Cloudflare. If you do not have one, you can get one for free at
 [Freenom][freenom] following [this article][domainarticle].**
 
-[:books: Read the full add-on documentation][docs]
+**Note**: _This add-on needs the Admin API role in order to get the internal
+IP of Nginx Proxy Manager, in case it is used with the tunnel._
 
 ## Disclaimer
 
@@ -37,62 +29,50 @@ Please make sure to be compliant with the
 add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
 mainly streaming videos or other Non-HTML content.
 
-## Installation
+{% if channel == "edge" %}
+## WARNING! THIS IS AN EDGE VERSION!
 
-**To install this Add-On, please add my HA-Addons repository to Home Assistant using
-[this GitHub repository][ha-addons].**
+This Home Assistant Add-ons repository contains edge builds of add-ons.
+Edge builds add-ons are based upon the latest development version.
 
-## Support
+- They may not work at all.
+- They might stop working at any time.
+- They could have a negative impact on your system.
 
-Got questions?
+This repository was created for:
 
-Feel free to [open an issue here][issue] on GitHub.
+- Anybody willing to test.
+- Anybody interested in trying out upcoming add-ons or add-on features.
+- Developers.
 
-## Author
+If you are more interested in stable releases of my add-ons:
 
-[Tobias Brenner][tobias]
+<https://github.com/brenner-tobias/ha-addons>
 
-## License
+{% endif %}
+{% if channel == "beta" %}
+## WARNING! THIS IS A BETA VERSION!
 
-MIT License
+This Home Assistant Add-ons repository contains beta releases of add-ons.
 
-Copyright (c) 2022 Tobias Brenner
+- They might stop working at any time.
+- They could have a negative impact on your system.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This repository was created for:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+- Anybody willing to test.
+- Anybody interested in trying out upcoming add-ons or add-on features.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+If you are more interested in stable releases of our add-ons:
 
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
+<https://github.com/brenner-tobias/ha-addons>
+
+{% endif %}
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
 [cloudflare-sssa-28]: https://www.cloudflare.com/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
-[docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
-[github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
-[github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
-[ha-addons]: https://github.com/brenner-tobias/ha-addons
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
-[issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
-[license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2022.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
 [releases-shield]: https://img.shields.io/github/v/release/brenner-tobias/addon-cloudflared?include_prereleases
 [releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
-[tobias]: https://github.com/brenner-tobias
