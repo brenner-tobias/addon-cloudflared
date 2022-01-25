@@ -32,8 +32,8 @@ case $arch in
     ;;
 esac
 
-# Download the needed cloudflared and yq bins
+# Download the needed cloudflared bin
 wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudflaredRelease}/cloudflared-linux-${arch}"
 
-# Make the downloaded bins executeable
+# Make the downloaded bin executeable
 chmod +x /usr/bin/cloudflared
