@@ -17,6 +17,23 @@ Please make sure to be compliant with the
 add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
 mainly streaming videos or other Non-HTML content.
 
+## Quick Tunnel for Testing
+
+You can get started with zero setup by using
+[Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
+Set `quick_tunnel` to `true` , all other configuration will be ignored. After
+starting the addon check the logs for your unique randomly generated
+`trycloudflare.com` URL.
+
+Quick Tunnel add-on configuration:
+
+```yaml
+quick_tunnel: true
+external_hostname: ''
+tunnel_name: ''
+additional_hosts: []
+```
+
 ## Installation
 
 The installation of this add-on is pretty straightforward but requires some prerequisites

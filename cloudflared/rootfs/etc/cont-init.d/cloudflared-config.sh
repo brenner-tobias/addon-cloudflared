@@ -239,6 +239,12 @@ tunnel_uuid=""
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
+    # Quick Tunnel with 0 config
+    if bashio::config.true 'quick_tunnel'; then
+        bashio::log.info "Using Cloudflare Quick Tunnels"
+        bashio::exit.ok
+    fi
+
     external_hostname="$(bashio::config 'external_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
