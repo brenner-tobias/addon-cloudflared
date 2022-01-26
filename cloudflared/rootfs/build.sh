@@ -32,7 +32,7 @@ case $arch in
     ;;
 esac
 
-# Download the needed cloudflared bin
+# Download the cloudflared bin
 wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudflaredRelease}/cloudflared-linux-${arch}"
 
 # Make the downloaded bin executeable
