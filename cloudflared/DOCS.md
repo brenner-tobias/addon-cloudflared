@@ -29,7 +29,7 @@ restart your HomeAssistant instance.**
 1. (Optional if you don't yet have a working Cloudflare set-up):
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
-1. Set the `additional_hosts` add-on option with your domain name or a subdomain
+1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
