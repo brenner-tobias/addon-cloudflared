@@ -21,18 +21,8 @@ mainly streaming videos or other Non-HTML content.
 
 You can get started with zero setup by using
 [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
-Set `quick_tunnel` to `true` , all other configuration will be ignored. After
-starting the addon check the logs for your unique randomly generated
-`trycloudflare.com` URL.
 
-Quick Tunnel add-on configuration:
-
-```yaml
-quick_tunnel: true
-external_hostname: ""
-tunnel_name: ""
-additional_hosts: []
-```
+See [below](#Option:-`quick_tunnel`) for the detailed configuration.
 
 ## Installation
 
@@ -46,6 +36,7 @@ restart your HomeAssistant instance.**
 1. (Optional if you don't yet have a working Cloudflare set-up):
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
+1. Add the `http` integration settings to your HA-config as described [below](#Configuration.yaml).
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
@@ -162,6 +153,25 @@ CNAME records in Cloudflare for all of them, pointing to your `external_hostname
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
+
+### Option: `quick_tunnel`
+
+You can get started with zero setup by using
+[Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
+Set `quick_tunnel` to `true` , all other configuration will be ignored. After
+starting the addon check the logs for your unique randomly generated
+`trycloudflare.com` URL.
+Please note that you still have to add the `http` integration settings to your
+HA-config as described [here](#Configuration.yaml).
+
+Quick Tunnel add-on configuration:
+
+```yaml
+quick_tunnel: true
+external_hostname: ""
+tunnel_name: ""
+additional_hosts: []
+```
 
 ### Option: `log_level`
 
