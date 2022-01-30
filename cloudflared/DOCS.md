@@ -245,6 +245,8 @@ SOFTWARE.
 
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare]: https://www.cloudflare.com/
+[cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
+[cloudflare-sssa-28]: https://www.cloudflare.com/en-gb/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
