@@ -22,7 +22,7 @@ mainly streaming videos or other Non-HTML content.
 You can get started with zero setup by using
 [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
 
-See [below](#option:-quick_tunnel) for the detailed configuration.
+See [below](#option-quick_tunnel) for the detailed configuration.
 
 ## Installation
 
@@ -41,10 +41,10 @@ restart your HomeAssistant instance.**
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
-   (see [detailed description below](#option:-additional_hosts)).
+   (see [detailed description below](#option-additional_hosts)).
 1. (Optional) Add the `nginxproxymanager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
-   [detailed description below](#option:-nginxproxymanager)).
+   [detailed description below](#option-nginxproxymanager)).
 1. **Any existing DNS entries with your desired external hostname and additional
    hosts will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
