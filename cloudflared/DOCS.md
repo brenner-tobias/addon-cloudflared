@@ -29,8 +29,8 @@ Quick Tunnel add-on configuration:
 
 ```yaml
 quick_tunnel: true
-external_hostname: ''
-tunnel_name: ''
+external_hostname: ""
+tunnel_name: ""
 additional_hosts: []
 ```
 
