@@ -27,5 +27,6 @@ schema:
       service: str
       disableChunkedEncoding: bool?
   nginxproxymanager: bool?
+  quick_tunnel: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?
