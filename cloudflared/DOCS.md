@@ -21,18 +21,8 @@ mainly streaming videos or other Non-HTML content.
 
 You can get started with zero setup by using
 [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
-Set `quick_tunnel` to `true` , all other configuration will be ignored. After
-starting the addon check the logs for your unique randomly generated
-`trycloudflare.com` URL.
 
-Quick Tunnel add-on configuration:
-
-```yaml
-quick_tunnel: true
-external_hostname: ""
-tunnel_name: ""
-additional_hosts: []
-```
+See [below](#option-quick_tunnel) for the detailed configuration.
 
 ## Installation
 
@@ -46,14 +36,15 @@ restart your HomeAssistant instance.**
 1. (Optional if you don't yet have a working Cloudflare set-up):
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
+1. Add the `http` integration settings to your HA-config as described [below](#Configuration.yaml).
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
-   (see [detailed description below](#Option:-`additional_hosts`)).
+   (see [detailed description below](#option-additional_hosts)).
 1. (Optional) Add the `nginxproxymanager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
-   [detailed description below](#Option:-`nginxproxymanager`)).
+   [detailed description below](#option-nginxproxymanager)).
 1. **Any existing DNS entries with your desired external hostname and additional
    hosts will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
@@ -163,6 +154,25 @@ CNAME records in Cloudflare for all of them, pointing to your `external_hostname
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
 
+### Option: `quick_tunnel`
+
+You can get started with zero setup by using
+[Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
+Set `quick_tunnel` to `true` , all other configuration will be ignored. After
+starting the addon check the logs for your unique randomly generated
+`trycloudflare.com` URL.
+Please note that you still have to add the `http` integration settings to your
+HA-config as described [here](#Configuration.yaml).
+
+Quick Tunnel add-on configuration:
+
+```yaml
+quick_tunnel: true
+external_hostname: ""
+tunnel_name: ""
+additional_hosts: []
+```
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -245,6 +255,8 @@ SOFTWARE.
 
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare]: https://www.cloudflare.com/
+[cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
+[cloudflare-sssa-28]: https://www.cloudflare.com/en-gb/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
