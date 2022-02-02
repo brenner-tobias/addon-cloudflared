@@ -2,8 +2,8 @@
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
 #
-# Creates a Cloudflared tunnel to a given Cloudflare Teams project and creates
-# the needed DNS entry under the given hostname
+# Configures the Cloudflared tunnel and creates the needed DNS entry under the
+# given hostname(s)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
