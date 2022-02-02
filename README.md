@@ -39,7 +39,7 @@ mainly streaming videos or other Non-HTML content.
 
 ## Installation
 
-**To install this Add-On, please add my HA-Addons repository to Home Assistant using
+**To install this Add-On, add my HA-Addons repository to Home Assistant using
 [this GitHub repository][ha-addons].**
 
 ## Support
