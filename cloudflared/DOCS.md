@@ -25,7 +25,7 @@ You can get started with zero setup by using
 See [below](#option-quick_tunnel) for the detailed configuration.
 
 **Please note that it is not recommended to use the quick tunnel for production
-use since the URL can change any time.**
+use since the URL can change anytime.**
 
 ## Installation
 
