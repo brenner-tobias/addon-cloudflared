@@ -20,7 +20,7 @@ Cloudflare Tunnel.
 
 Cloudflared connects your Home Assistant Instance via a secure tunnel to a domain
 or subdomain at Cloudflare. Doing that, you can expose your Home Assistant to the
-Internet without opening ports in your router. Additionally, you can utilize
+Internet without opening any ports in your router. Additionally, you can utilize
 Cloudflare Teams, their Zero Trust platform to further secure your Home Assistant
 connection.
 
