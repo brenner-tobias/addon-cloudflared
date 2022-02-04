@@ -260,17 +260,17 @@ main() {
         resetCloudflareFiles
     fi
 
-    #if ! hasCertificate ; then
-    #    createCertificate
-    #fi
+    if ! hasCertificate ; then
+        createCertificate
+    fi
 
-    #if ! hasTunnel ; then
-    #    createTunnel
-    #fi
+    if ! hasTunnel ; then
+        createTunnel
+    fi
 
     createConfig
 
-    #createDNS
+    createDNS
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
