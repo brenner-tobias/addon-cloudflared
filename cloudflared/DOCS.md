@@ -45,9 +45,9 @@ restart your HomeAssistant instance.**
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
    (see [detailed description below](#option-additional_hosts)).
-1. (Optional) Add the `nginxproxymanager` flag to use the Cloudflare tunnel with
+1. (Optional) Add the `nginx_proxy_manager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
-   [detailed description below](#option-nginxproxymanager)).
+   [detailed description below](#option-nginx_proxy_manager)).
 1. **Any existing DNS entries with your desired external hostname and additional
    hosts will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
@@ -82,7 +82,7 @@ additional_hosts:
   - hostname: "website.example.com"
     service: "http://192.168.1.3:8080"
     disableChunkedEncoding: true
-nginxproxymanager: true
+nginx_proxy_manager: true
 log_level: "debug"
 ```
 
@@ -136,13 +136,13 @@ anymore (the request will run agains the default route). Nevertheless,
 you should also manually delete the DNS entry from Cloudflare since it can not
 be deleted by the Add-On._
 
-### Option: `nginxproxymanager`
+### Option: `nginx_proxy_manager`
 
 If you want to use the Cloudflare Tunnel with the Add-On
-[Nginx Proxy Manager][nginxproxymanager], you can do so by setting this option.
+[Nginx Proxy Manager][nginx_proxy_manager], you can do so by setting this option.
 
 ```yaml
-nginxproxymanager: true
+nginx_proxy_manager: true
 ```
 
 **Note**: _This will still route your defined `external_hostname`to HomeAssistant
@@ -263,6 +263,6 @@ SOFTWARE.
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
-[nginxproxymanager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
+[nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
