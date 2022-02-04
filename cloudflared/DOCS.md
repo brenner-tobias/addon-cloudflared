@@ -48,8 +48,8 @@ restart your HomeAssistant instance.**
 1. (Optional) Add the `nginx_proxy_manager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
    [detailed description below](#option-nginx_proxy_manager)).
-1. **Any existing DNS entries with your desired external hostname and additional
-   hosts will be overridden at Cloudflare**.
+1. **Any existing DNS entries matching your defined `external_hostname` and `additional_hosts`
+   will be overridden at Cloudflare**.
 1. Start the "Cloudflare" add-on.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at Cloudflare**.
@@ -58,6 +58,26 @@ restart your HomeAssistant instance.**
    Teams dashboard.
 
 ## Configuration
+
+### Configuration.yaml
+
+Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
+your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
+so HA has to trust the docker network. In order to do so, add the following lines
+to your /config/configuration.yaml and restart your HA instance.
+(if you need assistance changing the config, please follow the
+[Advanced Configuration Tutorial][advancedconfiguration]):
+
+**Note**: _Remember to restart Home Assistance when the configuration is changed._
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+```
+
+### Add-on Configuration
 
 **Note**: _Remember to restart the add-on when the configuration is changed._
 
@@ -87,22 +107,6 @@ log_level: "debug"
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
-
-### Configuration.yaml
-
-Since HomeAssistant blocks requests via proxies or reverse proxies, you have to tell
-your instance to allow requests from the Cloudflared Add-On. The add-on runs locally,
-so HA has to trust the docker network. In order to do so, add the following lines
-to your /config/configuration.yaml and restart your HA instance.
-(if you need assistance changing the config, please follow the
-[Advanced Configuration Tutorial][advancedconfiguration]):
-
-```yaml
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-```
 
 ### Option: `additional_hosts`
 
@@ -134,11 +138,11 @@ additional_hosts:
 **Note**: _If you delete a hostname from the list, it will not be served
 anymore (the request will run agains the default route). Nevertheless,
 you should also manually delete the DNS entry from Cloudflare since it can not
-be deleted by the Add-On._
+be deleted by the Add-on._
 
 ### Option: `nginx_proxy_manager`
 
-If you want to use the Cloudflare Tunnel with the Add-On
+If you want to use the Cloudflare Tunnel with the Add-on
 [Nginx Proxy Manager][nginx_proxy_manager], you can do so by setting this option.
 
 ```yaml
