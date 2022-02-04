@@ -47,12 +47,13 @@ restart your HomeAssistant instance.**
    (see [detailed description below](#option-additional_hosts)).
 1. **Any existing DNS entries matching your defined `external_hostname` and `additional_hosts`
    will be overridden at Cloudflare**.
-1. (Optional) Add a `catch_all_service` to forward any other hosts to another URL
+1. (Optional) Add a `catch_all_service` to forward all other hosts to a URL
    (see [detailed description below](#option-catch_all_service)).
 1. (Optional) Add the `nginx_proxy_manager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
    [detailed description below](#option-nginx_proxy_manager)).
-1. Start the "Cloudflare" add-on.
+1. Start the "Cloudflare" add-on. **Any existing DNS entries matching your defined
+   `external_hostname` and `additional_hosts` will be overridden at Cloudflare**.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
