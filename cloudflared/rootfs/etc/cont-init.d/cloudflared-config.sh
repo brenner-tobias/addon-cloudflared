@@ -167,7 +167,7 @@ createConfig() {
         local npm_ip
 
         # Get full name of Nginxproxymanager from add-on list
-        npm_name="$(grep nginx_proxy_manager <<< "$(bashio::addons.installed)")"
+        npm_name="$(grep nginxproxymanager <<< "$(bashio::addons.installed)")"
 
         bashio::log.debug "Nginxproxymanager add-on name: ${npm_name}"
 
