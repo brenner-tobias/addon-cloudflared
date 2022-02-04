@@ -45,12 +45,15 @@ restart your HomeAssistant instance.**
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
 1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
    (see [detailed description below](#option-additional_hosts)).
-1. (Optional) Add the `nginxproxymanager` flag to use the Cloudflare tunnel with
+1. **Any existing DNS entries matching your defined `external_hostname` and `additional_hosts`
+   will be overridden at Cloudflare**.
+1. (Optional) Add a `catch_all_service` to forward all other hosts to a URL
+   (see [detailed description below](#option-catch_all_service)).
+1. (Optional) Add the `nginx_proxy_manager` flag to use the Cloudflare tunnel with
    the Nginxproxymanager add-on (see
-   [detailed description below](#option-nginxproxymanager)).
-1. **Any existing DNS entries with your desired external hostname and additional
-   hosts will be overridden at Cloudflare**.
-1. Start the "Cloudflare" add-on.
+   [detailed description below](#option-nginx_proxy_manager)).
+1. Start the "Cloudflare" add-on. **Any existing DNS entries matching your defined
+   `external_hostname` and `additional_hosts` will be overridden at Cloudflare**.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
    at Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
@@ -58,6 +61,26 @@ restart your HomeAssistant instance.**
    Teams dashboard.
 
 ## Configuration
+
+### Configuration.yaml
+
+Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
+your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
+so HA has to trust the docker network. In order to do so, add the following lines
+to your /config/configuration.yaml and restart your HA instance.
+(if you need assistance changing the config, please follow the
+[Advanced Configuration Tutorial][advancedconfiguration]):
+
+**Note**: _Remember to restart Home Assistance when the configuration is changed._
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+```
+
+### Add-on Configuration
 
 **Note**: _Remember to restart the add-on when the configuration is changed._
 
@@ -82,27 +105,11 @@ additional_hosts:
   - hostname: "website.example.com"
     service: "http://192.168.1.3:8080"
     disableChunkedEncoding: true
-nginxproxymanager: true
+nginx_proxy_manager: true
 log_level: "debug"
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
-
-### Configuration.yaml
-
-Since HomeAssistant blocks requests via proxies or reverse proxies, you have to tell
-your instance to allow requests from the Cloudflared Add-On. The add-on runs locally,
-so HA has to trust the docker network. In order to do so, add the following lines
-to your /config/configuration.yaml and restart your HA instance.
-(if you need assistance changing the config, please follow the
-[Advanced Configuration Tutorial][advancedconfiguration]):
-
-```yaml
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-```
 
 ### Option: `additional_hosts`
 
@@ -132,27 +139,53 @@ additional_hosts:
 ```
 
 **Note**: _If you delete a hostname from the list, it will not be served
-anymore (the request will run agains the default route). Nevertheless,
-you should also manually delete the DNS entry from Cloudflare since it can not
-be deleted by the Add-On._
+anymore. Nevertheless, you should also manually delete the DNS entry from
+Cloudflare since it can not be deleted by the Add-on._
 
-### Option: `nginxproxymanager`
+### Option: `catch_all_service`
 
-If you want to use the Cloudflare Tunnel with the Add-On
-[Nginx Proxy Manager][nginxproxymanager], you can do so by setting this option.
+If you want to forward all requests from any hostnames not defined in the
+`external_hostname` or the `additional_hosts`, you can use this option and
+define a URL to forward to. For example, this can be used for reverse proxies.
+
+**Note**: _If you want to use the HA add-on [Nginx Proxy Manager][nginx_proxy_manager]
+as reverse proxy, you should set the flag `nginx_proxy_manager` (see
+[below](#option-nginx_proxy_manager)) and not use this option._
 
 ```yaml
-nginxproxymanager: true
+catch_all_service: "http://192.168.1.100"
 ```
 
 **Note**: _This will still route your defined `external_hostname`to HomeAssistant
 as well as any potential `additional_hosts` to where you defined in the config.
-Any other incoming traffic will be routed to Nginx Proxy Manager._
+Any other incoming traffic will be routed to the defined service._
 
-In order to route multiple sub-domains through the tunnel, you have to create individual
+In order to route hostnames through the tunnel, you have to create individual
 CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
-(or directly to the tunnel URL that you can get from the CNAME entry of
-`external_hostname`).
+or directly to the tunnel URL that you can get from the CNAME entry of
+`external_hostname`.
+
+### Option: `nginx_proxy_manager`
+
+If you want to use the Cloudflare Tunnel with the Add-on
+[Nginx Proxy Manager][nginx_proxy_manager], you can do so by setting this option.
+It will automatically set the catch_all_service to the internal URL of Nginx Proxy
+Manager. You do not have to add the option `catch_all_service` to your config (if
+you add it anyways, it will be ignored).
+
+```yaml
+nginx_proxy_manager: true
+```
+
+**Note**: _As with `catch_all_service`, this will still route your defined
+`external_hostname`to HomeAssistant as well as any potential `additional_hosts`
+to where you defined in the config. Any other incoming traffic will be routed
+to Nginx Proxy Manager._
+
+In order to route hostnames through the tunnel, you have to create individual
+CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
+or directly to the tunnel URL that you can get from the CNAME entry of
+`external_hostname`.
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
@@ -263,6 +296,6 @@ SOFTWARE.
 [cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [freenom]: https://freenom.com
-[nginxproxymanager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
+[nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding

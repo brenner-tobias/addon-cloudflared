@@ -156,11 +156,10 @@ createConfig() {
             # Add additional_host config to ingress config
             config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
         done <<< "$(jq -c '.additional_hosts[]' /data/options.json )"
-
     fi
 
     # Check if NGINX Proxy Manager is used to finalize configuration
-    if bashio::config.true 'nginxproxymanager' ; then
+    if bashio::config.true 'nginx_proxy_manager' ; then
 
         bashio::log.info "Runing with Nginxproxymanager support"
 
@@ -178,7 +177,7 @@ createConfig() {
         if ! bashio::addons.installed "$npm_name" \
             || ! bashio::addon.available "$npm_name" ; then
             bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
-            nginxproxymanager in the add-on config"
+            nginx_proxy_manager in the add-on config"
         fi
 
         bashio::log.debug "Nginxproxymanager add-on found: $npm_name"
@@ -190,13 +189,22 @@ createConfig() {
             install / reset the Add-On"
         fi
 
-        bashio::log.debug "nginxproxymanager IP: ${npm_ip}"
+        bashio::log.debug "nginx_proxy_manager IP: ${npm_ip}"
 
         bashio::log.info "All information about Nginxproxymanager Add-On found"
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://${npm_ip}:80\"}]")
     else
-        # Finalize config without NPM support, sending all other requests to HTTP:404
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
+
+        # Check if catch all service is defined
+        if bashio::config.has_value 'catch_all_service' ; then
+
+            bashio::log.info "Runing with Catch all Service"
+            # Setting catch all service to defined URL
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"$(bashio::config 'catch_all_service')\"}]")
+        else
+            # Finalize config without NPM support and catch all service, sending all other requests to HTTP:404
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
+        fi
     fi
 
     # Deactivate TLS verification for all services
