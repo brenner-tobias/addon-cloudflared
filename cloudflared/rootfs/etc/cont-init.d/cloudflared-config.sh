@@ -200,7 +200,7 @@ createConfig() {
 
             bashio::log.info "Runing with Catch all Service"
             # Setting catch all service to defined URL
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": $(bashio::config 'catch_all_service')}]")
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"$(bashio::config 'catch_all_service')\"}]")
         else
             # Finalize config without NPM support and catch all service, sending all other requests to HTTP:404
             config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
@@ -260,17 +260,17 @@ main() {
         resetCloudflareFiles
     fi
 
-    if ! hasCertificate ; then
-        createCertificate
-    fi
+    #if ! hasCertificate ; then
+    #    createCertificate
+    #fi
 
-    if ! hasTunnel ; then
-        createTunnel
-    fi
+    #if ! hasTunnel ; then
+    #    createTunnel
+    #fi
 
     createConfig
 
-    createDNS
+    #createDNS
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
