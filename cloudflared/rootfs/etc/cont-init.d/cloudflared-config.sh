@@ -202,7 +202,7 @@ createConfig() {
         # Loop additional_hosts to create json config
         while read -r additional_host; do
             # Check for originRequest configuration option: disableChunkedEncoding
-            disableChunkedEncoding=$( echo "${additional_host}" | jq ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
+            disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
             if ! [[ ${disableChunkedEncoding} == "" ]]  ; then
                 additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
                 additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
