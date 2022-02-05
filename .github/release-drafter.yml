@@ -26,6 +26,9 @@ categories:
   - title: "📚 Documentation"
     labels:
       - "documentation"
+  - title: "🌎 Translations"
+    labels:
+      - "translations"
   - title: "⬆️ Dependency updates"
     labels:
       - "dependencies"
