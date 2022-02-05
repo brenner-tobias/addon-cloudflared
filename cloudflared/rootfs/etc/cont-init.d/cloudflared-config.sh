@@ -13,23 +13,48 @@ checkConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Checking Add-on config..."
 
-    if bashio::var.is_empty "${external_hostname}" ; then
+    # Check if 'external_hostname' is a non-empty string
+    if bashio::config.is_empty 'external_hostname' ; then
         bashio::exit.nok "'external_hostname' is empty, please enter a valid String"
     fi
 
-    if bashio::var.is_empty "${tunnel_name}" ; then
+    # Check if 'tunnel_name' is a non-empty string
+    if bashio::config.is_empty 'tunnel_name' ; then
         bashio::exit.nok "'tunnel_name' is empty, please enter a valid String"
     fi
 
-    if bashio::config.has_value 'catch_all_service' ; then
-        if bashio::var.is_empty "$(bashio::config 'catch_all_service')" ; then
-            bashio::exit.nok "'catch_all_service' is defined but empty, please delete the option or enter a proper value"
-        fi
-        if bashio::config.true 'nginx_proxy_manager' ; then
-            bashio::log.warning
-            bashio::log.warning "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Consider deleting 'catch_all_service' since it is ignorded anyways"
-            bashio::log.warning
-        fi
+    # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
+    if bashio::config.has_value 'additional_hosts' ; then
+        local hostname
+        local service
+        for additional_host in $(bashio::jq "/data/options.json" ".additional_hosts[]"); do
+            bashio::log.debug "Checking host ${additional_host}..."
+            hostname=$(bashio::jq "${additional_host}" ".hostname")
+            service=$(bashio::jq "${additional_host}" ".service")
+            if bashio::var.is_empty "${hostname}" && bashio::var.is_empty "${service}"; then
+                bashio::exit.nok "'hostname' and 'service' in 'additional_hosts' are empty, please enter a valid String"
+            fi
+            if bashio::var.is_empty "${hostname}" ; then
+                bashio::exit.nok "'hostname' in 'additional_hosts' for service ${service} is empty, please enter a valid String"
+            fi
+            if bashio::var.is_empty "${service}" ; then
+                bashio::exit.nok "'service' in 'additional_hosts' for hostname ${hostname} is empty, please enter a valid String"
+            fi
+        done
+    fi
+
+    # Check and warn if 'catch_all_service' is included in config with an empty String
+    if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service' ; then
+        bashio::log.warning
+        bashio::log.warning "'catch_all_service' is defined as an empty String, which has no impact. Consider removing 'catch_all_service' from the configuration"
+        bashio::log.warning
+    fi
+
+    # Check and warn if 'catch_all_service' and 'nginx_proxy_manager' are included in config.
+    if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
+        bashio::log.warning
+        bashio::log.warning "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Consider deleting 'catch_all_service' since it is ignorded when 'nginx_proxy_manager' is set"
+        bashio::log.warning
     fi
 }
 
@@ -89,7 +114,9 @@ hasCertificate() {
 createCertificate() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new certificate..."
+    bashio::log.notice
     bashio::log.notice "Please follow the Cloudflare Auth-Steps:"
+    bashio::log.notice
     cloudflared tunnel login
 
     bashio::log.green "Authentication successfull, moving auth file to config folder"
@@ -283,10 +310,10 @@ main() {
         bashio::exit.ok
     fi
 
+    checkConfig
+
     external_hostname="$(bashio::config 'external_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
-
-    checkConfig
 
     if bashio::config.true 'reset_cloudflared_files' ; then
         resetCloudflareFiles
