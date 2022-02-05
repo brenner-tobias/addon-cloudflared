@@ -7,6 +7,33 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Checks if the config is valid
+# ------------------------------------------------------------------------------
+checkConfig() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.info "Checking Add-on config..."
+
+    if bashio::var.is_empty "${external_hostname}" ; then
+        bashio::exit.nok "'external_hostname' is empty, please enter a valid String"
+    fi
+
+    if bashio::var.is_empty "${tunnel_name}" ; then
+        bashio::exit.nok "'tunnel_name' is empty, please enter a valid String"
+    fi
+
+    if bashio::config.has_value 'catch_all_service' ; then
+        if bashio::var.is_empty "$(bashio::config 'catch_all_service')" ; then
+            bashio::exit.nok "'catch_all_service' is defined but empty, please delete the option or enter a proper value"
+        fi
+        if bashio::config.true 'nginx_proxy_manager' ; then
+            bashio::log.warning
+            bashio::log.warning "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Consider deleting 'catch_all_service' since it is ignorded anyways"
+            bashio::log.warning
+        fi
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Delete all Cloudflared config files
 # ------------------------------------------------------------------------------
 resetCloudflareFiles() {
@@ -231,6 +258,9 @@ createDNS() {
     if bashio::config.has_value 'additional_hosts' ; then
         for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
             bashio::log.info "Creating new DNS entry ${host}..."
+            if bashio::var.is_empty "${host}" ; then
+                bashio::exit.nok "'hostname' in 'additional_hosts' is empty, please enter a valid String"
+            fi
             cloudflared --origincert=/data/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
         done
@@ -255,6 +285,8 @@ main() {
 
     external_hostname="$(bashio::config 'external_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
+
+    checkConfig
 
     if bashio::config.true 'reset_cloudflared_files' ; then
         resetCloudflareFiles
