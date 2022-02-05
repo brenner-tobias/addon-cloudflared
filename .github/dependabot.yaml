@@ -6,3 +6,8 @@ updates:
     schedule:
       interval: daily
       time: "06:00"
+  - package-ecosystem: "pip"
+    directory: "/cloudflared"
+    schedule:
+      interval: daily
+      time: "06:00"
