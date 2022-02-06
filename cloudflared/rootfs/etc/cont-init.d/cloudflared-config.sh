@@ -43,18 +43,14 @@ checkConfig() {
         done
     fi
 
-    # Check and warn if 'catch_all_service' is included in config with an empty String
+    # Check if 'catch_all_service' is included in config with an empty String
     if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service' ; then
-        bashio::log.warning
-        bashio::log.warning "'catch_all_service' is defined as an empty String, which has no impact. Consider removing 'catch_all_service' from the configuration"
-        bashio::log.warning
+        bashio::exit.nok "'catch_all_service' is defined as an empty String. Please remove 'catch_all_service' from the configuration or enter a valid String"
     fi
 
-    # Check and warn if 'catch_all_service' and 'nginx_proxy_manager' are included in config.
+    # Check if 'catch_all_service' and 'nginx_proxy_manager' are both included in config.
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
-        bashio::log.warning
-        bashio::log.warning "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Consider deleting 'catch_all_service' since it is ignorded when 'nginx_proxy_manager' is set"
-        bashio::log.warning
+        bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
 }
 
