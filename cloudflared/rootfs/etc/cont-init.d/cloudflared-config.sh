@@ -267,6 +267,10 @@ createConfig() {
     # Write content of config variable to config file for cloudflared
     bashio::jq "${config}" "." > /data/config.json
 
+    # Validate config using Cloudflared
+    cloudflared tunnel ingress validate \
+    || bashio::exit.nok "Validation of Config failed, please check the logs above."
+
     bashio::log.debug "Sucessfully created config file: $(bashio::jq "/data/config.json" ".")"
 }
 
