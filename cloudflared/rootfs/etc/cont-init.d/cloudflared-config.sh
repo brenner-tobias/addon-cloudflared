@@ -172,13 +172,6 @@ createTunnel() {
 
     bashio::log.debug "Created new tunnel: $(cat /data/tunnel.json)"
 
-    bashio::log.info "Checking for old config"
-    if bashio::fs.file_exists "/data/config.json" ; then
-        rm -f /data/config.json || bashio::exit.nok "Failed to remove old config"
-        bashio::log.notice "Old config found and removed"
-    else bashio::log.info "No old config found"
-    fi
-
     hasTunnel || bashio::exit.nok "Failed to create tunnel"
 }
 
