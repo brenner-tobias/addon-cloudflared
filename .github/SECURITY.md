@@ -3,13 +3,13 @@
 If you believe you have found a security vulnerability in this repository,
 please report it directly to me as described below.
 
-**Please DO NOT report security vulnerabilities publicly. So 
+**Please DO NOT report security vulnerabilities publicly. So
 do not create a GitHub issue for it!**
 
 ## Reporting a vulnerability
 
-Please send me a detailed description of the vulnerability you have 
-discovered privately via email. Contact information needed for this 
+Please send me a detailed description of the vulnerability you have
+discovered privately via email. Contact information needed for this
 is listed down below.
 
 In the report, please include as much information as possible, including:
