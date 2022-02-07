@@ -184,7 +184,7 @@ createConfig() {
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"/data/tunnel.json\"")
 
     # Add Service for Home-Assistant
-    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://homeassistant:$(bashio::core.port)\"}]")
+    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://172.30.32.1:$(bashio::core.port)\"}]")
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
