@@ -175,6 +175,7 @@ createTunnel() {
 # Create cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
+    local ha_service_protocol
     local config
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating config file..."
@@ -183,8 +184,20 @@ createConfig() {
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"/data/tunnel.json\"")
 
+    bashio::log.debug "Checking if SSL is used..."
+    if bashio::var.true "$(bashio::core.ssl)" ; then
+        ha_service_protocol="https"
+    else
+        ha_service_protocol="http"
+    fi
+    bashio::log.debug "ha_service_protocol: ${ha_service_protocol}"
+
+    if bashio::var.is_empty "${ha_service_protocol}" ; then
+        bashio::exit.nok "Error checking if SSL is enabled"
+    fi
+
     # Add Service for Home-Assistant
-    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://172.30.32.1:$(bashio::core.port)\"}]")
+    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
