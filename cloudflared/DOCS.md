@@ -67,8 +67,8 @@ restart your HomeAssistant instance.**
 Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
 your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
 so HA has to trust the docker network. In order to do so, add the following lines
-to your `/config/configuration.yaml`. There is no need to adapt anything in these lines
-since the IP range of the docker network is always the same.
+to your `/config/configuration.yaml` (there is no need to adapt anything in these
+lines since the IP range of the docker network is always the same):
 
 **Note**: _Remember to restart Home Assistance when the configuration is changed._
 
