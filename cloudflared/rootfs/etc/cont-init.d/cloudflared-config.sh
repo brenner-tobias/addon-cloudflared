@@ -63,12 +63,12 @@ resetCloudflareFiles() {
 
     if bashio::fs.file_exists "${data_path}/cert.pem" ; then
         bashio::log.debug "Deleting certificate file"
-        rm -f ${data_path}/cert.pem || bashio::exit.nok "Failed to delete certificate file"
+        rm -f "${data_path}/cert.pem" || bashio::exit.nok "Failed to delete certificate file"
     fi
 
     if bashio::fs.file_exists "${data_path}/tunnel.json" ; then
         bashio::log.debug "Deleting tunnel file"
-        rm -f ${data_path}/tunnel.json || bashio::exit.nok "Failed to delete tunnel file"
+        rm -f "${data_path}/tunnel.json" || bashio::exit.nok "Failed to delete tunnel file"
     fi
 
     if bashio::fs.file_exists "${data_path}/cert.pem" \
@@ -111,7 +111,7 @@ createCertificate() {
 
     bashio::log.green "Authentication successfull, moving auth file to config folder"
 
-    mv /root/.cloudflared/cert.pem ${data_path}/cert.pem || bashio::exit.nok "Failed to move auth file"
+    mv /root/.cloudflared/cert.pem "${data_path}/cert.pem" || bashio::exit.nok "Failed to move auth file"
 
     hasCertificate || bashio::exit.nok "Failed to create certificate"
 }
@@ -141,7 +141,7 @@ hasTunnel() {
     bashio::log.debug "Tunnnel name read from file: $tunnel_name_from_file"
     if [[ $tunnel_name != "$tunnel_name_from_file" ]]; then
         bashio::log.warning "Tunnel name in file does not match config, removing tunnel file"
-        rm -f ${data_path}/tunnel.json  || bashio::exit.nok "Failed to remove tunnel file"
+        rm -f "${data_path}/tunnel.json"  || bashio::exit.nok "Failed to remove tunnel file"
         return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::log.info "Tunnnel name read from file matches config, proceeding with existing tunnel file"
@@ -155,12 +155,12 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    cloudflared --origincert=${data_path}/cert.pem --cred-file=${data_path}/tunnel.json tunnel create "${tunnel_name}" \
+    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
 
-    bashio::log.debug "Created new tunnel: $(cat ${data_path}/tunnel.json)"
+    bashio::log.debug "Created new tunnel: $(cat \"${data_path}\"/tunnel.json)"
 
     hasTunnel || bashio::exit.nok "Failed to create tunnel"
 }
@@ -279,7 +279,7 @@ createDNS() {
 
     # Create DNS entry for external hostname of HomeAssistant
     bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    cloudflared --origincert=${data_path}/cert.pem tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
+    cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
     || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
 
     # Check for configured additional hosts and create DNS entries for them if existing
@@ -289,7 +289,7 @@ createDNS() {
             if bashio::var.is_empty "${host}" ; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' is empty, please enter a valid String"
             fi
-            cloudflared --origincert=${data_path}/cert.pem tunnel route dns -f "${tunnel_uuid}" "${host}" \
+            cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
         done
     fi
@@ -301,12 +301,12 @@ createDNS() {
 migrateFiles() {
     if bashio::fs.file_exists '/data/cert.pem'; then
         bashio::log.warning "Migrating /data/cert.pem to ${data_path}/cert.pem"
-        mv /data/cert.pem ${data_path}/cert.pem \
+        mv /data/cert.pem "${data_path}/cert.pem" \
             || bashio::exit.nok "Migration failed."
     fi
     if bashio::fs.file_exists '/data/tunnel.json'; then
         bashio::log.warning "Migrating /data/tunnel.json to ${data_path}/tunnel.json"
-        mv /data/tunnel.json ${data_path}/tunnel.json \
+        mv /data/tunnel.json "${data_path}/tunnel.json" \
             || bashio::exit.nok "Migration failed."
     fi
 }
@@ -333,7 +333,7 @@ main() {
     if bashio::config.has_value 'data_path'; then
         data_path=$(bashio::config 'data_path' | sed 's:/*$::')
         bashio::log.info "Data path set to ${data_path}"
-        mkdir -p ${data_path}
+        mkdir -p "${data_path}"
         migrateFiles
     fi
 
