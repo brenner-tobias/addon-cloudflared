@@ -369,8 +369,8 @@ main() {
     fi
 
     # Check for custom data path
-    if bashio::config.has_value 'data_path'; then
-        data_path=$(bashio::config 'data_path' | sed 's:/*$::')
+    if bashio::config.has_value 'data_folder'; then
+        data_path="/$(bashio::config 'data_folder')/cloudflared"
         bashio::log.info "Data path set to ${data_path}"
         mkdir -p "${data_path}"
         migrateFiles
