@@ -17,6 +17,7 @@ arch:
 map:
   - ssl:rw
   - share:rw
+  - config:rw
 options:
   external_hostname: null
   tunnel_name: "homeassistant"
@@ -33,4 +34,4 @@ schema:
   quick_tunnel: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?
-  data_path: str?
+  data_folder: list(config|share|ssl)?

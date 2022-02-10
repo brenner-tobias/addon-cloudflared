@@ -11,8 +11,8 @@ if bashio::config.true 'quick_tunnel'; then
 else
 
     data_path="/data"
-    if bashio::config.has_value 'data_path'; then
-        data_path=$(bashio::config 'data_path' | sed 's:/*$::')
+    if bashio::config.has_value 'data_folder'; then
+        data_folder="/$(bashio::config 'data_folder')/cloudflared"
     fi
     certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
