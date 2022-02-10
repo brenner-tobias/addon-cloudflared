@@ -228,7 +228,7 @@ data_folder: share
 ```
 
 The add-on takes care of moving the created files within the default location
-to the custom `data_path` when adding the option after initial add-on setup.
+to the custom `data_folder` when adding the option after initial add-on setup.
 
 **Note**: There are currently no automations in place when changing
 from custom data folder to another custom data fodler or back to default.
