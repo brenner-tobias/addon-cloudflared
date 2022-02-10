@@ -14,8 +14,11 @@ arch:
   - armhf
   - armv7
   - i386
+map:
+  - ssl:rw
+  - share:rw
 options:
-  external_hostname: ""
+  external_hostname: null
   tunnel_name: "homeassistant"
   additional_hosts: []
 schema:
@@ -30,3 +33,4 @@ schema:
   quick_tunnel: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   reset_cloudflared_files: bool?
+  data_path: str?
