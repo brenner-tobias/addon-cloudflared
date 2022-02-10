@@ -311,6 +311,45 @@ migrateFiles() {
     fi
 }
 
+# ------------------------------------------------------------------------------
+# Create cloudflare DNS entry for external hostname and additional hosts
+# ------------------------------------------------------------------------------
+createCustomDNS() {
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    # Check for configured additional hosts and create DNS entries for them if existing
+    for host in $(cat "${data_path}/config.yml" | yq e '.ingress[].hostname | select(. == "*")' -); do
+        bashio::log.info "Creating new DNS entry ${host}..."
+        if bashio::var.is_empty "${host}" ; then
+            bashio::exit.nok "'hostname' is empty, please check your config file."
+        fi
+        cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${host}" \
+        || bashio::exit.nok "Failed to create DNS entry ${host}."
+    done
+}
+
+# ------------------------------------------------------------------------------
+# Check if custom config file exists and is valid
+# ------------------------------------------------------------------------------
+hasCustomConfig() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.info "Checking for existing custom config ${data_path}/config.yml"
+    if bashio::fs.file_exists "${data_path}/config.yml" ; then
+        bashio::log.info "Custom config found, validating..."
+        if cloudflared tunnel --config="${data_path}/config.yml" ingress validate ; then
+            createCustomDNS
+            touch /tmp/custom_config
+            return "${__BASHIO_EXIT_OK}"
+        else
+            bashio::log.error "Validation failed, falling back to default config!"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    bashio::log.debug "No custom config found: ${data_path}/config.yml"
+    return "${__BASHIO_EXIT_NOK}"
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -354,6 +393,10 @@ main() {
         createTunnel
     fi
 
+    if hasCustomConfig ; then
+        bashio::log.info "Finished setting-up the Cloudflare tunnel with custom config file"
+        bashio::exit.ok
+    fi
     createConfig
 
     createDNS
