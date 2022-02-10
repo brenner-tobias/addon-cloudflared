@@ -160,7 +160,7 @@ createTunnel() {
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
 
-    bashio::log.debug "Created new tunnel: $(cat \"${data_path}\"/tunnel.json)"
+    bashio::log.debug "Created new tunnel: $(cat ${data_path}/tunnel.json)"
 
     hasTunnel || bashio::exit.nok "Failed to create tunnel"
 }
@@ -261,7 +261,7 @@ createConfig() {
     config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
 
     # Write content of config variable to config file for cloudflared
-    bashio::jq "${config}" "." > ${default_config}
+    bashio::jq "${config}" "." > "${default_config}"
 
     # Validate config using Cloudflared
     bashio::log.info "Validating config file..."
