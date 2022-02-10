@@ -3,16 +3,21 @@
 # Home Assistant Add-on: Cloudflared
 # Runs the Cloudfalred tunnel for HomeAssistant
 # ==============================================================================
+declare default_config=/tmp/config.json
 
 if bashio::config.true 'quick_tunnel'; then
     bashio::log.info "Connecting Cloudflared Quick Tunnel..."
     exec cloudflared tunnel --url "http://homeassistant:$(bashio::core.port)"
 else
-    certificate="/data/cert.pem"
-    config="/data/config.json"
+
+    data_path="/data"
+    if bashio::config.has_value 'data_path'; then
+        data_path=$(bashio::config 'data_path' | sed 's:/*$::')
+    fi
+    certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     bashio::log.info "Connecting Cloudflared Tunnel..."
 
-    exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${config} run "${tunnel_name}"
+    exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${default_config} run "${tunnel_name}"
 fi
