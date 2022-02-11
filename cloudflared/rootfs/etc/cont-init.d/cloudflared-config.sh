@@ -318,7 +318,7 @@ createCustomDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     # Check for configured additional hosts and create DNS entries for them if existing
-    for host in $(cat "${data_path}/config.yml" | yq e '.ingress[].hostname | select(. == "*")' -); do
+    for host in $( yq e '.ingress[].hostname | select(. == "*")' "${data_path}/config.yml" ); do
         bashio::log.info "Creating new DNS entry ${host}..."
         if bashio::var.is_empty "${host}" ; then
             bashio::exit.nok "'hostname' is empty, please check your config file."

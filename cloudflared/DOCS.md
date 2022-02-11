@@ -234,6 +234,21 @@ to the custom `data_folder` when adding the option after initial add-on setup.
 from custom data folder to another custom data fodler or back to default.
 You have to take care of moving the files accordingly.
 
+If you set the `data_folder` option you are able to create a custom `config.ym`
+file to create more complex ingress configurations.
+See [cloudflared documentation][cloudflared-ingress] for further details on
+the needed file structure and content options.
+
+For example: if you set `data_folder: ssl` the add-on will search for
+`/ssl/cloudflared/config.yml`.
+
+Your file will be validated on add-on startup and the add-on will fallback to
+the created default config when your custom `config.yml` file is invalid.
+
+**Note**: If you use a custom `config.yml` file, `additional_hosts` and 
+`external_hostname` options will be ignored. Make sure to add all needed
+services (e.g. a homeassistant ingress rule) inside `config.yml`
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -324,3 +339,4 @@ SOFTWARE.
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
+[cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
