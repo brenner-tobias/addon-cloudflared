@@ -247,7 +247,7 @@ the created default config when your custom `config.yml` file is invalid.
 
 **Note**: If you use a custom `config.yml` file, `additional_hosts` and
 `external_hostname` options will be ignored. Make sure to add all needed
-services (e.g. a homeassistant ingress rule) inside `config.yml`
+services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
 ### Option: `log_level`
 
