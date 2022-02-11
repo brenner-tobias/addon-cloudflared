@@ -211,6 +211,29 @@ tunnel_name: ""
 additional_hosts: []
 ```
 
+### Option: `data_folder`
+
+The `data_folder` option allows to change default storage
+location (`/data`) for the automatically created `cert.pem` and
+`tunnel.json` file.`
+
+Possible values are:
+
+- `config`: Files will be stored in /config/cloudflared.
+- `share`: Files will be stored in /share/cloudflared.
+- `ssl`: Files will be stored in /ssl/cloudflared.
+
+```yam
+data_folder: share
+```
+
+The add-on takes care of moving the created files within the default location
+to the custom `data_folder` when adding the option after initial add-on setup.
+
+**Note**: There are currently no automations in place when changing
+from custom data folder to another custom data fodler or back to default.
+You have to take care of moving the files accordingly.
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
