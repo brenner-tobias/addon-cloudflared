@@ -260,10 +260,10 @@ The `tunnel.json` file contains your `<tunnel UUID>` as `TunnelID` attribute.
 tunnel: <tunnel UUID>
 credentials-file: "/ssl/cloudflared/tunnel.json"
 ingress:
-- hostname: homeassistant.example.com
-  service: http://homeassistant:8123
-  originRequest:
-    noTLSVerify: true
+  - hostname: homeassistant.example.com
+    service: http://homeassistant:8123
+    originRequest:
+      noTLSVerify: true
 ```
 
 **Note**: If you use a custom `config.yml` file, `additional_hosts` and
