@@ -15,9 +15,8 @@ else
         data_path="/$(bashio::config 'data_folder')/cloudflared"
     fi
     # Check status file which exists when custom_config exists
-    if bashio::fs.file_exists "/tmp/custom_config"; then
+    if bashio::config.true "custom_config"; then
         config="${data_path}/config.yml"
-        rm /tmp/custom_config
     else
         config="${default_config}"
     fi

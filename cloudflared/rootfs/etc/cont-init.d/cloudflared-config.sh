@@ -52,6 +52,10 @@ checkConfig() {
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
+
+    if bashio::config.true 'custom_config' && ! bashio::config.has_value 'data_folder' ; then
+        bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -338,16 +342,13 @@ hasCustomConfig() {
         bashio::log.info "Custom config found, validating..."
         if cloudflared tunnel --config="${data_path}/config.yml" ingress validate ; then
             createCustomDNS
-            touch /tmp/custom_config
             return "${__BASHIO_EXIT_OK}"
         else
-            bashio::log.error "Validation failed, falling back to default config!"
-            return "${__BASHIO_EXIT_NOK}"
+            bashio::exit.nok "Your custom config is invalid. Please correct errors or remove 'custom_config' option"
         fi
     fi
 
-    bashio::log.debug "No custom config found: ${data_path}/config.yml"
-    return "${__BASHIO_EXIT_NOK}"
+    bashio::exit.nok "No custom config found: ${data_path}/config.yml please create custom config file or remove 'custom_config' option"
 }
 
 # ==============================================================================
@@ -392,10 +393,11 @@ main() {
     if ! hasTunnel ; then
         createTunnel
     fi
-
-    if hasCustomConfig ; then
-        bashio::log.info "Finished setting-up the Cloudflare tunnel with custom config file"
-        bashio::exit.ok
+    if bashio::config.true 'custom_config' ; then
+        if hasCustomConfig ; then
+            bashio::log.info "Finished setting-up the Cloudflare tunnel with custom config file"
+            bashio::exit.ok
+        fi
     fi
     createConfig
 
