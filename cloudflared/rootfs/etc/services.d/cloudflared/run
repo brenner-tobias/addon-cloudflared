@@ -24,9 +24,15 @@ else
 fi
 
 if bashio::config.true 'quick_tunnel'; then
+    bashio::log.debug "Checking if SSL is used..."
+    if bashio::var.true "$(bashio::core.ssl)" ; then
+        ha_service_protocol="https"
+    else
+        ha_service_protocol="http"
+    fi
     bashio::log.info "Connecting Cloudflared Quick Tunnel..."
     exec cloudflared --no-autoupdate \
-    tunnel --loglevel="${cloudflared_log}" --url "http://homeassistant:$(bashio::core.port)"
+    tunnel --loglevel="${cloudflared_log}" --url "${ha_service_protocol}://homeassistant:$(bashio::core.port)"
 else
 
     data_path="/data"
