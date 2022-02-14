@@ -14,10 +14,16 @@ else
     if bashio::config.has_value 'data_folder'; then
         data_path="/$(bashio::config 'data_folder')/cloudflared"
     fi
+    # Check status file which exists when custom_config exists
+    if bashio::config.true "custom_config"; then
+        config="${data_path}/config.yml"
+    else
+        config="${default_config}"
+    fi
     certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
     bashio::log.info "Connecting Cloudflared Tunnel..."
-
-    exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${default_config} run "${tunnel_name}"
+    bashio::log.debug "using ${config} config file"
+    exec cloudflared --origincert="${certificate}" --no-autoupdate tunnel --config="${config}" run "${tunnel_name}"
 fi

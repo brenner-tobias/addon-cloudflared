@@ -37,3 +37,7 @@ wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases
 
 # Make the downloaded bin executeable
 chmod +x /usr/bin/cloudflared
+
+# Add needed packages
+apk add --no-cache \
+    yq=4.14.1-r0
