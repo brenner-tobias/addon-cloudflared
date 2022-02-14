@@ -17,7 +17,25 @@ else
     certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
+    # Map HomeAssistant log levels to Cloudflared
+    if bashio::config.exists 'log_level' ; then
+        case $(bashio::config 'log_level') in
+            "trace") cloudflared_log="debug";;
+            "debug") cloudflared_log="debug";;
+            "info") cloudflared_log="info";;
+            "notice") cloudflared_log="info";;
+            "warning") cloudflared_log="warn";;
+            "error") cloudflared_log="error";;
+            "fatal") cloudflared_log="fatal";;
+        esac
+
+        bashio::log.info "Cloudflared log level set to \"${cloudflared_log}\""
+    else
+        cloudflared_log="info"
+    fi
+
     bashio::log.info "Connecting Cloudflared Tunnel..."
 
-    exec cloudflared --origincert=${certificate} --no-autoupdate tunnel --config=${default_config} run "${tunnel_name}"
+    exec cloudflared --origincert=${certificate} --no-autoupdate \
+        tunnel --config=${default_config} --loglevel="${cloudflared_log}" run "${tunnel_name}"
 fi
