@@ -3,8 +3,8 @@
 # Map HomeAssistant log levels to Cloudflared
 if bashio::config.exists 'log_level' ; then
     case $(bashio::config 'log_level') in
-        "trace") cloudflared_log="debug";;
-        "debug") cloudflared_log="debug";;
+        "trace") cloudflared_log="info";;
+        "debug") cloudflared_log="info";;
         "info") cloudflared_log="info";;
         "notice") cloudflared_log="info";;
         "warning") cloudflared_log="warn";;
