@@ -16,5 +16,5 @@ else
 fi
 
 # Write log level to S6 environment 
-printf "${cloudflared_log}" > /var/run/s6/container_environment/cloudflared_log
+printf "%s" "${cloudflared_log}" > /var/run/s6/container_environment/cloudflared_log
 bashio::log.debug "Cloudflared log level set to \"${cloudflared_log}\""
