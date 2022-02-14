@@ -224,15 +224,51 @@ Possible values are:
 - `ssl`: Files will be stored in /ssl/cloudflared.
 
 ```yam
-data_folder: share
+data_folder: ssl
 ```
 
 The add-on takes care of moving the created files within the default location
 to the custom `data_folder` when adding the option after initial add-on setup.
 
 **Note**: There are currently no automations in place when changing
-from custom data folder to another custom data fodler or back to default.
+from custom data folder to another custom data folder or back to default.
 You have to take care of moving the files accordingly.
+
+### Option: `custom_config`
+
+The `custom_config` option can be used to create a custom `config.yml`
+file to create more complex ingress configurations.
+
+The option can only be used in combination with the `data_folder` option.
+
+See [cloudflared documentation][cloudflared-ingress] for further details on
+the needed file structure and content options.
+
+For example: if you set `data_folder: ssl` the add-on will search for
+`/ssl/cloudflared/config.yml` when `custom_config: true`.
+
+Your file will be validated on add-on startup and all errors will be logged.
+
+For your custom config.yml you have to add values for `tunnel` and the tunnel
+credentials file. The tunnel credentials file is located in your
+`data_folder/cloudflared` and is named `tunnel.json`.
+
+The `tunnel.json` file contains your `<tunnel UUID>` as `TunnelID` attribute.
+
+```yaml
+---
+tunnel: <tunnel UUID>
+credentials-file: "/ssl/cloudflared/tunnel.json"
+ingress:
+  - hostname: homeassistant.example.com
+    service: http://homeassistant:8123
+    originRequest:
+      noTLSVerify: true
+```
+
+**Note**: If you use a custom `config.yml` file, `additional_hosts` and
+`external_hostname` options will be ignored. Make sure to add all needed
+services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
 ### Option: `log_level`
 
@@ -324,3 +360,4 @@ SOFTWARE.
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
+[cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
