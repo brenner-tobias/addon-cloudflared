@@ -159,7 +159,7 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel create "${tunnel_name}" \
+    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${cloudflared_log}" create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Teams Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     https://dash.teams.cloudflare.com/ Access / Tunnels"
@@ -269,7 +269,7 @@ createConfig() {
 
     # Validate config using Cloudflared
     bashio::log.info "Validating config file..."
-    cloudflared tunnel --config="${default_config}" ingress validate \
+    cloudflared tunnel --config="${default_config}" --loglevel "${cloudflared_log}" ingress validate \
     || bashio::exit.nok "Validation of Config failed, please check the logs above."
 
     bashio::log.debug "Sucessfully created config file: $(bashio::jq "${default_config}" ".")"
@@ -283,7 +283,7 @@ createDNS() {
 
     # Create DNS entry for external hostname of HomeAssistant
     bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${external_hostname}" \
+    cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${cloudflared_log}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
     || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
 
     # Check for configured additional hosts and create DNS entries for them if existing
@@ -293,7 +293,7 @@ createDNS() {
             if bashio::var.is_empty "${host}" ; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' is empty, please enter a valid String"
             fi
-            cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${host}" \
+            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${cloudflared_log}" route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
         done
     fi
@@ -327,7 +327,7 @@ createCustomDNS() {
         if bashio::var.is_empty "${host}" ; then
             bashio::exit.nok "'hostname' is empty, please check your config file."
         fi
-        cloudflared --origincert="${data_path}/cert.pem" tunnel route dns -f "${tunnel_uuid}" "${host}" \
+        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${cloudflared_log}" route dns -f "${tunnel_uuid}" "${host}" \
         || bashio::exit.nok "Failed to create DNS entry ${host}."
     done
 }
@@ -340,7 +340,7 @@ hasCustomConfig() {
     bashio::log.info "Checking for existing custom config ${data_path}/config.yml"
     if bashio::fs.file_exists "${data_path}/config.yml" ; then
         bashio::log.info "Custom config found, validating..."
-        if cloudflared tunnel --config="${data_path}/config.yml" ingress validate ; then
+        if cloudflared tunnel --loglevel "${cloudflared_log}" --config="${data_path}/config.yml" ingress validate ; then
             createCustomDNS
             return "${__BASHIO_EXIT_OK}"
         else
