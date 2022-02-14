@@ -5,9 +5,28 @@
 # ==============================================================================
 declare default_config=/tmp/config.json
 
+
+# Map HomeAssistant log levels to Cloudflared
+if bashio::config.exists 'log_level' ; then
+    case $(bashio::config 'log_level') in
+        "trace") cloudflared_log="debug";;
+        "debug") cloudflared_log="debug";;
+        "info") cloudflared_log="info";;
+        "notice") cloudflared_log="info";;
+        "warning") cloudflared_log="warn";;
+        "error") cloudflared_log="error";;
+        "fatal") cloudflared_log="fatal";;
+    esac
+
+    bashio::log.info "Cloudflared log level set to \"${cloudflared_log}\""
+else
+    cloudflared_log="info"
+fi
+
 if bashio::config.true 'quick_tunnel'; then
     bashio::log.info "Connecting Cloudflared Quick Tunnel..."
-    exec cloudflared tunnel --url "http://homeassistant:$(bashio::core.port)"
+    exec cloudflared --no-autoupdate \
+    tunnel --loglevel="${cloudflared_log}" --url "http://homeassistant:$(bashio::core.port)"
 else
 
     data_path="/data"
@@ -22,23 +41,6 @@ else
     fi
     certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
-
-    # Map HomeAssistant log levels to Cloudflared
-    if bashio::config.exists 'log_level' ; then
-        case $(bashio::config 'log_level') in
-            "trace") cloudflared_log="debug";;
-            "debug") cloudflared_log="debug";;
-            "info") cloudflared_log="info";;
-            "notice") cloudflared_log="info";;
-            "warning") cloudflared_log="warn";;
-            "error") cloudflared_log="error";;
-            "fatal") cloudflared_log="fatal";;
-        esac
-
-        bashio::log.info "Cloudflared log level set to \"${cloudflared_log}\""
-    else
-        cloudflared_log="info"
-    fi
 
     bashio::log.info "Connecting Cloudflared Tunnel..."
     bashio::log.debug "using ${config} config file"
