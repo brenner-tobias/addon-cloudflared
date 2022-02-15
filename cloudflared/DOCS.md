@@ -108,6 +108,10 @@ additional_hosts:
     service: "http://192.168.1.3:8080"
     disableChunkedEncoding: true
 nginx_proxy_manager: true
+strict_ssl: true
+generate_cert: true
+certfile: fullchain.pem
+keyfile: privkey.pem
 log_level: "debug"
 ```
 
@@ -143,6 +147,41 @@ additional_hosts:
 **Note**: _If you delete a hostname from the list, it will not be served
 anymore. Nevertheless, you should also manually delete the DNS entry from
 Cloudflare since it can not be deleted by the Add-on._
+
+### Option: `strict_ssl`
+
+When enabled, the tunnel in Cloudflare will be set with the [_Full (strict)_ SSL/TLS encryption mode](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes#full-strict) to provide a higher security.
+
+In this mode, the local connection needs to be stablished over HTTPS, presenting a certificate issued by a publicly trusted certificate authority (like using the [Let's Encrypt addon](https://github.com/home-assistant/addons/tree/master/letsencrypt#home-assistant-add-on-letsencrypt)), or a [Cloudflare Origin CA](https://blog.cloudflare.com/cloudflare-ca-encryption-origin/) one (which [the addon can generate for you automatically](#option-generatecert)).
+
+Here is an example on how to configure the Home Assistant HTTP server to use HTTPS with the appropriate certificate:
+
+```diff-json
+// /config/configuration.yaml
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
++ ssl_certificate: /ssl/fullchain.pem
++ ssl_key: /ssl/privkey.pem
+```
+
+### Option: `generate_cert`
+
+When enabled, the addon will generate, retrieve and export a Cloudflare Origin CA issued certificate for you in the `/ssl` folder.
+
+> Please note that the CloudFlare Origin CA certificates are only valid for using between the Cloudflare Tunnel and the local server, as it is not issued by a publicly trusted certificate authority.
+>
+> If for some reason, you need publicly trusted certificates, you should disable this option and something like the [Let's Encrypt addon]([Let's Encrypt addon](https://github.com/home-assistant/addons/tree/master/letsencrypt#home-assistant-add-on-letsencrypt)) instead.
+
+#### Option: `certfile`
+
+The path where the generated public certificate will be exported to, relative to `/ssl`.
+
+#### Option: `keyfile`
+
+The path where the generated certificate private key will be exported to, relative to `/ssl`.
 
 ### Option: `catch_all_service`
 

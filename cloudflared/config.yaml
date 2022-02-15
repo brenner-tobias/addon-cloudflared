@@ -21,10 +21,20 @@ map:
 options:
   external_hostname: null
   tunnel_name: "homeassistant"
+  strict_ssl: false
+  generate_cert:
+    enabled: false
+    certfile: fullchain.pem
+    keyfile: privkey.pem
   additional_hosts: []
 schema:
   external_hostname: str
   tunnel_name: str
+  strict_ssl: bool
+  generate_cert:
+    enabled: bool
+    certfile: str
+    keyfile: str
   additional_hosts:
     - hostname: str
       service: str
