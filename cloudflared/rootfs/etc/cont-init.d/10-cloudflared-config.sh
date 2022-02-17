@@ -113,7 +113,7 @@ createCertificate() {
     bashio::log.notice
     cloudflared tunnel login
 
-    bashio::log.green "Authentication successfull, moving auth file to config folder"
+    bashio::log.info "Authentication successfull, moving auth file to the '${data_path}' folder"
 
     mv /root/.cloudflared/cert.pem "${data_path}/cert.pem" || bashio::exit.nok "Failed to move auth file"
 
