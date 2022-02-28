@@ -7,13 +7,7 @@ on:
 jobs:
   cloudflare-release:
     steps:
-      - uses: joutvhu/get-release@v1
+      - id: timeseries
+        uses: pozetroninc/github-action-get-latest-release@master
         with:
-          latest: true
-          # Tag name start with `v`
-          pattern: '^v.*'
-          # Including pre-release
-          prerelease: false
-          debug: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repository: cloudflare/cloudflared
