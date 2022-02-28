@@ -10,8 +10,12 @@ jobs:
     name: ℹ️ Gather Cloudflared latest version
     runs-on: ubuntu-latest
     steps:
-      - id: timeseries
+      - id: cloudflare_version
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: cloudflare/cloudflared
           excludes: "prerelease, draft"
+      - id: test 
+        run: |
+          version="${{ steps.cloudflare_version.outputs.release }}"
+          echo "${{ inputs.slug }}"
