@@ -3,12 +3,12 @@ name: CI
 
 # yamllint disable-line rule:truthy
 on:
-  #push:
-  #pull_request:
-  #  types:
-  #    - opened
-  #    - reopened
-  #    - synchronize
+  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
   workflow_dispatch:
 
 jobs:

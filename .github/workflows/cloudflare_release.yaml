@@ -30,7 +30,6 @@ jobs:
         run: |
           latest_version="${{ steps.cloudflare_version.outputs.release }}"
           current_version=$(jq -r .version ./${{ steps.information.outputs.target }}/cloudflare_version.json)
-          echo $current_version
           if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then 
                   echo "::set-output name=update_available::false"
           else
@@ -60,4 +59,4 @@ jobs:
           delete-branch: true
           title: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
           body: "Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
-          reviewers: "elcajon"
+          reviewers: "elcajon,brenner-tobias"
