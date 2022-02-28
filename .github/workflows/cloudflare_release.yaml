@@ -45,4 +45,4 @@ jobs:
       - name: 🚀 Check installed and latest version
         id: check_version
         run: |
-          echo ${{ neds.cloudflare-release.outputs.latest_version }}
+          echo ${{ needs.cloudflare-release.outputs.latest_version }}
