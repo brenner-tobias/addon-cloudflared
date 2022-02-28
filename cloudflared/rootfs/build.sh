@@ -9,8 +9,7 @@
 arch=$1
 
 # Dependency releases to build from
-cloudflaredRelease=$(jq .version /cloudflare_version.json )
-
+cloudflaredRelease=$(jq -r .version /cloudflared_version.json )
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
 # see Cloudflared Archs https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation
