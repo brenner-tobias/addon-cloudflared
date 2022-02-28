@@ -7,18 +7,22 @@ on:
   workflow_dispatch:
 jobs:
   cloudflare-release:
-    name: ℹ️ Gather Cloudflared latest version
+    name: ℹ️ Check Cloudflared Release
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v2.4.0
-      - id: cloudflare_version
+      - name: ℹ️ Gather Cloudflared latest version
+        id: cloudflare_version
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: cloudflare/cloudflared
           excludes: "prerelease, draft"
+      - name: 🚀 Run add-on information action
+        id: information
+        uses: frenck/action-addon-information@v1.3.1
       - id: test
         run: |
           version="${{ steps.cloudflare_version.outputs.release }}"
           echo "${{ inputs.slug }}"
-          ls -lh ./
+          ls -lh ./"${{ steps.information.outputs.target }}/rootfs"
