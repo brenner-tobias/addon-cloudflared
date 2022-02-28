@@ -10,7 +10,8 @@ jobs:
     name: ℹ️ Check Cloudflared Release
     runs-on: ubuntu-latest
     outputs:
-      update_available: false
+      update_available: ${{ steps.check_version.outputs.update_available }}
+      latest_version: ${{ steps.check_version.outputs.latest_version }}
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v2.4.0
@@ -37,7 +38,7 @@ jobs:
           fi
   update:
     name: 🚀 Update cloudflared to latest version
-    if: needs.cloudflare-release.outputs.update_available == "true"
+    if: needs.cloudflare-release.outputs.update_available == 'true'
     needs:
     - cloudflare-release
     runs-on: ubuntu-latest
