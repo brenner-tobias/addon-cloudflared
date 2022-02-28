@@ -35,7 +35,7 @@ jobs:
           fi
   update:
     name: 🚀 Update cloudflared to latest version
-    if: needs.cloudflare-release.outputs.update_available
+    if: needs.cloudflare-release.outputs.update_available == 'true'
     needs:
     - cloudflare-release
     runs-on: ubuntu-latest
