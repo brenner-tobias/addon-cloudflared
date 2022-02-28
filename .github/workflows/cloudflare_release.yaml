@@ -1,5 +1,6 @@
 ---
 name: Cloudflare Release
+# yamllint disable-line rule:truthy
 on:
   schedule:
     - cron: "34 5 * * *"
