@@ -30,12 +30,12 @@ jobs:
           if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then 
                   echo "::set-output name=update_available::false"
           else
-                  echo "::set-output name=update_available::true"
+                  echo "::set-output name=update_available::check"
                   echo "::set-output name=latest_version::$latest_version"
           fi
   update:
     name: 🚀 Update cloudflared to latest version
-    if: needs.cloudflare-release.outputs.update_available == 'true'
+    if: needs.cloudflare-release.outputs.update_available == 'check'
     needs:
     - cloudflare-release
     runs-on: ubuntu-latest
