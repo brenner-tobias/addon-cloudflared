@@ -21,14 +21,28 @@ jobs:
       - name: 🚀 Run add-on information action
         id: information
         uses: frenck/action-addon-information@v1.3.1
-      - name: 🚀 Debug
-        id: test
+      - name: 🚀 Check installed and latest version
+        id: check_version
         run: |
           latest_version="${{ steps.cloudflare_version.outputs.release }}"
           current_version=$(jq -r .version ./${{ steps.information.outputs.target }}/cloudflare_version.json)
           echo $current_version
           if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then 
-                  echo "Greater than or equal to ${latest_version}"
+                  echo "::set-output name=update_available::false"
           else
-                  echo "Less than ${latest_version}"
+                  echo "::set-output name=update_available::true"
+                  echo "::set-output name=latest_version::$latest_version"
           fi
+  update:
+    name: 🚀 Update cloudflared to latest version
+    if: needs.cloudflare-release.outputs.update_available
+    needs:
+    - cloudflare-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v2.4.0
+      - name: 🚀 Check installed and latest version
+        id: check_version
+        run: |
+          echo ${{ neds.cloudflare-release.outputs.latest_version }}
