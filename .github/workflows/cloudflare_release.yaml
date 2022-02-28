@@ -6,7 +6,7 @@ on:
     - cron: "34 5 * * *"
 jobs:
   cloudflare-release:
-    name:  ℹ️ Gather Cloudflared latest version
+    name: ℹ️ Gather Cloudflared latest version
     runs-on: ubuntu-latest
     steps:
       - id: timeseries
