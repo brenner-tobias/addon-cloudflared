@@ -1,5 +1,8 @@
 ---
 name: Cloudflare Release
+on:
+  schedule:
+    - cron: "34 5 * * *"
 jobs:
   cloudflare-release:
     steps:
