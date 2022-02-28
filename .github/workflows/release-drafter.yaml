@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   workflows:
     uses: hassio-addons/workflows/.github/workflows/release-drafter.yaml@main
