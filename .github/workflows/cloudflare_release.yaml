@@ -4,6 +4,7 @@ name: Cloudflare Release
 on:
   schedule:
     - cron: "34 5 * * *"
+  workflow_dispatch:
 jobs:
   cloudflare-release:
     name: ℹ️ Gather Cloudflared latest version
