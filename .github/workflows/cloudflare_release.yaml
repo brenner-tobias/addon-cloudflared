@@ -21,11 +21,12 @@ jobs:
       - name: 🚀 Run add-on information action
         id: information
         uses: frenck/action-addon-information@v1.3.1
-      - id: test
+      - name: 🚀 Debug
+        id: test
         run: |
           latest_version="${{ steps.cloudflare_version.outputs.release }}"
-          current_version=$(jq .version ./${{ steps.information.outputs.target }}/cloudflare_version.json)
-          echo $current_version
+          current_version=$(jq -r .version ./${{ steps.information.outputs.target }}/cloudflare_version.json)
+          echo ${{ current_version }}
           if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then 
                   echo "Greater than or equal to ${latest_version}"
           else
