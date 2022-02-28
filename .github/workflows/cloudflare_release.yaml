@@ -51,4 +51,4 @@ jobs:
         run: |
           jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json | > ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json.tmp
           mv ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json.tmp ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json
-          jq '.' ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json
+          jq -r '.version' ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json
