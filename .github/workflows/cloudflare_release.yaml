@@ -1,0 +1,15 @@
+---
+name: Cloudflare Release
+jobs:
+  cloudflare-release:
+    steps:
+      - uses: joutvhu/get-release@v1
+        with:
+          latest: true
+          # Tag name start with `v`
+          pattern: '^v.*'
+          # Including pre-release
+          prerelease: false
+          debug: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
