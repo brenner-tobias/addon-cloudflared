@@ -11,3 +11,4 @@ jobs:
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: cloudflare/cloudflared
+          excludes: "prerelease, draft"
