@@ -11,6 +11,8 @@ ARG BUILD_ARCH=amd64
 # Copy root filesystem
 COPY rootfs /
 
+COPY cloudflare_version.json /cloudflare_version.json
+
 # Run the script that installes cloudflared
 RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}"
 

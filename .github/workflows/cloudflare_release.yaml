@@ -23,6 +23,10 @@ jobs:
         uses: frenck/action-addon-information@v1.3.1
       - id: test
         run: |
-          version="${{ steps.cloudflare_version.outputs.release }}"
-          echo "${{ inputs.slug }}"
-          ls -lh ./"${{ steps.information.outputs.target }}/rootfs"
+          latest_version="${{ steps.cloudflare_version.outputs.release }}"
+          current_version="$(jq .version ${{ steps.information.outputs.target }}/cloudflare_version.json)"
+          if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then 
+                  echo "Greater than or equal to ${latest_version}"
+          else
+                  echo "Less than ${latest_version}"
+          fi
