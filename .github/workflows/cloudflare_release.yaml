@@ -51,4 +51,9 @@ jobs:
         run: |
           json=$(jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json)
           echo "$json" > ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json
-          jq '.' ./${{ needs.cloudflare-release.outputs.target }}/cloudflare_version.json
+      - name: 🚀 Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "Updating Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
+          branch: "cloudflared-${{ needs.cloudflare-release.outputs.latest_version }}"
