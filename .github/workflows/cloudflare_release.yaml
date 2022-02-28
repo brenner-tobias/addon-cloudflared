@@ -57,3 +57,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "Updating Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
           branch: "cloudflared-${{ needs.cloudflare-release.outputs.latest_version }}"
+          force: true
