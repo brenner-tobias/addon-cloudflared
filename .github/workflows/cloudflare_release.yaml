@@ -6,6 +6,8 @@ on:
     - cron: "34 5 * * *"
 jobs:
   cloudflare-release:
+    name:  ℹ️ Gather Cloudflared latest version
+    runs-on: ubuntu-latest
     steps:
       - id: timeseries
         uses: pozetroninc/github-action-get-latest-release@master
