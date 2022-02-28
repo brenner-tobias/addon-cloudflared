@@ -48,4 +48,6 @@ jobs:
       - name: 🚀 Check installed and latest version
         id: check_version
         run: |
-          echo ${{ needs.cloudflare-release.outputs.latest_version }}
+          jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' ./${{ steps.information.outputs.target }}/cloudflare_version.json | > ./${{ steps.information.outputs.target }}/cloudflare_version.json.tmp
+          mv ./${{ steps.information.outputs.target }}/cloudflare_version.json.tmp ./${{ steps.information.outputs.target }}/cloudflare_version.json
+          jq '.' ./${{ steps.information.outputs.target }}/cloudflare_version.json
