@@ -1,0 +1,62 @@
+---
+name: Cloudflare Release
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "00 18 * * *"
+  workflow_dispatch:
+jobs:
+  cloudflare-release:
+    name: ℹ️ Check Cloudflared Release
+    runs-on: ubuntu-latest
+    outputs:
+      update_available: ${{ steps.check_version.outputs.update_available }}
+      latest_version: ${{ steps.check_version.outputs.latest_version }}
+      target: ${{ steps.information.outputs.target }}
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v2.4.0
+      - name: ℹ️ Gather Cloudflared latest version
+        id: cloudflare_version
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: cloudflare/cloudflared
+          excludes: "prerelease, draft"
+      - name: 🚀 Run add-on information action
+        id: information
+        uses: frenck/action-addon-information@v1.3.1
+      - name: 🚀 Check installed and latest version
+        id: check_version
+        run: |
+          latest_version="${{ steps.cloudflare_version.outputs.release }}"
+          current_version=$(jq -r .version ./${{ steps.information.outputs.target }}/cloudflared_version.json)
+          if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then
+                  echo "::set-output name=update_available::false"
+          else
+                  echo "::set-output name=update_available::true"
+                  echo "::set-output name=latest_version::$latest_version"
+          fi
+  update:
+    name: 🚀 Update cloudflared to latest version
+    if: needs.cloudflare-release.outputs.update_available == 'true'
+    needs:
+      - cloudflare-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v2.4.0
+      - name: 🚀 Check installed and latest version
+        id: check_version
+        run: |
+          json=$(jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json)
+          echo "$json" > ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json
+      - name: 🚀 Commit & Create Pull Request
+        uses: peter-evans/create-pull-request@v3.14.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
+          branch: "cloudflared-${{ needs.cloudflare-release.outputs.latest_version }}"
+          delete-branch: true
+          title: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
+          body: "Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
+          reviewers: "elcajon,brenner-tobias"
