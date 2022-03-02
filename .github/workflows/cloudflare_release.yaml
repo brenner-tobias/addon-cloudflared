@@ -15,7 +15,7 @@ jobs:
       target: ${{ steps.information.outputs.target }}
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: ℹ️ Gather Cloudflared latest version
         id: cloudflare_version
         uses: pozetroninc/github-action-get-latest-release@master
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: 🚀 Check installed and latest version
         id: check_version
         run: |

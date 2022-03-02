@@ -33,7 +33,7 @@ jobs:
       version: ${{ steps.release.outputs.version }}
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: 🚀 Run add-on information action
         id: information
         uses: frenck/action-addon-information@v1.3.1
@@ -76,7 +76,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: 🏗 Set up build cache
         id: cache
         uses: actions/cache@v2.1.7
