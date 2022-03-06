@@ -141,7 +141,8 @@ hasTunnel() {
     # Check if tunnel name in file matches config value
     bashio::log.info "Checking if existing tunnel matches name given in config"
     local tunnel_name_from_file
-    tunnel_name_from_file="$(bashio::jq "${data_path}/tunnel.json" .TunnelName)"
+    tunnel_name_from_file=$(cloudflared --origincert="${data_path}/cert.pem" tunnel \
+        list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
     bashio::log.debug "Tunnnel name read from file: $tunnel_name_from_file"
     if [[ $tunnel_name != "$tunnel_name_from_file" ]]; then
         bashio::log.warning "Tunnel name in file does not match config, removing tunnel file"
