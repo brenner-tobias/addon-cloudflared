@@ -372,9 +372,9 @@ createRoute() {
     # Get routes linked to tunnel id
     existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
                     tunnel --loglevel "${CLOUDFLARED_LOG}" \
-                    route ip list --filter-tunnel-id ${tunnel_uuid} --output json) || bashio::exit.nok "Failed getting routes"
+                    route ip list --filter-tunnel-id "${tunnel_uuid}" --output json) || bashio::exit.nok "Failed getting routes"
     # Remove routes one by one
-    for route in $(echo ${existing_tunnel_routes} | jq -cr ".[] | .network") ; do
+    for route in $(echo "${existing_tunnel_routes}" | jq -cr ".[] | .network") ; do
         cloudflared --origincert="${data_path}/cert.pem" \
             tunnel --loglevel "${CLOUDFLARED_LOG}" \
             route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
@@ -449,9 +449,9 @@ warp_reset() {
     # Get routes linked to tunnel id
     existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
                     tunnel --loglevel "${CLOUDFLARED_LOG}" \
-                    route ip list --filter-tunnel-id ${tunnel_uuid} --output json) || bashio::exit.nok "Failed getting routes"
+                    route ip list --filter-tunnel-id "${tunnel_uuid}" --output json) || bashio::exit.nok "Failed getting routes"
     # Remove routes one by one
-    for route in $(echo ${existing_tunnel_routes} | jq -cr ".[] | .network") ; do
+    for route in $(echo "${existing_tunnel_routes}" | jq -cr ".[] | .network") ; do
         cloudflared --origincert="${data_path}/cert.pem" \
             tunnel --loglevel "${CLOUDFLARED_LOG}" \
             route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
