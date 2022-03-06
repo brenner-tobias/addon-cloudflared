@@ -143,13 +143,13 @@ hasTunnel() {
     local existing_tunnel_name
     existing_tunnel_name=$(cloudflared --origincert="${data_path}/cert.pem" tunnel \
         list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
-    bashio::log.debug "Tunnnel name read from file: $existing_tunnel_name"
+    bashio::log.debug "Existing Cloudflare tunnnel name: $existing_tunnel_name"
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
-        bashio::log.warning "Tunnel name in file does not match config, removing tunnel file"
+        bashio::log.warning "Existing Cloudflare tunnel name does not match config, removing tunnel file"
         rm -f "${data_path}/tunnel.json"  || bashio::exit.nok "Failed to remove tunnel file"
         return "${__BASHIO_EXIT_NOK}"
     fi
-    bashio::log.info "Tunnnel name read from file matches config, proceeding with existing tunnel file"
+    bashio::log.info "Existing Cloudflare tunnnel name matches config, proceeding with existing tunnel file"
 
     return "${__BASHIO_EXIT_OK}"
 }
