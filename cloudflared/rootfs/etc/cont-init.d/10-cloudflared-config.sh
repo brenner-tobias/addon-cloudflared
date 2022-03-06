@@ -438,10 +438,6 @@ createRoute() {
             route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}"
     done
 
-    bashio::log.debug "$(cloudflared --origincert=\"${data_path}/cert.pem\"" \
-        tunnel --loglevel "${CLOUDFLARED_LOG}" \
-        route ip list --output json | jq -c '.[] | [.network,.tunnel_name,.created_at]')
-
 }
 
 # ------------------------------------------------------------------------------
