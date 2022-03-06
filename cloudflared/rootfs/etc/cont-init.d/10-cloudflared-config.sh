@@ -181,6 +181,12 @@ createConfig() {
     # Add tunnel information
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
+    
+    # Add Warp configuration
+    if bashio::config.true 'warp_enable' ; then
+        bashio::log.debug "Add Warp-routing..."
+        config=$(bashio::jq "${config}" ".\"warp-routing\" += {\"enabled\": true}")
+    fi
 
     bashio::log.debug "Checking if SSL is used..."
     if bashio::var.true "$(bashio::core.ssl)" ; then
@@ -269,6 +275,7 @@ createConfig() {
 
     # Validate config using Cloudflared
     bashio::log.info "Validating config file..."
+    bashio::log.debug "Validating created config file: $(bashio::jq "${default_config}" ".")"
     cloudflared tunnel --config="${default_config}" --loglevel "${CLOUDFLARED_LOG}" ingress validate \
     || bashio::exit.nok "Validation of Config failed, please check the logs above."
 
@@ -351,6 +358,116 @@ hasCustomConfig() {
     bashio::exit.nok "No custom config found: ${data_path}/config.yml please create custom config file or remove 'custom_config' option"
 }
 
+# ------------------------------------------------------------------------------
+# Create route for local IPs if Warp is enabled
+# ------------------------------------------------------------------------------
+createRoute() {
+    if ! bashio::config.has_value 'warp_enable' || bashio::config.false 'warp_enable' ; then
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    # Remove already linked routes 
+    bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
+    # Get routes linked to tunnel id
+    existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
+                    tunnel --loglevel "${CLOUDFLARED_LOG}" \
+                    route ip list --filter-tunnel-id ${tunnel_uuid} --output json) || bashio::exit.nok "Failed getting routes"
+    # Remove routes one by one
+    for route in $(echo ${existing_tunnel_routes} | jq -cr ".[] | .network") ; do
+        cloudflared --origincert="${data_path}/cert.pem" \
+            tunnel --loglevel "${CLOUDFLARED_LOG}" \
+            route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
+        bashio::log.debug "Removing route ${route}"
+    done
+
+    # Collect IP addresses
+    # Get value from add-on option if set by user
+    # otherwise fall back to host connected interfaces
+    if bashio::config.has_value 'warp_routes' ; then
+        routes+=($(bashio::config 'warp_routes'))
+    else
+        interfaces+=($(bashio::network.interfaces))
+        for interface in "${interfaces[@]}"; do
+            routes+=($(bashio::network.ipv4_address "${interface}"))
+            routes+=($(bashio::network.ipv6_address "${interface}"))
+        done
+    fi
+    
+
+    for route in "${routes[@]}" ; do
+        # General part, checking route for empty value and local loopback
+        # Empty route value? Skip it
+        if ! bashio::var.has_value "${route}"; then
+            continue
+        fi
+        # Check local loopback adresses for IPv4 and IPv6 adresses
+        if [[ "${route}" =~ .*:.* ]]; then
+            # IPv6
+            part="${route%%:*}"
+
+            # The decimal values for 0xfd & 0xa2
+            fd=$(( (0x$part) / 256 ))
+            a2=$(( (0x$part) % 256 ))
+
+            # fe80::/10 according to RFC 4193 -> Local link. Skip it
+            if (( (fd == 254) && ( (a2 & 192) == 128) )); then
+                continue
+            fi
+        else
+            # IPv4
+            part="${route%%.*}"
+
+            # 169.254.0.0/16 according to RFC 3927 -> Local link. Skip it
+            if (( part == 169 )); then
+                continue
+            fi
+        fi
+        # Cloudflare related part
+        # We need to make sure that route doesn't exist before adding
+        # Routes are linked to Cloudflare, therefore stay persistent between reboots
+        #bashio::log.info "Removing already configured route for ${route}"
+        # remove route
+        #cloudflared --origincert="${data_path}/cert.pem" \
+        #    tunnel --loglevel "${CLOUDFLARED_LOG}" \
+        #    route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
+        bashio::log.info "Adding route ${route} to ${tunnel_name} tunnel"
+        # add route
+        cloudflared --origincert="${data_path}/cert.pem" \
+            tunnel --loglevel "${CLOUDFLARED_LOG}" \
+            route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}"
+    done
+
+    bashio::log.debug $(cloudflared --origincert="${data_path}/cert.pem" \
+        tunnel --loglevel "${CLOUDFLARED_LOG}" \
+        route ip list --output json | jq -c '.[] | [.network,.tunnel_name,.created_at]')
+
+}
+
+# ------------------------------------------------------------------------------
+# Reset routes and config options
+# ------------------------------------------------------------------------------
+warp_reset() {
+    # Remove already linked routes 
+    bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
+    # Get routes linked to tunnel id
+    existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
+                    tunnel --loglevel "${CLOUDFLARED_LOG}" \
+                    route ip list --filter-tunnel-id ${tunnel_uuid} --output json) || bashio::exit.nok "Failed getting routes"
+    # Remove routes one by one
+    for route in $(echo ${existing_tunnel_routes} | jq -cr ".[] | .network") ; do
+        cloudflared --origincert="${data_path}/cert.pem" \
+            tunnel --loglevel "${CLOUDFLARED_LOG}" \
+            route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
+        bashio::log.debug "Removing route ${route}"
+    done
+    bashio::log.info "Reset cloudflared warp options"
+
+    bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
+    bashio::addon.option 'warp_enable'
+    bashio::addon.option 'warp_routes'
+    bashio::addon.option 'warp_reset'
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -399,9 +516,16 @@ main() {
             bashio::exit.ok
         fi
     fi
+
+    if bashio::config.true 'warp_reset' ; then
+        warp_reset
+    fi
+
     createConfig
 
     createDNS
+
+    createRoute
 
     bashio::log.info "Finished setting-up the Cloudflare tunnel"
 }
