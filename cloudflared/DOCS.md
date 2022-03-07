@@ -109,6 +109,7 @@ additional_hosts:
     disableChunkedEncoding: true
 nginx_proxy_manager: true
 log_level: "debug"
+warp_enable: true
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
@@ -270,6 +271,42 @@ ingress:
 `external_hostname` options will be ignored. Make sure to add all needed
 services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
+### Option: `warp_enable`
+
+If you want to route your home network(s) you can set this option to
+`true`. This will enable your cloudflared tunnel to proxy related traffic
+through your tunnel.
+
+Before setting this to `true` please have a look at the [cloudflared documentation][cloudflared-route].
+
+This add-on will take care of setting up cloudflared tunnel and routing specific
+configuration. All other configuration is up to you.
+
+From the above documentation:
+- Enable HTTP filtering by turning on the Proxy switch under Settings >
+   Network > L7 Firewall.
+- Create device enrollment rules to determine which devices can enroll
+   to your Zero Trust organization.
+- Install the WARP client on the devices you want to allow into your network.
+
+### Option: `warp_routes`
+
+This option controls which routes will be added to your tunnel.
+The default setting (no `warp_routes` configured in add-on configuration) will
+route all connected networks through your tunnel.
+
+You can override this by setting specifing networks (IP/CIDR) in `warp_routes`.
+
+```yaml
+warp_routes:
+  - 192.168.0.0/24
+  - 192.168.10.0/24
+```
+
+**Note**: _By default, Cloudflare Zero Trust excludes traffic for private
+address spaces (RFC 191), you need to adapt the
+[Split Tunnel][cloudflared-route-st] configuration._
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -306,6 +343,20 @@ reset_cloudflared_files: true
 
 **Note**: _After deleting the files, the option `reset_cloudflared_files` will
 automaticaly be removed from the add-on configuration._
+
+### Option: `warp_reset`
+
+In case something went wrong or you no longer want to use this add-on to
+route your networks, you can reset warp related settings by setting this option
+to `true`.
+
+```yaml
+warp_reset: true
+```
+
+**Note**: _This will delete the routes assigned to your tunnel. The add-on
+options `warp_reset`, `warp_enable` and `warp_routes` will automatically be
+removed from the add-on configuration._
 
 ## Domain Name and Cloudlfare Set-Up
 
@@ -361,3 +412,5 @@ SOFTWARE.
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
 [cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
+[cloudflared-route]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/
+[cloudflared-route-st] https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/#optional-ensure-that-traffic-can-reach-your-network
