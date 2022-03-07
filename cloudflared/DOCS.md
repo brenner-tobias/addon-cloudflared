@@ -414,11 +414,4 @@ SOFTWARE.
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
 [cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
 [cloudflared-route]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/
-
-<<<<<<< HEAD
-[cloudflared-route-st] https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
-=======
-
-[cloudflared-route-st] https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/#optional-ensure-that-traffic-can-reach-your-network
-
-> > > > > > > 64f2c70a09bde9e41b6520a724eb164c56f4a980
+[cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
