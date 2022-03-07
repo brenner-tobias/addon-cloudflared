@@ -283,10 +283,11 @@ This add-on will take care of setting up cloudflared tunnel and routing specific
 configuration. All other configuration is up to you.
 
 From the above documentation:
+
 - Enable HTTP filtering by turning on the Proxy switch under Settings >
-   Network > L7 Firewall.
+  Network > L7 Firewall.
 - Create device enrollment rules to determine which devices can enroll
-   to your Zero Trust organization.
+  to your Zero Trust organization.
 - Install the WARP client on the devices you want to allow into your network.
 
 ### Option: `warp_routes`
@@ -413,4 +414,5 @@ SOFTWARE.
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
 [cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
 [cloudflared-route]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/
+
 [cloudflared-route-st] https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/#optional-ensure-that-traffic-can-reach-your-network
