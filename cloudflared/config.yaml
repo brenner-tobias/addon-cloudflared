@@ -36,3 +36,7 @@ schema:
   reset_cloudflared_files: bool?
   data_folder: list(config|share|ssl)?
   custom_config: bool?
+  warp_enable: bool?
+  warp_routes:
+    - str?
+  warp_reset: bool?
