@@ -448,14 +448,16 @@ createRoutes() {
 # Reset routes and config options
 # ------------------------------------------------------------------------------
 warp_reset() {
+    bashio::log.warning "Reset cloudflared warp routes and add-on warp options"
     # Delete routes
     deleteRoutes
 
-    bashio::log.info "Reset cloudflared warp options"
     bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
     bashio::addon.option 'warp_enable'
     bashio::addon.option 'warp_routes'
     bashio::addon.option 'warp_reset'
+
+    bashio::log.warning "Warp disabled successfully"
 }
 
 # ==============================================================================
@@ -515,7 +517,7 @@ main() {
 
     createDNS
 
-    if ! bashio::config.has_value 'warp_enable' || bashio::config.false 'warp_enable' ; then
+    if bashio::config.true 'warp_enable' ; then
         createRoutes
     fi
 
