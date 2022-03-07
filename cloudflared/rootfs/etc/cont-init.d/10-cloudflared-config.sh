@@ -361,7 +361,7 @@ hasCustomConfig() {
 }
 
 # ------------------------------------------------------------------------------
-# Create route for local IPs if Warp is enabled
+# Delete all routes assigned to tunnel id
 # ------------------------------------------------------------------------------
 deleteRoutes() {
     # Remove already linked routes 
