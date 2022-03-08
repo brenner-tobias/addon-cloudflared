@@ -24,7 +24,7 @@ jobs:
           excludes: "prerelease, draft"
       - name: 🚀 Run add-on information action
         id: information
-        uses: frenck/action-addon-information@v1.3.1
+        uses: frenck/action-addon-information@v1.4
       - name: 🚀 Check installed and latest version
         id: check_version
         run: |
