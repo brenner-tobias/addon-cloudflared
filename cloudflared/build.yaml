@@ -8,4 +8,3 @@ build_from:
 codenotary:
   base_image: codenotary@frenck.dev
   signer: signer@example.com
-
