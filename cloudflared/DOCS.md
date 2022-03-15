@@ -293,10 +293,10 @@ From the above documentation:
 ### Option: `warp_routes`
 
 This option controls which routes will be added to your tunnel.
-The default setting (no `warp_routes` configured in add-on configuration) will
-route all connected networks through your tunnel.
+This option is mandatory if `warp_enable` is set to `true.
 
-You can override this by setting specifing networks (IP/CIDR) in `warp_routes`.
+See the example below on how to specifie networks (IP/CIDR) in
+`warp_routes`.
 
 ```yaml
 warp_routes:
