@@ -54,8 +54,14 @@ checkConfig() {
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
 
+    # Check if 'custom_config' and 'data_folder' are both included in config.
     if bashio::config.true 'custom_config' && ! bashio::config.has_value 'data_folder' ; then
         bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
+    fi
+
+    # Check if 'warp_enable' and 'warp_routes' are both included in config.
+    if bashio::config.true 'warp_enable' && ! bashio::config.has_value 'warp_routes' ; then
+        bashio::exit.nok "The config option 'warp_enable' can only be used in combination with defined routes defined in 'warp_routes'."
     fi
 }
 
@@ -223,38 +229,8 @@ createConfig() {
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager' ; then
 
-        bashio::log.info "Runing with Nginxproxymanager support"
-
-        local npm_name
-        local npm_ip
-
-        # Get full name of Nginxproxymanager from add-on list
-        npm_name="$(grep nginxproxymanager <<< "$(bashio::addons.installed)")"
-
-        bashio::log.debug "Nginxproxymanager add-on name: ${npm_name}"
-
-        bashio::log.info "Looking for Nginxproxymanager add-on"
-
-        # Check if Nginxproxymanager is installed and available
-        if ! bashio::addons.installed "$npm_name" \
-            || ! bashio::addon.available "$npm_name" ; then
-            bashio::exit.nok "Nginxproxymanager not found, please install the Add-On or unset
-            nginx_proxy_manager in the add-on config"
-        fi
-
-        bashio::log.debug "Nginxproxymanager add-on found: $npm_name"
-
-        npm_ip="$(bashio::addon.ip_address "$npm_name")"
-
-        if bashio::var.is_empty "$npm_ip" ; then
-            bashio::exit.nok "Internal IP of Nginxproxymanager not found, please
-            install / reset the Add-On"
-        fi
-
-        bashio::log.debug "nginx_proxy_manager IP: ${npm_ip}"
-
-        bashio::log.info "All information about Nginxproxymanager Add-On found"
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://${npm_ip}:80\"}]")
+        bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
     else
 
         # Check if catch all service is defined
@@ -385,61 +361,17 @@ deleteRoutes() {
 createRoutes() {
     # Delete routes
     deleteRoutes
-    # Collect IP addresses
-    # Get value from add-on option if set by user
-    # otherwise fall back to host connected interfaces
-    if bashio::config.has_value 'warp_routes' ; then
-        routes+=($(bashio::config 'warp_routes'))
-    else
-        interfaces+=($(bashio::network.interfaces))
-        for interface in "${interfaces[@]}"; do
-            routes+=($(bashio::network.ipv4_address "${interface}"))
-            routes+=($(bashio::network.ipv6_address "${interface}"))
-        done
-    fi
-    
+
+    # Get value from add-on option set by user
+    routes+=($(bashio::config 'warp_routes'))
 
     for route in "${routes[@]}" ; do
-        # General part, checking route for empty value and local loopback
-        # Empty route value? Skip it
-        if ! bashio::var.has_value "${route}"; then
-            continue
-        fi
-        # Check local loopback adresses for IPv4 and IPv6 adresses
-        if [[ "${route}" =~ .*:.* ]]; then
-            # IPv6
-            part="${route%%:*}"
 
-            # The decimal values for 0xfd & 0xa2
-            fd=$(( (0x$part) / 256 ))
-            a2=$(( (0x$part) % 256 ))
-
-            # fe80::/10 according to RFC 4193 -> Local link. Skip it
-            if (( (fd == 254) && ( (a2 & 192) == 128) )); then
-                continue
-            fi
-        else
-            # IPv4
-            part="${route%%.*}"
-
-            # 169.254.0.0/16 according to RFC 3927 -> Local link. Skip it
-            if (( part == 169 )); then
-                continue
-            fi
-        fi
-        # Cloudflare related part
-        # We need to make sure that route doesn't exist before adding
-        # Routes are linked to Cloudflare, therefore stay persistent between reboots
-        #bashio::log.info "Removing already configured route for ${route}"
-        # remove route
-        #cloudflared --origincert="${data_path}/cert.pem" \
-        #    tunnel --loglevel "${CLOUDFLARED_LOG}" \
-        #    route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
         bashio::log.info "Adding route ${route} to ${tunnel_name} tunnel"
         # add route
         cloudflared --origincert="${data_path}/cert.pem" \
             tunnel --loglevel "${CLOUDFLARED_LOG}" \
-            route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}"
+            route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}. Check logs above for more information on this error."
     done
 
 }
@@ -447,7 +379,7 @@ createRoutes() {
 # ------------------------------------------------------------------------------
 # Reset routes and config options
 # ------------------------------------------------------------------------------
-warp_reset() {
+resetWarp() {
     bashio::log.warning "Reset cloudflared warp routes and add-on warp options"
     # Delete routes
     deleteRoutes
@@ -510,7 +442,7 @@ main() {
     fi
 
     if bashio::config.true 'warp_reset' ; then
-        warp_reset
+        resetWarp
     fi
 
     createConfig
