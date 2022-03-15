@@ -19,9 +19,6 @@ connection.
 DNS servers of Cloudflare. If you do not have one, you can get one for free at
 [Freenom][freenom] following [this article][domainarticle].**
 
-**Note**: _This add-on needs the Admin API role in order to get the internal
-IP of Nginx Proxy Manager, in case it is used with the tunnel._
-
 ## Disclaimer
 
 Please make sure to be compliant with the

@@ -39,8 +39,10 @@ mainly streaming videos or other Non-HTML content.
 
 ## Installation
 
-**To install this Add-On, add my HA-Addons repository to Home Assistant using
-[this GitHub repository][ha-addons].**
+**To install this Add-On, manually add my HA-Addons repository to Home Assistant using
+[this GitHub repository][ha-addons] or by clicking the button below.
+
+[![Add Repository to HA][my-ha-badge]][my-ha-url]
 
 ## Support
 
@@ -96,3 +98,5 @@ SOFTWARE.
 [releases-shield]: https://img.shields.io/github/v/release/brenner-tobias/addon-cloudflared?include_prereleases
 [releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
 [tobias]: https://github.com/brenner-tobias
+[my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
+[my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fbrenner-tobias%2Fha-addons
