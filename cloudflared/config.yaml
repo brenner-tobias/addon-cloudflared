@@ -5,6 +5,7 @@ slug: cloudflared
 description: "Use a Cloudflared tunnel (formerly Argo Tunnel)
   to remotely connect to Home Assistant without opening any ports"
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
+codenotary: dev@brenner.tech
 init: false
 hassio_api: true
 hassio_role: manager

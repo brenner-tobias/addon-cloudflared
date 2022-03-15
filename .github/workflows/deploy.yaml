@@ -24,10 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       architectures: ${{ steps.information.outputs.architectures }}
+      base_image_signer: ${{ steps.information.outputs.codenotary_base_image }}
       build: ${{ steps.information.outputs.build }}
       description: ${{ steps.information.outputs.description }}
       environment: ${{ steps.release.outputs.environment }}
       name: ${{ steps.information.outputs.name }}
+      signer: ${{ steps.information.outputs.codenotary_signer }}
       slug: ${{ steps.override.outputs.slug }}
       target: ${{ steps.information.outputs.target }}
       version: ${{ steps.release.outputs.version }}
@@ -77,18 +79,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
-      - name: 🏗 Set up build cache
-        id: cache
-        uses: actions/cache@v2.1.7
-        with:
-          path: /tmp/.docker-cache
-          key: docker-${{ matrix.architecture }}-${{ github.sha }}
-          restore-keys: |
-            docker-${{ matrix.architecture }}
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v1.2.0
       - name: 🏗 Set up Docker Buildx
         uses: docker/setup-buildx-action@v1.6.0
+      - name: 🏗 Set up Codenotary Community Attestation Service (CAS)
+        uses: frenck/action-setup-cas@v0.1.0
       - name: ℹ️ Compose build flags
         id: flags
         run: |
@@ -117,6 +113,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Download base image
         run: docker pull "${{ steps.flags.outputs.from }}"
+      - name: ✅ Verify authenticity of base image
+        if: needs.information.outputs.base_image_signer != 'null'
+        run: |
+          cas authenticate \
+            --signerID "${{ needs.information.outputs.base_image_signer }}" \
+            "docker://${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
         uses: docker/build-push-action@v2.10.0
         with:
@@ -128,10 +130,8 @@ jobs:
           # yamllint enable rule:line-length
           context: ${{ needs.information.outputs.target }}
           file: ${{ needs.information.outputs.target }}/Dockerfile
-          cache-from: |
-            type=local,src=/tmp/.docker-cache
-            ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:edge
-          cache-to: type=local,mode=max,dest=/tmp/.docker-cache-new
+          cache-from: type=gha,scope=${{ needs.information.outputs.slug }}-${{ matrix.architecture }}
+          cache-to: type=gha,mode=max,scope=${{ needs.information.outputs.slug }}-${{ matrix.architecture }}
           platforms: ${{ steps.flags.outputs.platform }}
           build-args: |
             BUILD_ARCH=${{ matrix.architecture }}
@@ -142,14 +142,20 @@ jobs:
             BUILD_REF=${{ github.sha }}
             BUILD_REPOSITORY=${{ github.repository }}
             BUILD_VERSION=${{ needs.information.outputs.version }}
-      # This ugly bit is necessary, or our cache will grow forever...
-      # Well until we hit GitHub's limit of 5GB :)
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
-      - name: 🚚 Swap build cache
+      - name: 🔏 Notarize
+        if: needs.information.outputs.signer != 'null'
+        # yamllint disable rule:line-length
         run: |
-          rm -rf /tmp/.docker-cache
-          mv /tmp/.docker-cache-new /tmp/.docker-cache
+          if ! cas authenticate \
+            --signerID "${{ needs.information.outputs.signer }}" \
+            --silent \
+            "docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}";
+          then
+            cas notarize \
+              --api-key="${{ secrets.CAS_API_KEY }}" \
+              --name "${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}" \
+              "docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}"
+          fi
       - name: 🚀 Push
         # yamllint disable rule:line-length
         run: |
