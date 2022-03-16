@@ -94,7 +94,7 @@ SOFTWARE.
 [issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
 [license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2022.svg
-[project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
+[project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
 [releases-shield]: https://img.shields.io/github/v/release/brenner-tobias/addon-cloudflared?include_prereleases
 [releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
 [tobias]: https://github.com/brenner-tobias
