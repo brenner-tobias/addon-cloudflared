@@ -32,26 +32,23 @@ use since the URL can change anytime.**
 The installation of this add-on is pretty straightforward but requires some prerequisites
 and a manual step at the first set-up.
 
-**Before starting, please make sure to remove all other add-ons or configuration
-entries handling SSL certificates, domain names and so on (e.g. DuckDNS) and
-restart your HomeAssistant instance.**
+### Prerequisites
 
-1. (Optional if you don't yet have a working Cloudflare set-up):
+1. Before starting, please make sure to remove all other add-ons or configuration
+   entries handling SSL certificates, domain names and so on (e.g. DuckDNS) and
+   restart your HomeAssistant instance.
+1. If you don't yet have a working Cloudflare set-up:
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
-1. Add the `http` integration settings to your HA-config as described [below](#Configuration.yaml).
+
+### Initial Add-on Setup
+
+The following instructions describe the minimum necessary steps to use this add-on:
+
+1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
-1. (Optional) Add additional hosts to forward to in the `additional_hosts` array
-   (see [detailed description below](#option-additional_hosts)).
-1. **Any existing DNS entries matching your defined `external_hostname` and `additional_hosts`
-   will be overridden at Cloudflare**.
-1. (Optional) Add a `catch_all_service` to forward all other hosts to a URL
-   (see [detailed description below](#option-catch_all_service)).
-1. (Optional) Add the `nginx_proxy_manager` flag to use the Cloudflare tunnel with
-   the Nginxproxymanager add-on (see
-   [detailed description below](#option-nginx_proxy_manager)).
 1. Start the "Cloudflare" add-on. **Any existing DNS entries matching your defined
    `external_hostname` and `additional_hosts` will be overridden at Cloudflare**.
 1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
@@ -60,29 +57,27 @@ restart your HomeAssistant instance.**
 1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
    Teams dashboard.
 
+Please review the rest of this site for further information and more
+advanced configuration options.
+
 ## Configuration
 
-### Configuration.yaml
+There are more advanced configuration options this add-on provides.
+Please check the index below for further information.
 
-Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
-your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
-so HA has to trust the docker network. In order to do so, add the following lines
-to your `/config/configuration.yaml` (there is no need to adapt anything in these
-lines since the IP range of the docker network is always the same):
+- [`additional_hosts`](#option-additional_hosts)
+- [`catch_all_service`](#option-catch_all_service)
+- [`nginx_proxy_manager`](#option-nginx_proxy_manager)
+- [`quick_tunnel`](#option-quick_tunnel)
+- [`data_folder`](#option-data_folder)
+- [`custom_config`](#option-custom_config-advanced-option)
+- [`warp_enable`](#option-warp_enable-advanced-option)
+- [`warp_routes`](#option-warp_routes)
+- [`log_level`](#option-log_level)
+- [`reset_cloudflared_files`](#option-reset_cloudflared_files)
+- [`warp_reset`](#option-warp_reset)
 
-**Note**: _Remember to restart Home Assistance when the configuration is changed._
-
-```yaml
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-```
-
-If you need assistance changing the config, please follow the
-[Advanced Configuration Tutorial][advancedconfiguration].
-
-### Add-on Configuration
+### Overview: Add-on Configuration
 
 **Note**: _Remember to restart the add-on when the configuration is changed._
 
@@ -110,6 +105,8 @@ additional_hosts:
 nginx_proxy_manager: true
 log_level: "debug"
 warp_enable: true
+warp_routes:
+  - 192.168.1.0/24
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
@@ -120,7 +117,7 @@ You can use the internal reverse proxy of Cloudflare Tunnel to define additional
 hosts next to home assistant. That way, you can use the tunnel to also access
 other systems like a diskstation, router or anything else.
 
-Like with the `external_hostname` of HomeAssistant, DNS entries at will be
+Like with the `external_hostname` of HomeAssistant, DNS entries will be
 automatically created at Cloudflare.
 
 Add the (optional) `disableChunkedEncoding` option to a hostname, to disable
@@ -128,7 +125,7 @@ chunked transfer encoding. This is useful if you are running a WSGI server,
 like Proxmox for example. Visit [Cloudflare Docs][disablechunkedencoding] for
 further information.
 
-Please find below an examplary entry for two additional hosts:
+Please find below an examplary entry for three additional hosts:
 
 ```yaml
 additional_hosts:
@@ -198,10 +195,10 @@ them to wherever you like.
 You can get started with zero setup by using
 [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
 Set `quick_tunnel` to `true` , all other configuration will be ignored. After
-starting the addon check the logs for your unique randomly generated
+starting the addon, check the logs for your unique randomly generated
 `trycloudflare.com` URL.
 Please note that you still have to add the `http` integration settings to your
-HA-config as described [here](#Configuration.yaml).
+HA-config as described [here](#configurationyaml).
 
 Quick Tunnel add-on configuration:
 
@@ -214,9 +211,9 @@ additional_hosts: []
 
 ### Option: `data_folder`
 
-The `data_folder` option allows to change default storage
+The `data_folder` option allows to change the default storage
 location (`/data`) for the automatically created `cert.pem` and
-`tunnel.json` file.`
+`tunnel.json` file.
 
 Possible values are:
 
@@ -224,18 +221,18 @@ Possible values are:
 - `share`: Files will be stored in /share/cloudflared.
 - `ssl`: Files will be stored in /ssl/cloudflared.
 
-```yam
+```yaml
 data_folder: ssl
 ```
 
-The add-on takes care of moving the created files within the default location
+The add-on takes care of moving the created files from the default location
 to the custom `data_folder` when adding the option after initial add-on setup.
 
 **Note**: There are currently no automations in place when changing
 from custom data folder to another custom data folder or back to default.
 You have to take care of moving the files accordingly.
 
-### Option: `custom_config`
+### Option: `custom_config` (advanced option)
 
 The `custom_config` option can be used to create a custom `config.yml`
 file to create more complex ingress configurations.
@@ -271,10 +268,10 @@ ingress:
 `external_hostname` options will be ignored. Make sure to add all needed
 services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
-### Option: `warp_enable`
+### Option: `warp_enable` (advanced option)
 
 If you want to route your home network(s) you can set this option to
-`true`. This will enable your cloudflared tunnel to proxy related traffic
+`true`. This will enable your cloudflared tunnel to proxy network traffic
 through your tunnel.
 
 Before setting this to `true` please have a look at the [cloudflared documentation][cloudflared-route].
@@ -282,7 +279,7 @@ Before setting this to `true` please have a look at the [cloudflared documentati
 This add-on will take care of setting up cloudflared tunnel and routing specific
 configuration. All other configuration is up to you.
 
-From the above documentation:
+An excerpt from the above documentation:
 
 - Enable HTTP filtering by turning on the Proxy switch under Settings >
   Network > L7 Firewall.
@@ -293,12 +290,14 @@ From the above documentation:
 ### Option: `warp_routes`
 
 This option controls which routes will be added to your tunnel.
+
 This option is mandatory if `warp_enable` is set to `true.
 
 See the example below on how to specifie networks (IP/CIDR) in
 `warp_routes`.
 
 ```yaml
+warp_enable: true
 warp_routes:
   - 192.168.0.0/24
   - 192.168.10.0/24
@@ -355,9 +354,31 @@ to `true`.
 warp_reset: true
 ```
 
-**Note**: _This will delete the routes assigned to your tunnel. The add-on
+**Note**: _This will remove the routes assigned to your tunnel. The add-on
 options `warp_reset`, `warp_enable` and `warp_routes` will automatically be
 removed from the add-on configuration._
+
+## Home Assistant configuration
+
+### configuration.yaml
+
+Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
+your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
+so HA has to trust the docker network. In order to do so, add the following lines
+to your `/config/configuration.yaml` (there is no need to adapt anything in these
+lines since the IP range of the docker network is always the same):
+
+**Note**: _Remember to restart Home Assistance when the configuration is changed._
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+```
+
+If you need assistance changing the config, please follow the
+[Advanced Configuration Tutorial][advancedconfiguration].
 
 ## Domain Name and Cloudlfare Set-Up
 
