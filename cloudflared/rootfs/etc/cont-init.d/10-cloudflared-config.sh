@@ -14,9 +14,16 @@ checkConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Checking Add-on config..."
 
+    local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$";
+
     # Check if 'external_hostname' is a non-empty string
     if bashio::config.is_empty 'external_hostname' ; then
         bashio::exit.nok "'external_hostname' is empty, please enter a valid String"
+    fi
+
+    # Check if 'external_hostname' includes a valid hostname
+    if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
+        bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
     fi
 
     # Check if 'tunnel_name' is a non-empty string
@@ -37,6 +44,10 @@ checkConfig() {
             fi
             if bashio::var.is_empty "${hostname}" ; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' for service ${service} is empty, please enter a valid String"
+            fi
+            # Check if hostname of 'additional_host' includes a valid hostname
+            if ! [[ ${hostname} =~ ${validHostnameRegex} ]] ; then
+                bashio::exit.nok "'${hostname}' in 'additional_hosts' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'hostname'."
             fi
             if bashio::var.is_empty "${service}" ; then
                 bashio::exit.nok "'service' in 'additional_hosts' for hostname ${hostname} is empty, please enter a valid String"
@@ -189,7 +200,7 @@ createConfig() {
     # Add tunnel information
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
-    
+
     # Add Warp configuration
     if bashio::config.true 'warp_enable' ; then
         bashio::log.debug "Add Warp-routing..."
@@ -340,7 +351,7 @@ hasCustomConfig() {
 # Delete all routes assigned to tunnel id
 # ------------------------------------------------------------------------------
 deleteRoutes() {
-    # Remove already linked routes 
+    # Remove already linked routes
     bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
     # Get routes linked to tunnel id
     existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
