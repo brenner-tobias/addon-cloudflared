@@ -12,9 +12,9 @@ configuration:
   tunnel_name:
     name: Cloudflare Tunnel Name
     description: >-
-      Defines the name of the tunnel crated for the communication between
-      this service and the cloudflare edge server. The default value should
-      be fine in most usecases.
+      Defines the name of the tunnel created for the communication between
+      this service and the Cloudflare edge server. The default value should
+      be fine in most use cases.
   additional_hosts:
     name: Additional Hosts
     description: >-
@@ -45,7 +45,7 @@ configuration:
       Set custom data folder to store Cloudflare configuration.
   custom_config:
     name: Enable Custom Configuration
-    descrption: >-
+    description: >-
       You can provide your own Cloudflare ingress configuration when this
       option is enabled.
   warp_enable:
