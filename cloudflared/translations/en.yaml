@@ -1,0 +1,65 @@
+---
+configuration:
+  log_level:
+    name: Log Level
+    description: >-
+      Defines the log level for add-on and the Cloudflare service.
+  external_hostname:
+    name: External Homeassistant Hostname
+    description: >-
+      Set this to your domain name or a subdomain that you want to use to
+      access Home Assistant.
+  tunnel_name:
+    name: Cloudflare Tunnel Name
+    description: >-
+      Defines the name of the tunnel created for the communication between
+      this service and the Cloudflare edge server. The default value should
+      be fine in most use cases.
+  additional_hosts:
+    name: Additional Hosts
+    description: >-
+      Define a list of additional hosts to be routed by the Cloudflare tunnel.
+  catch_all_service:
+    name: Catch-All Service
+    description: >-
+      Define a catch-all service which will be called for services not
+      configured directly.
+  nginx_proxy_manager:
+    name: Enable Catch-All Nginx-Proxy-Manager
+    description: >-
+      Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
+      Add-On.
+  quick_tunnel:
+    name: Enable Quick Tunnel
+    description: >-
+      Enables the Cloudflare Quick Tunnel for this instance. All other options
+      will be ignored.
+  reset_cloudflared_files:
+    name: Reset Cloudflared files
+    description: >-
+      When enabled, the add-on configuration will be resetted upon next add-on
+      start.
+  data_folder:
+    name: Custom Data Folder
+    description: >-
+      Set custom data folder to store Cloudflare configuration.
+  custom_config:
+    name: Enable Custom Configuration
+    description: >-
+      You can provide your own Cloudflare ingress configuration when this
+      option is enabled.
+  warp_enable:
+    name: Enable Cloudflare Warp
+    description: >-
+      This option enables Cloudflare Warp functionality. Warp allows you to
+      route your whole network through the Cloudflare tunnel.
+  warp_routes:
+    name: Define Cloudflare Warp routes
+    description: >-
+      Define networks to route through your Cloudflare tunnel if Warp function
+      is enabled.
+  warp_reset:
+    name: Reset Cloudflare Warp
+    description: >-
+      When enabled, the Cloudflare Warp related add-on configuration will
+      be resetted upon next add-on start.
