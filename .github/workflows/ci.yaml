@@ -169,7 +169,7 @@ jobs:
             --signerID "${{ needs.information.outputs.base_image_signer }}" \
             "docker://${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
-        uses: docker/build-push-action@v2.10.0
+        uses: docker/build-push-action@v3.0.0
         with:
           push: false
           context: ${{ needs.information.outputs.target }}
