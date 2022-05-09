@@ -30,18 +30,18 @@ to use this tunnel.
    or continue with the next step.
    ![Step 5](images/5.png)
 1. Open your Home Assistant instance and open the Cloudflared add-on configuration
-    page. Search for the `tunnel_token` field, named Cloudflare Tunnel Token.
-    ![Step 6](images/6.png)
+   page. Search for the `tunnel_token` field, named Cloudflare Tunnel Token.
+   ![Step 6](images/6.png)
 1. Copy in your token from step 4 of this guide.
-    ![Step 7](images/7.png)
+   ![Step 7](images/7.png)
 1. Start the add-on and check the logs.
 1. If everything went well, you should be connected to your tunnel.
-    ![Step 8](images/8.png)
+   ![Step 8](images/8.png)
 1. Check the Cloudflare Zero Trust Dashboard again to see that your tunnel is
-    connected.
+   connected.
 1. You may add additional hosts from there. (Changes will be replicated to your
-    tunnel without the need to restart the tunnel/add-on)
-    ![Step 9](images/9.png)
+   tunnel without the need to restart the tunnel/add-on)
+   ![Step 9](images/9.png)
 1. Make sure to adapt your Home Assistant
    [configuration.yaml](../cloudflared/DOCS.md#configurationyaml)
    to allow proxying traffic from this add-on.
