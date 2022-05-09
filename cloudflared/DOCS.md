@@ -319,8 +319,8 @@ Set `tunnel_token` to your [tunnel token][create-remote-managed-tunnel],
 all other configuration will be ignored. After starting the addon, check the
 logs to see whether everything went as expected.
 
-Check out [this how-to][addon-remote-tunnel] to get a step by step guide on how to set up a
-remote managed tunnel with this add-on.
+Check out [this how-to][addon-remote-tunnel] to get a step by step
+guide on how to set up a remote managed tunnel with this add-on.
 
 Please note that you still have to add the `http` integration settings to your
 HA-config as described [here](#configurationyaml).
