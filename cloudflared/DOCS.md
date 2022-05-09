@@ -40,15 +40,13 @@ and a manual step at the first set-up.
 1. If you don't yet have a working Cloudflare set-up:
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
+1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
-### Initial Add-on Setup
+### Initial Add-on Setup for local tunnels
 
 The following instructions describe the minimum necessary steps to use this add-on:
 
 1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
-1. Create a tunnel from the Zero Trust Dashboard ([Remote Managed Tunnel][remote-managed-tunnel])
-   and set the [`tunnel_token`](#option-tunnel_token) add-on option
-   OR follow the next steps to set up a local managed tunnel.
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
@@ -321,6 +319,9 @@ Set `tunnel_token` to your [tunnel token][create-remote-managed-tunnel],
 all other configuration will be ignored. After starting the addon, check the
 logs to see whether everything went as expected.
 
+Check out [this how-to][addon-remote-tunnel] to get a step by step guide on how to set up a
+remote managed tunnel with this add-on.
+
 Please note that you still have to add the `http` integration settings to your
 HA-config as described [here](#configurationyaml).
 
@@ -455,3 +456,5 @@ SOFTWARE.
 [cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
 [remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#set-up-a-tunnel-remotely-dashboard-setup
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
+[addon-remote-tunnel]: ../docs/remote-tunnel.md
+[addon-remote-or-local]: ../docs/tunnels.md
