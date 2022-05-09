@@ -43,4 +43,3 @@ schema:
     - str?
   warp_reset: bool?
   tunnel_token: str?
-
