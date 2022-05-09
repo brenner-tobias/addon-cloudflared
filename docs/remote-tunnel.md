@@ -8,13 +8,15 @@ to use this tunnel.
 
 ## Step by step
 
-1. Open [https://dash.teams.cloudflare.com](https://dash.teams.cloudflare.com) and login.
+1. Open [https://dash.teams.cloudflare.com](https://dash.teams.cloudflare.com)
+   and login.
 2. Search for the `Tunnels` section in the `Access` menu and create a new tunnel.
    ![Step 1](images/1.png)
 3. Name the tunnel (choose whatever you like) and hit save.
    ![Step 2](images/2.png)
 4. The tunnel will be created and a code snippet will be displayed. Extract the
-   token out of the code and copy it somewhere safe. (Depending on your OS the picture will vary)
+   token out of the code and copy it somewhere safe. (Depending on your OS the
+   picture will vary)
    ![Step 3](images/3.png)
 5. Add your first `Public Hostname` to proxy through the tunnel.
 6. The pictures below shows how to configure Home Assistant with default HA config.

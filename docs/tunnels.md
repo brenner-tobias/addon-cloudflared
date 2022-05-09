@@ -1,15 +1,18 @@
 # Cloudflare local vs. remote managed tunnels
 
 ## About
+
 Check the following information if you are unsure which tunnel type to use
 with this add-on.
 
 ## Cloudflare Documentation
+
 Revise the [official Cloudflare documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/) to see latest information.
 
 ![Cloudflare Docs Picture](images/10.png)
 
 ## What does this add-on provide?
+
 In general you can use both tunnel types (remote and local) with this add-on.
 
 If you like to configure your tunnel from within the add-on configuration page,
