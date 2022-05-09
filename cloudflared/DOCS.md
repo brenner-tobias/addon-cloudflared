@@ -46,6 +46,9 @@ and a manual step at the first set-up.
 The following instructions describe the minimum necessary steps to use this add-on:
 
 1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
+1. Create a tunnel from the Zero Trust Dashboard ([Remote Managed Tunnel][remote-managed-tunnel]) and set the
+   [`tunnel_token`](#option-tunnel_token) add-on option
+   OR follow the next steps to set up a local managed tunnel.
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
@@ -76,6 +79,7 @@ Please check the index below for further information.
 - [`log_level`](#option-log_level)
 - [`reset_cloudflared_files`](#option-reset_cloudflared_files)
 - [`warp_reset`](#option-warp_reset)
+- [`tunnel_token`](#option-tunnel_token)
 
 ### Overview: Add-on Configuration
 
@@ -307,6 +311,19 @@ warp_routes:
 address spaces (RFC 191), you need to adapt the
 [Split Tunnel][cloudflared-route-st] configuration._
 
+### Option: `tunnel_token`
+
+If you created a Cloudflare Tunnel from the Zero Trust Dashboard, you can provide
+your tunnel token to connect to your remote managed tunnel.
+Keep in mind, when using this option, that you need to configure all
+hosts (including Home Assistant) by yourself.
+Set `tunnel_token` to your [tunnel token][create-remote-managed-tunnel],
+all other configuration will be ignored. After starting the addon, check the
+logs to see whether everything went as expected.
+
+Please note that you still have to add the `http` integration settings to your
+HA-config as described [here](#configurationyaml).
+
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -436,3 +453,5 @@ SOFTWARE.
 [cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
 [cloudflared-route]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/
 [cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
+[remote-managed-tunnel]:https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#set-up-a-tunnel-remotely-dashboard-setup
+[create-remote-managed-tunnel]:https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel

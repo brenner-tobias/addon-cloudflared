@@ -15,8 +15,13 @@ if bashio::config.true 'quick_tunnel'; then
     bashio::log.info "Connecting Cloudflared Quick Tunnel..."
     exec cloudflared --no-autoupdate \
     tunnel --loglevel="${CLOUDFLARED_LOG}" --url "${ha_service_protocol}://homeassistant:$(bashio::core.port)"
-else
 
+elif bashio::config.has_value 'tunnel_token' ; then
+    tunnel_token=$(bashio::config 'tunnel_token')
+    exec cloudflared --no-autoupdate \
+            tunnel --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
+
+else
     data_path="/data"
     if bashio::config.has_value 'data_folder'; then
         data_path="/$(bashio::config 'data_folder')/cloudflared"
