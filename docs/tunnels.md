@@ -14,7 +14,7 @@ to see latest information.
 
 ## What does this add-on provide
 
-In general you can use both tunnel types (remote and local) with this add-on.
+In general you can use both tunnel types (remote or local) with this add-on.
 
 If you like to configure your tunnel from within the add-on configuration page,
 the local tunnel is what you are looking for. Take a look at the
