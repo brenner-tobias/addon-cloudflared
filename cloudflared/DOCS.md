@@ -46,8 +46,8 @@ and a manual step at the first set-up.
 The following instructions describe the minimum necessary steps to use this add-on:
 
 1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
-1. Create a tunnel from the Zero Trust Dashboard ([Remote Managed Tunnel][remote-managed-tunnel]) and set the
-   [`tunnel_token`](#option-tunnel_token) add-on option
+1. Create a tunnel from the Zero Trust Dashboard ([Remote Managed Tunnel][remote-managed-tunnel])
+   and set the [`tunnel_token`](#option-tunnel_token) add-on option
    OR follow the next steps to set up a local managed tunnel.
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
