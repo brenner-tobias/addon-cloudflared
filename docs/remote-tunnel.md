@@ -33,6 +33,7 @@ to use this tunnel.
    page. Search for the `tunnel_token` field, named Cloudflare Tunnel Token.
    ![Step 6](images/6.png)
 1. Copy in your token from step 4 of this guide.
+1. **All other configuration options will be ignored.**
    ![Step 7](images/7.png)
 1. Start the add-on and check the logs.
 1. If everything went well, you should be connected to your tunnel.
