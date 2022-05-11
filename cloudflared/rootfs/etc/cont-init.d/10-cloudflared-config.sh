@@ -421,6 +421,16 @@ main() {
         bashio::exit.ok
     fi
 
+    # Run service with tunnel token without creating config
+    if bashio::config.has_value 'tunnel_token'; then
+        bashio::log.info ""
+        bashio::log.info "Using Cloudflare Remote Management Tunnel"
+        bashio::log.info "All add-on configuration options except tunnel_token"
+        bashio::log.info "will be ignored."
+        bashio::log.info ""
+        bashio::exit.ok
+    fi
+
     # Check for custom data path
     if bashio::config.has_value 'data_folder'; then
         data_path="/$(bashio::config 'data_folder')/cloudflared"
