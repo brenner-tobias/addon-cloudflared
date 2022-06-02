@@ -398,6 +398,14 @@ http:
 If you need assistance changing the config, please follow the
 [Advanced Configuration Tutorial][advancedconfiguration].
 
+## Troubleshooting
+
+### 400: Bad Request error
+
+Make sure to add the [trusted proxy setting](#configurationyaml) correctly.
+Make sure to copy and paste the code snippet without adapting anything.
+There is no need to adapt IP ranges as the add-on is working as proxy.
+
 ## Domain Name and Cloudlfare Set-Up
 
 To use this plugin, you need a domain name that is using Cloudflare for its
