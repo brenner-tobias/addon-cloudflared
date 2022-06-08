@@ -1,9 +1,11 @@
-#!/usr/bin/execlineb -S0
+#!/command/with-contenv bashio
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
 # Take down the S6 supervision tree when Cloudflared fails
 # ==============================================================================
-if -n { s6-test $# -ne 0 }
-if -n { s6-test ${1} -eq 256 }
+if [[ "${1}" -ne 0 ]] && [[ "${1}" -ne 256 ]]; then
+  bashio::log.warning "cloudflared crashed, halting add-on"
+  /run/s6/basedir/bin/halt
+fi
 
-s6-svscanctl -t /var/run/s6/services
+bashio::log.info "cloudflared stoped, restarting..."

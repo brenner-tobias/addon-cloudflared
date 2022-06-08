@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bashio
+#!/command/with-contenv bashio
 # shellcheck disable=SC2207
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
