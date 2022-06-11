@@ -5,24 +5,50 @@ profile cloudflared flags=(attach_disconnected,mediate_deleted) {
 
   # Capabilities
   file,
-  signal,
+  signal (send) set=(kill,term,int,hup,cont),
 
-  # S6-Overlay
+  # S6-Overlay from HA OS default apparmor profile
+  /init ix,
+  /bin/** ix,
+  /usr/bin/** ix,
+  /run/{s6,s6-rc*,service}/** ix,
+  /package/** ix,
+  /command/** ix,
   /etc/services.d/** rwix,
   /etc/cont-init.d/** rwix,
+  /etc/cont-finish.d/** rwix,
+  /run/{,**} rwk,
+  /dev/tty rw,
+  
+  # S6-Overlay from cloudflared add-on
+  /etc/s6-overlay/** rwix,
 
   # Bashio
   /usr/lib/bashio/** ix,
-  /tmp/** rw,
-
-  # Access to cloudflared files
-  /root/.cloudflared/** rw,
+  /tmp/** rwk,
+  
+  # Access to options.json and other files within your addon
+  /data/** rw,
 
   # Start new profile for cloudflared service
-  cloudflared cx,
+  /usr/bin/cloudflared cx -> cloudflared,
 
   profile cloudflared flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/base>
+
+    # Access to options.json and other files within your addon
+    /data/** rw,
+
+    # Access to mapped volumes specified in config.json
+    /share/** rw,
+    /config/** rw,
+    /ssl/** rw,
+    
+    # Access to add-on generated config.yaml
+    /tmp/** rw,
+    
+    # Access required for service functionality
+    /usr/bin/cloudflared r,
 
     # Receive signals from S6-Overlay
     signal receive,

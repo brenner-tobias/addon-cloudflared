@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bashio
+#!/command/with-contenv bashio
 
 # Map HomeAssistant log levels to Cloudflared
 if bashio::config.exists 'log_level' ; then
