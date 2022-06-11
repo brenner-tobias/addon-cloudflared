@@ -31,7 +31,7 @@ profile cloudflared flags=(attach_disconnected,mediate_deleted) {
   /data/** rw,
 
   # Start new profile for cloudflared service
-  /usr/bin/cloudflared cx -> cloudflared,
+  #/usr/bin/cloudflared cx -> cloudflared,
 
   profile cloudflared flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/base>
