@@ -57,7 +57,7 @@ body:
     attributes:
       label: Anything in the logs that might be useful for us?
       description: Copy and paste the complete log.
-    render: txt
+      render: txt
   - type: textarea
     validations:
       required: true
