@@ -42,6 +42,15 @@ and a manual step at the first set-up.
    [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
 1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
+### Securing Access to the Cloudflare Account
+The Add-on downloads after authentication a `cert.pem` file to authenticate your instance of cloudflared against your Cloudflare account. You can not revoke access to this file from your cloudflare account! The [issue](https://github.com/cloudflare/cloudflared/issues/93) still persists.
+
+Workaround:
+1. Create a new Cloudflare Account and invite it to your Cloudflare account that manages your Domain: Cloudflare Dashboard ->    Manage Account -> Members -> Invite Member
+1.    Instead of using your primary account to authenticate the tunnel, use your secondary account.
+
+If your `cert.pem` file is compromised, you can revoke your secondary account from your primary account.
+
 ### Initial Add-on Setup for local tunnels
 
 The following instructions describe the minimum necessary steps to use this add-on:
