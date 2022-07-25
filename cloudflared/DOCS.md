@@ -52,10 +52,10 @@ The [issue](https://github.com/cloudflare/cloudflared/issues/93) still persists
 Workaround:
 
 1. Create a new Cloudflare Account and invite it to your Cloudflare account 
-   that manages your Domain: 
+   that manages your Domain:<br /> 
    Cloudflare Dashboard -> Manage Account -> Members -> Invite Member
-1. Instead of using your primary account to authenticate the tunnel, use your   
-   secondary account.
+1. Instead of using your primary account to authenticate the tunnel, 
+   use your secondary account.
 
 If your `cert.pem` file is compromised, you can revoke your 
 secondary account from your primary account.
