@@ -44,10 +44,11 @@ and a manual step at the first set-up.
 
 ### Securing Access to the Cloudflare Account
 
-The Add-on downloads after authentication a `cert.pem` file to authenticate your
-instance of cloudflared against your Cloudflare account.
+The Add-on downloads after authentication a `cert.pem` file to authenticate
+your instance of cloudflared against your Cloudflare account.
 You can not revoke access to this file from your cloudflare account!
-The [issue](https://github.com/cloudflare/cloudflared/issues/93) still persists.
+The [issue](https://github.com/cloudflare/cloudflared/issues/93)
+still persists.
 
 Workaround:
 
