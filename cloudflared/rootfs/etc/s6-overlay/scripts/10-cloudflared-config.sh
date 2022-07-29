@@ -163,9 +163,14 @@ hasTunnel() {
         list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
     bashio::log.debug "Existing Cloudflare tunnnel name: $existing_tunnel_name"
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
-        bashio::log.warning "Existing Cloudflare tunnel name does not match config, removing tunnel file"
-        rm -f "${data_path}/tunnel.json"  || bashio::exit.nok "Failed to remove tunnel file"
-        return "${__BASHIO_EXIT_NOK}"
+        bashio::log.error "Existing Cloudflare tunnel name does not match add-on config."
+        bashio::log.error "---------------------------------------"
+        bashio::log.error "Add-on Configuration tunnel name: ${tunnel_name}"
+        bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
+        bashio::log.error "---------------------------------------"
+        bashio::log.error "Align add-on configuration to match existing tunnel credential file"
+        bashio::log.error "or reset the add-on. Take a look at the documentation on how to reset the add-on"
+        bashio::exit.nok
     fi
     bashio::log.info "Existing Cloudflare tunnnel name matches config, proceeding with existing tunnel file"
 
