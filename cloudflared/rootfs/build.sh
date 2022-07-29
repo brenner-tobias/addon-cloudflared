@@ -40,4 +40,4 @@ chmod +x /usr/bin/cloudflared
 
 # Add needed packages
 apk add --no-cache \
-    yq=4.25.1-r1
+    yq=4.25.1-r2
