@@ -4,7 +4,7 @@
 # Runs the healthcheck for cloudflared tunnel
 # ==============================================================================
 declare counter=0;
-declare treshold=24;
+declare threshold=24;
 declare status_ok=200;
 declare sleep=5;
 declare metrics_port=36500
@@ -26,13 +26,13 @@ do
 	else
 		counter=$((counter+1))
 		bashio::log.warning "Connection unavailable, rechecking in 5 seconds."
-		bashio::log.warning "Connection attempt ${counter}/${treshold} before restart."
+		bashio::log.warning "Connection attempt ${counter}/${threshold} before restart."
 	fi
 	
 	bashio::log.debug "Metrics status: ${rc}"
 	bashio::log.debug "Connection attempt: ${counter}"
 
-	if [ "${counter}" == "${treshold}" ]; then
+	if [ "${counter}" == "${threshold}" ]; then
         bashio::log.error "Restarting Cloudflared service"
         s6-svc -r /var/run/s6-rc/servicedirs/cloudflared || bashio::exit.nok "Failed restarting cloudflared."
         counter=0;
