@@ -1,0 +1,43 @@
+#!/command/with-contenv bashio
+# ==============================================================================
+# Home Assistant Add-on: Cloudflared
+# Runs the healthcheck for cloudflared tunnel
+# ==============================================================================
+declare counter=0;
+declare treshold=24;
+declare status_ok=200;
+declare sleep=5;
+declare metrics_port=36500
+bashio::log.info "Starting Cloudflared Healthcheck for Home-Assistant add-on."
+
+while :
+do
+
+    # Wait for cloudflared metrics server to be available
+    bashio::net.wait_for "${metrics_port}"
+
+	# Get status of cloudflared
+	# 200 = Up, connected, ready
+	# 503 = 503, connection error (internet loss)
+	rc=$(curl -s localhost:"${metrics_port}"/ready | jq -r .status)
+	if [ "${rc}" == "${status_ok}" ]
+	then
+		counter=0;
+	else
+		counter=$((counter+1))
+		bashio::log.warning "Connection unavailable, rechecking in 5 seconds."
+		bashio::log.warning "Connection attempt ${counter}/${treshold} before restart."
+	fi
+	
+	bashio::log.debug "Metrics status: ${rc}"
+	bashio::log.debug "Connection attempt: ${counter}"
+
+	if [ "${counter}" == "${treshold}" ]; then
+        bashio::log.error "Restarting Cloudflared service"
+        s6-svc -r /var/run/s6-rc/servicedirs/cloudflared || bashio::exit.nok "Failed restarting cloudflared."
+        counter=0;
+	fi
+	# Wait a bit
+	sleep ${sleep};
+
+done
