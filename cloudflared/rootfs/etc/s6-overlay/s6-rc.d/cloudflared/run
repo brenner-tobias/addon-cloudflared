@@ -14,12 +14,12 @@ if bashio::config.true 'quick_tunnel'; then
     fi
     bashio::log.info "Connecting Cloudflared Quick Tunnel..."
     exec cloudflared --no-autoupdate \
-    tunnel --loglevel="${CLOUDFLARED_LOG}" --url "${ha_service_protocol}://homeassistant:$(bashio::core.port)"
+    tunnel --metrics="localhost:36500" --loglevel="${CLOUDFLARED_LOG}" --url "${ha_service_protocol}://homeassistant:$(bashio::core.port)"
 
 elif bashio::config.has_value 'tunnel_token' ; then
     tunnel_token=$(bashio::config 'tunnel_token')
     exec cloudflared --no-autoupdate \
-            tunnel --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
+            tunnel --metrics="localhost:36500" --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
 
 else
     data_path="/data"
@@ -39,5 +39,5 @@ else
     bashio::log.debug "using ${config} config file"
     
     exec cloudflared --origincert=${certificate} --no-autoupdate \
-        tunnel --config=${config} --loglevel="${CLOUDFLARED_LOG}" run "${tunnel_name}"
+        tunnel --config=${config} --metrics="localhost:36500" --loglevel="${CLOUDFLARED_LOG}" run "${tunnel_name}"
 fi
