@@ -9,7 +9,7 @@ codenotary: dev@brenner.tech
 init: false
 hassio_api: true
 hassio_role: homeassistant
-watchdog: "http://localhost:36500/healthcheck"
+watchdog: "http://[HOST]:36500/healthcheck"
 arch:
   - aarch64
   - amd64
