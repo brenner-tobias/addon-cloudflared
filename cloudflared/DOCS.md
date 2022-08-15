@@ -39,7 +39,7 @@ and a manual step at the first set-up.
    restart your HomeAssistant instance.
 1. If you don't yet have a working Cloudflare set-up:
    Get a domain name and set-up Cloudflare. See section
-   [Domain Name and Cloudlfare Set-Up](#domain-name-and-cloudlfare-set-up) for details.
+   [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
 1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
 ### Securing Access to the Cloudflare Account
@@ -425,7 +425,7 @@ Make sure to add the [trusted proxy setting](#configurationyaml) correctly.
 Make sure to copy and paste the code snippet without adapting anything.
 There is no need to adapt IP ranges as the add-on is working as proxy.
 
-## Domain Name and Cloudlfare Set-Up
+## Domain Name and Cloudflare Set-Up
 
 To use this plugin, you need a domain name that is using Cloudflare for its
 DNS entries.
