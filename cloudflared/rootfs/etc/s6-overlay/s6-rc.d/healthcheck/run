@@ -25,10 +25,16 @@ do
 		counter=0;
 	else
 		counter=$((counter+1))
-		bashio::log.warning "Connection unavailable, rechecking in 5 seconds."
-		bashio::log.warning "Connection attempt ${counter}/${threshold} before restart."
+		if [ "${counter}" -le 2 ]
+		then
+			bashio::log.debug "Connection unavailable, rechecking in 5 seconds."
+			bashio::log.debug "Connection attempt ${counter}/${threshold} before restart."
+		else
+			bashio::log.warning "Connection unavailable, rechecking in 5 seconds."
+			bashio::log.warning "Connection attempt ${counter}/${threshold} before restart."
+		fi
 	fi
-	
+
 	bashio::log.debug "Metrics status: ${rc}"
 	bashio::log.debug "Connection attempt: ${counter}"
 
