@@ -59,4 +59,5 @@ jobs:
           delete-branch: true
           title: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
           body: "Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
-          reviewers: "elcajon,brenner-tobias"
+          assignees: "elcajon,brenner-tobias"
+          labels: "dependencies"
