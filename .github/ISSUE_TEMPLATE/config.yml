@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Cloudflared related issues
+    url: https://github.com/cloudflare/cloudflared
+    about: Issues related to the tunnel itself should be addressed here.
