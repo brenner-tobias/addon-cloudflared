@@ -1,6 +1,12 @@
 ---
 blank_issues_enabled: false
 contact_links:
+  - name: I have a question or need support
+    url: https://community.home-assistant.io/t/new-add-on-cloudflared/
+    about: We use GitHub for tracking bugs, check the community forum for help.
+  - name: Feature Request
+    url: https://community.home-assistant.io/t/new-add-on-cloudflared/
+    about: Please use our Community Forum for making feature requests.
   - name: Cloudflared related issues
     url: https://github.com/cloudflare/cloudflared
     about: Issues related to the tunnel itself should be addressed here.
