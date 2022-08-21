@@ -408,6 +408,17 @@ resetWarp() {
     bashio::log.warning "Warp disabled successfully"
 }
 
+# ------------------------------------------------------------------------------
+# Check for active network/internet connection
+# ------------------------------------------------------------------------------
+checkInternet() {
+    while [ ! bashio::network.host_internet ]
+    do
+        bashio::log.error "Host has no internet connection, waiting 30 seconds..."
+        sleep 30
+    done
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -419,6 +430,9 @@ data_path="/data"
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
+    
+    # Check for active internet connection
+    checkInternet
 
     # Quick Tunnel with 0 config
     if bashio::config.true 'quick_tunnel'; then
