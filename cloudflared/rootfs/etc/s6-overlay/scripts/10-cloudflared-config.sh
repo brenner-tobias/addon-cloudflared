@@ -412,12 +412,10 @@ resetWarp() {
 # Check for active network/internet connection
 # ------------------------------------------------------------------------------
 checkInternet() {
-    bashio::network.reload
-    while ! bashio::network.host_internet &> /dev/null
+    while ! ping -q -c 1 -W 1 1.1.1.1 > /dev/null
     do
         bashio::log.error "Host has no internet connection, waiting 30 seconds..."
         sleep 30
-        bashio::network.reload
     done
 }
 
