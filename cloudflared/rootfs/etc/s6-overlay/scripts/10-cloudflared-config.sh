@@ -356,6 +356,7 @@ hasCustomConfig() {
 # Delete all routes assigned to tunnel id
 # ------------------------------------------------------------------------------
 deleteRoutes() {
+    bashio::log.trace "${FUNCNAME[0]}"
     # Remove already linked routes
     bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
     # Get routes linked to tunnel id
@@ -412,7 +413,9 @@ resetWarp() {
 # Check for active network/internet connection
 # ------------------------------------------------------------------------------
 checkInternet() {
-    while ! ping -q -c 1 -W 1 1.1.1.1 > /dev/null
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    while ! nc -zw1 1.1.1.1 443
     do
         bashio::log.error "Host has no internet connection, waiting 30 seconds..."
         sleep 30
@@ -430,7 +433,7 @@ data_path="/data"
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
-    
+
     # Check for active internet connection
     checkInternet
 
