@@ -38,6 +38,9 @@ wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases
 # Make the downloaded bin executeable
 chmod +x /usr/bin/cloudflared
 
+# Remove legacy cont-init.d services
+rm -rf /etc/cont-init.d
+
 # Add needed packages
 apk add --no-cache \
     yq=4.25.1-r3
