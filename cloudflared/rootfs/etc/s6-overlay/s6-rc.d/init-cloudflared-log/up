@@ -1,1 +1,0 @@
-/bin/bash -c /etc/s6-overlay/scripts/00-cloudflared-log.sh
