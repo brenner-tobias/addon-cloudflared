@@ -26,19 +26,19 @@ if bashio::supervisor.ping; then
     bashio::log.blue " Home Assistant Core: $(bashio::info.homeassistant)"
     bashio::log.blue " Home Assistant Supervisor: $(bashio::info.supervisor)"
 
-if ! [ bashio::supervisor.supported &> /dev/null ] ; then
+if bashio::var.false "$(bashio::supervisor.supported)" ; then
     bashio::log.magenta
-    bashio::log.magenta "System setup not officially supported by Home-Assistant."
-    bashio::log.magenta "Errors with this add-on may occur."
-    bashio::log.magenta "We don't offer support with unsupported setups."
+    bashio::log.magenta " System setup not officially supported by Home-Assistant."
+    bashio::log.magenta " Errors with this add-on may occur."
+    bashio::log.magenta " We don't offer support with unsupported setups."
     bashio::log.magenta
 fi
 
-if ! [ bashio::supervisor.healthy &> /dev/null ] ; then
+if bashio::var.false "$(bashio::supervisor.healthy)" ; then
     bashio::log.magenta
-    bashio::log.magenta "System is unhealthy."
-    bashio::log.magenta "Errors with this add-on may occur."
-    bashio::log.magenta "Before asking for support fix your system health errors."
+    bashio::log.magenta " System is unhealthy."
+    bashio::log.magenta " Errors with this add-on may occur."
+    bashio::log.magenta " Before asking for support fix your system health errors."
     bashio::log.magenta
 fi
 
