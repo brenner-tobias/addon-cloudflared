@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:12.2.3
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:12.2.4
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
