@@ -44,5 +44,5 @@ to use this tunnel.
    tunnel without the need to restart the tunnel/add-on)
    ![Step 9](images/9.png)
 1. Make sure to adapt your Home Assistant
-   [configuration.yaml](../cloudflared/DOCS.md#configurationyaml)
+   [configuration.yaml](../DOCS.md#configurationyaml)
    to allow proxying traffic from this add-on.
