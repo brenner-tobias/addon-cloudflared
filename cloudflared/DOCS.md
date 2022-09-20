@@ -312,7 +312,7 @@ An excerpt from the above documentation:
 
 This option controls which routes will be added to your tunnel.
 
-This option is mandatory if `warp_enable` is set to `true.
+This option is mandatory if `warp_enable` is set to `true`.
 
 See the example below on how to specifie networks (IP/CIDR) in
 `warp_routes`.
