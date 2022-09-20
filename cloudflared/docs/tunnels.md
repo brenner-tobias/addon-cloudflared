@@ -18,7 +18,7 @@ In general you can use both tunnel types (remote or local) with this add-on.
 
 If you like to configure your tunnel from within the add-on configuration page,
 the local tunnel is what you are looking for. Take a look at the
-[add-on docs](../cloudflared/DOCS.md), to see what options can be used.
+[add-on docs](../DOCS.md), to see what options can be used.
 
 If you want to set up and maintain your tunnel from the Cloudflare Zero Trust
 Dashboard, you should go for the remote managed tunnel. Have a look at this
