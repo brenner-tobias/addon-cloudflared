@@ -36,7 +36,7 @@ and a manual step at the first set-up.
 
 1. Before starting, please make sure to remove all other add-ons or configuration
    entries handling SSL certificates, domain names and so on (e.g. DuckDNS) and
-   restart your HomeAssistant instance.
+   restart your Home Assistant instance.
 1. If you don't yet have a working Cloudflare set-up:
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
@@ -46,7 +46,7 @@ and a manual step at the first set-up.
 
 The Add-on downloads after authentication a `cert.pem` file to authenticate
 your instance of cloudflared against your Cloudflare account.
-You can not revoke access to this file from your cloudflare account!
+You can not revoke access to this file from your Cloudflare account!
 The [issue](https://github.com/cloudflare/cloudflared/issues/93)
 still persists.
 
@@ -69,9 +69,9 @@ The following instructions describe the minimum necessary steps to use this add-
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
    that you want to use to access Home Assistant.
 1. (Optional) Change the `tunnel_name` add-on option (default: homeassistant).
-1. Start the "Cloudflare" add-on. **Any existing DNS entries matching your defined
+1. Start the "Cloudflared" add-on. **Any existing DNS entries matching your defined
    `external_hostname` and `additional_hosts` will be overridden at Cloudflare**.
-1. Check the logs of the "Cloudflare" add-on and **follow the instruction to authenticate
+1. Check the logs of the "Cloudflared" add-on and **follow the instruction to authenticate
    at Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
 1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
@@ -135,10 +135,10 @@ warp_routes:
 ### Option: `additional_hosts`
 
 You can use the internal reverse proxy of Cloudflare Tunnel to define additional
-hosts next to home assistant. That way, you can use the tunnel to also access
+hosts next to Home Assistant. That way, you can use the tunnel to also access
 other systems like a diskstation, router or anything else.
 
-Like with the `external_hostname` of HomeAssistant, DNS entries will be
+Like with the `external_hostname` of Home Assistant, DNS entries will be
 automatically created at Cloudflare.
 
 Add the (optional) `disableChunkedEncoding` option to a hostname, to disable
@@ -177,7 +177,7 @@ as reverse proxy, you should set the flag `nginx_proxy_manager` (see
 catch_all_service: "http://192.168.1.100"
 ```
 
-**Note**: _This will still route your defined `external_hostname`to HomeAssistant
+**Note**: _This will still route your defined `external_hostname`to Home Assistant
 as well as any potential `additional_hosts` to where you defined in the config.
 Any other incoming traffic will be routed to the defined service._
 
@@ -199,7 +199,7 @@ nginx_proxy_manager: true
 ```
 
 **Note**: _As with `catch_all_service`, this will still route your defined
-`external_hostname`to HomeAssistant as well as any potential `additional_hosts`
+`external_hostname`to Home Assistant as well as any potential `additional_hosts`
 to where you defined in the config. Any other incoming traffic will be routed
 to Nginx Proxy Manager._
 
@@ -399,11 +399,12 @@ removed from the add-on configuration._
 
 ### configuration.yaml
 
-Since HomeAssistant blocks requests from proxies / reverse proxies, you have to tell
-your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
-so HA has to trust the docker network. In order to do so, add the following lines
-to your `/config/configuration.yaml` (there is no need to adapt anything in these
-lines since the IP range of the docker network is always the same):
+Since Home Assistant blocks requests from proxies / reverse proxies, you have to
+tell your instance to allow requests from the Cloudflared Add-on. The add-on runs
+locally, so HA has to trust the docker network. In order to do so, add the
+following lines to your `/config/configuration.yaml` (there is no need to adapt
+anything in these lines since the IP range of the docker network is always the
+same):
 
 **Note**: _Remember to restart Home Assistance when the configuration is changed._
 
