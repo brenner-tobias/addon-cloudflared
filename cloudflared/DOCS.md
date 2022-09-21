@@ -399,11 +399,12 @@ removed from the add-on configuration._
 
 ### configuration.yaml
 
-Since Home Assistant blocks requests from proxies / reverse proxies, you have to tell
-your instance to allow requests from the Cloudflared Add-on. The add-on runs locally,
-so HA has to trust the docker network. In order to do so, add the following lines
-to your `/config/configuration.yaml` (there is no need to adapt anything in these
-lines since the IP range of the docker network is always the same):
+Since Home Assistant blocks requests from proxies / reverse proxies, you have to
+tell your instance to allow requests from the Cloudflared Add-on. The add-on runs
+locally, so HA has to trust the docker network. In order to do so, add the
+following lines to your `/config/configuration.yaml` (there is no need to adapt
+anything in these lines since the IP range of the docker network is always the
+same):
 
 **Note**: _Remember to restart Home Assistance when the configuration is changed._
 
