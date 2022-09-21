@@ -5,7 +5,7 @@ configuration:
     description: >-
       Defines the log level for add-on and the Cloudflare service.
   external_hostname:
-    name: External Homeassistant Hostname
+    name: External Home Assistant Hostname
     description: >-
       Set this to your domain name or a subdomain that you want to use to
       access Home Assistant.
@@ -18,7 +18,7 @@ configuration:
   additional_hosts:
     name: Additional Hosts
     description: >-
-      Define a list of additional hosts to be routed by the Cloudflare tunnel.
+      Define a list of additional hosts to be routed by the Cloudflare Tunnel.
   catch_all_service:
     name: Catch-All Service
     description: >-
@@ -37,7 +37,7 @@ configuration:
   reset_cloudflared_files:
     name: Reset Cloudflared files
     description: >-
-      When enabled, the add-on configuration will be resetted upon next add-on
+      When enabled, the add-on configuration will be reset upon next add-on
       start.
   data_folder:
     name: Custom Data Folder
@@ -52,17 +52,17 @@ configuration:
     name: Enable Cloudflare Warp
     description: >-
       This option enables Cloudflare Warp functionality. Warp allows you to
-      route your whole network through the Cloudflare tunnel.
+      route your whole network through the Cloudflare Tunnel.
   warp_routes:
     name: Define Cloudflare Warp routes
     description: >-
-      Define networks to route through your Cloudflare tunnel if Warp function
+      Define networks to route through your Cloudflare Tunnel if Warp function
       is enabled.
   warp_reset:
     name: Reset Cloudflare Warp
     description: >-
       When enabled, the Cloudflare Warp related add-on configuration will
-      be resetted upon next add-on start.
+      be reset upon next add-on start.
   tunnel_token:
     name: Cloudflare Tunnel Token
     description: >-

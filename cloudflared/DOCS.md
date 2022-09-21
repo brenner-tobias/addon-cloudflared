@@ -52,7 +52,7 @@ still persists.
 
 Workaround:
 
-1. Create a new Cloudflare Account and invite it to your Cloudflare account
+1. Create a new Cloudflare account and invite it to your Cloudflare account
    that manages your Domain:\
    Cloudflare Dashboard -> Manage Account -> Members -> Invite Member
 1. Instead of using your primary account to authenticate the tunnel,
@@ -188,7 +188,7 @@ or directly to the tunnel URL that you can get from the CNAME entry of
 
 ### Option: `nginx_proxy_manager`
 
-If you want to use the Cloudflare Tunnel with the Add-on
+If you want to use Cloudflare Tunnel with the Add-on
 [Nginx Proxy Manager][nginx_proxy_manager], you can do so by setting this option.
 It will automatically set the catch_all_service to the internal URL of Nginx Proxy
 Manager. You do not have to add the option `catch_all_service` to your config (if
@@ -292,13 +292,12 @@ services (e.g. a homeassistant ingress rule) inside `config.yml`.
 ### Option: `warp_enable` (advanced option)
 
 If you want to route your home network(s) you can set this option to
-`true`. This will enable your cloudflared tunnel to proxy network traffic
-through your tunnel.
+`true`. This will enable proxying network traffic through your tunnel.
 
 Before setting this to `true` please have a look at the [cloudflared documentation][cloudflared-route].
 
-This add-on will take care of setting up cloudflared tunnel and routing specific
-configuration. All other configuration is up to you.
+This add-on will take care of setting up the Cloudflare Tunnel and routing
+specific configuration. All other configuration is up to you.
 
 An excerpt from the above documentation:
 
@@ -314,7 +313,7 @@ This option controls which routes will be added to your tunnel.
 
 This option is mandatory if `warp_enable` is set to `true`.
 
-See the example below on how to specifie networks (IP/CIDR) in
+See the example below on how to specify networks (IP/CIDR) in
 `warp_routes`.
 
 ```yaml
@@ -370,7 +369,7 @@ you are troubleshooting.
 
 ### Option: `reset_cloudflared_files`
 
-In case something went wrong or you want to reset your Cloudflare tunnel
+In case something went wrong or you want to reset your Cloudflare Tunnel
 for some other reason (e.g., switch to another Cloudflare account), you can reset
 all your local Cloudflare files by setting this option to `true`.
 
@@ -379,7 +378,7 @@ reset_cloudflared_files: true
 ```
 
 **Note**: _After deleting the files, the option `reset_cloudflared_files` will
-automaticaly be removed from the add-on configuration._
+automatically be removed from the add-on configuration._
 
 ### Option: `warp_reset`
 
@@ -400,13 +399,13 @@ removed from the add-on configuration._
 ### configuration.yaml
 
 Since Home Assistant blocks requests from proxies / reverse proxies, you have to
-tell your instance to allow requests from the Cloudflared Add-on. The add-on runs
+tell your instance to allow requests from the Cloudflared add-on. The add-on runs
 locally, so HA has to trust the docker network. In order to do so, add the
 following lines to your `/config/configuration.yaml` (there is no need to adapt
 anything in these lines since the IP range of the docker network is always the
 same):
 
-**Note**: _Remember to restart Home Assistance when the configuration is changed._
+**Note**: _Remember to restart Home Assistant when the configuration is changed._
 
 ```yaml
 http:
@@ -438,7 +437,7 @@ following [this article][domainarticle].
 
 ### Cloudflare
 
-Create a free Cloudflare Account at [cloudflare.com][cloudflare] and follow
+Create a free Cloudflare account at [cloudflare.com][cloudflare] and follow
 the tutorial [Getting started with Cloudflare][cloudflaretutorial].
 
 ## Authors & contributors

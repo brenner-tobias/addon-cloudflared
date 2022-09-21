@@ -2,7 +2,7 @@
 
 ## About
 
-Follow the next steps to create a cloudflare managed tunnel with the
+Follow the next steps to create a Cloudflare Tunnel with the
 Cloudflare Zero Trust Dashboard and connect the Cloudflared Home Assistant add-on
 to use this tunnel.
 

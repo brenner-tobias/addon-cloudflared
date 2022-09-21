@@ -3,7 +3,7 @@
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
 #
-# Configures the Cloudflared tunnel and creates the needed DNS entry under the
+# Configures the Cloudflare Tunnel and creates the needed DNS entry under the
 # given hostname(s)
 # ==============================================================================
 
@@ -139,7 +139,7 @@ createCertificate() {
 }
 
 # ------------------------------------------------------------------------------
-# Check if Cloudflared tunnel is existing
+# Check if Cloudflare Tunnel is existing
 # ------------------------------------------------------------------------------
 hasTunnel() {
     bashio::log.trace "${FUNCNAME[0]}:"
@@ -161,9 +161,9 @@ hasTunnel() {
     local existing_tunnel_name
     existing_tunnel_name=$(cloudflared --origincert="${data_path}/cert.pem" tunnel \
         list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
-    bashio::log.debug "Existing Cloudflare tunnnel name: $existing_tunnel_name"
+    bashio::log.debug "Existing Cloudflare Tunnel name: $existing_tunnel_name"
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
-        bashio::log.error "Existing Cloudflare tunnel name does not match add-on config."
+        bashio::log.error "Existing Cloudflare Tunnel name does not match add-on config."
         bashio::log.error "---------------------------------------"
         bashio::log.error "Add-on Configuration tunnel name: ${tunnel_name}"
         bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
@@ -172,13 +172,13 @@ hasTunnel() {
         bashio::log.error "or reset the add-on. Take a look at the documentation on how to reset the add-on"
         bashio::exit.nok
     fi
-    bashio::log.info "Existing Cloudflare tunnnel name matches config, proceeding with existing tunnel file"
+    bashio::log.info "Existing Cloudflare Tunnel name matches config, proceeding with existing tunnel file"
 
     return "${__BASHIO_EXIT_OK}"
 }
 
 # ------------------------------------------------------------------------------
-# Create cloudflare tunnel with name from HA-Add-on-Config
+# Create Cloudflare Tunnel with name from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -194,7 +194,7 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
-# Create cloudflare config with variables from HA-Add-on-Config
+# Create Cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
     local ha_service_protocol
@@ -267,7 +267,7 @@ createConfig() {
     # Write content of config variable to config file for cloudflared
     bashio::jq "${config}" "." > "${default_config}"
 
-    # Validate config using Cloudflared
+    # Validate config using cloudflared
     bashio::log.info "Validating config file..."
     bashio::log.debug "Validating created config file: $(bashio::jq "${default_config}" ".")"
     cloudflared tunnel --config="${default_config}" --loglevel "${CLOUDFLARED_LOG}" ingress validate \
@@ -463,7 +463,7 @@ main() {
     fi
     if bashio::config.true 'custom_config' ; then
         if hasCustomConfig ; then
-            bashio::log.info "Finished setting-up the Cloudflare tunnel with custom config file"
+            bashio::log.info "Finished setting-up the Cloudflare Tunnel with custom config file"
             bashio::exit.ok
         fi
     fi
@@ -480,6 +480,6 @@ main() {
         createRoutes
     fi
 
-    bashio::log.info "Finished setting-up the Cloudflare tunnel"
+    bashio::log.info "Finished setting-up the Cloudflare Tunnel"
 }
 main "$@"
