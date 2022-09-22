@@ -5,8 +5,8 @@ contact_links:
     url: https://community.home-assistant.io/t/new-add-on-cloudflared/
     about: We use GitHub for tracking bugs, check the community forum for help.
   - name: Feature Request
-    url: https://community.home-assistant.io/t/new-add-on-cloudflared/
-    about: Please use our Community Forum for making feature requests.
+    url: https://github.com/brenner-tobias/addon-cloudflared/discussions/new
+    about: Please use create a Discussions for making feature requests.
   - name: Cloudflared related issues
     url: https://github.com/cloudflare/cloudflared
     about: Issues related to the tunnel itself should be addressed here.
