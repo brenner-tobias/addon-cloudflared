@@ -433,7 +433,8 @@ For example you could add a [WAF rule](https://developers.cloudflare.com/waf/) i
 Cloudflare which blocks requests outside your country.
 
 You can also use Cloudflare Access to present an authentication page before users
-are able to access Home Assistant, see the [self-hosted applications](https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/) docs.
+are able to access Home Assistant, see the
+[self-hosted applications][self-hosted-applications] docs.
 
 ## Domain Name and Cloudflare Set-Up
 
@@ -493,5 +494,6 @@ SOFTWARE.
 [cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
 [remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#set-up-a-tunnel-remotely-dashboard-setup
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
+[self-hosted-applications]: https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/
 [addon-remote-tunnel]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/remote-tunnel.md
 [addon-remote-or-local]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/tunnels.md
