@@ -21,7 +21,6 @@ mainly streaming videos or other Non-HTML content.
 
 You can get started with zero setup by using
 [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
-
 See [below](#option-quick_tunnel) for the detailed configuration.
 
 **Please note that it is not recommended to use the quick tunnel for production
@@ -42,25 +41,6 @@ and a manual step at the first set-up.
    [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
 1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
-### Securing Access to the Cloudflare Account
-
-The Add-on downloads after authentication a `cert.pem` file to authenticate
-your instance of cloudflared against your Cloudflare account.
-You can not revoke access to this file from your Cloudflare account!
-The [issue](https://github.com/cloudflare/cloudflared/issues/93)
-still persists.
-
-Workaround:
-
-1. Create a new Cloudflare account and invite it to your Cloudflare account
-   that manages your Domain:\
-   Cloudflare Dashboard -> Manage Account -> Members -> Invite Member
-1. Instead of using your primary account to authenticate the tunnel,
-   use your secondary account.
-
-If your `cert.pem` file is compromised, you can revoke your
-secondary account from your primary account.
-
 ### Initial Add-on Setup for local tunnels
 
 The following instructions describe the minimum necessary steps to use this add-on:
@@ -77,7 +57,7 @@ The following instructions describe the minimum necessary steps to use this add-
 1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
    Teams dashboard.
 
-Please review the rest of this site for further information and more
+Please review the rest of this documentation for further information and more
 advanced configuration options.
 
 ## Configuration
@@ -425,6 +405,37 @@ Make sure to add the [trusted proxy setting](#configurationyaml) correctly.
 Make sure to copy and paste the code snippet without adapting anything.
 There is no need to adapt IP ranges as the add-on is working as proxy.
 
+## Securing access to the Cloudflare account
+
+The add-on downloads after authentication a `cert.pem` file to authenticate
+your instance of cloudflared against your Cloudflare account.
+You can not revoke access to this file from your Cloudflare account!
+The [issue](https://github.com/cloudflare/cloudflared/issues/93)
+still persists.
+
+Workaround:
+
+1. Create a new Cloudflare account and invite it to your Cloudflare account
+   that manages your Domain:\
+   Cloudflare Dashboard -> Manage Account -> Members -> Invite Member
+1. Instead of using your primary account to authenticate the tunnel,
+   use your secondary account.
+
+If your `cert.pem` file is compromised, you can revoke your
+secondary account from your primary account.
+
+## Securing access to Home Assistant
+
+After your tunnel is setup and working, you may wish to add additional security
+measures.
+
+For example you could add a [WAF rule](https://developers.cloudflare.com/waf/) in
+Cloudflare which blocks requests outside your country.
+
+You can also use Cloudflare Access to present an authentication page before users
+are able to access Home Assistant, see the
+[self-hosted applications][self-hosted-applications] docs.
+
 ## Domain Name and Cloudflare Set-Up
 
 To use this plugin, you need a domain name that is using Cloudflare for its
@@ -483,5 +494,6 @@ SOFTWARE.
 [cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
 [remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#set-up-a-tunnel-remotely-dashboard-setup
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
+[self-hosted-applications]: https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/
 [addon-remote-tunnel]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/remote-tunnel.md
 [addon-remote-or-local]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/tunnels.md
