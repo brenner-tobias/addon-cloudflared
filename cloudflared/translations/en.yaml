@@ -29,16 +29,6 @@ configuration:
     description: >-
       Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
       Add-On.
-  quick_tunnel:
-    name: Enable Quick Tunnel
-    description: >-
-      Enables the Cloudflare Quick Tunnel for this instance. All other options
-      will be ignored.
-  reset_cloudflared_files:
-    name: Reset Cloudflared files
-    description: >-
-      When enabled, the add-on configuration will be reset upon next add-on
-      start.
   data_folder:
     name: Custom Data Folder
     description: >-

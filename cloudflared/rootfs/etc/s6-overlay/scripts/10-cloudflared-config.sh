@@ -77,35 +77,6 @@ checkConfig() {
 }
 
 # ------------------------------------------------------------------------------
-# Delete all Cloudflared config files
-# ------------------------------------------------------------------------------
-resetCloudflareFiles() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.warning "Deleting all existing Cloudflared config files..."
-
-    if bashio::fs.file_exists "${data_path}/cert.pem" ; then
-        bashio::log.debug "Deleting certificate file"
-        rm -f "${data_path}/cert.pem" || bashio::exit.nok "Failed to delete certificate file"
-    fi
-
-    if bashio::fs.file_exists "${data_path}/tunnel.json" ; then
-        bashio::log.debug "Deleting tunnel file"
-        rm -f "${data_path}/tunnel.json" || bashio::exit.nok "Failed to delete tunnel file"
-    fi
-
-    if bashio::fs.file_exists "${data_path}/cert.pem" \
-        || bashio::fs.file_exists "${data_path}/tunnel.json";
-    then
-        bashio::exit.nok "Failed to delete cloudflared files"
-    fi
-
-    bashio::log.info "Succesfully deleted cloudflared files"
-
-    bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
-    bashio::addon.option 'reset_cloudflared_files'
-}
-
-# ------------------------------------------------------------------------------
 # Check if Cloudflared certificate (authorization) is available
 # ------------------------------------------------------------------------------
 hasCertificate() {
@@ -169,7 +140,7 @@ hasTunnel() {
         bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
         bashio::log.error "---------------------------------------"
         bashio::log.error "Align add-on configuration to match existing tunnel credential file"
-        bashio::log.error "or reset the add-on. Take a look at the documentation on how to reset the add-on"
+        bashio::log.error "or re-install the add-on."
         bashio::exit.nok
     fi
     bashio::log.info "Existing Cloudflare Tunnel name matches config, proceeding with existing tunnel file"
@@ -401,7 +372,7 @@ resetWarp() {
     # Delete routes
     deleteRoutes
 
-    bashio::log.debug "Removing 'reset_cloudflared_files' option from add-on config"
+    bashio::log.debug "Removing 'warp_*' options from add-on config"
     bashio::addon.option 'warp_enable'
     bashio::addon.option 'warp_routes'
     bashio::addon.option 'warp_reset'
@@ -420,12 +391,6 @@ data_path="/data"
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
-
-    # Quick Tunnel with 0 config
-    if bashio::config.true 'quick_tunnel'; then
-        bashio::log.info "Using Cloudflare Quick Tunnels"
-        bashio::exit.ok
-    fi
 
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
@@ -449,10 +414,6 @@ main() {
 
     external_hostname="$(bashio::config 'external_hostname')"
     tunnel_name="$(bashio::config 'tunnel_name')"
-
-    if bashio::config.true 'reset_cloudflared_files' ; then
-        resetCloudflareFiles
-    fi
 
     if ! hasCertificate ; then
         createCertificate

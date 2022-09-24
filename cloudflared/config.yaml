@@ -33,9 +33,7 @@ schema:
       disableChunkedEncoding: bool?
   catch_all_service: str?
   nginx_proxy_manager: bool?
-  quick_tunnel: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
-  reset_cloudflared_files: bool?
   data_folder: list(config|share|ssl)?
   custom_config: bool?
   warp_enable: bool?
