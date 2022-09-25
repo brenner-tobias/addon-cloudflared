@@ -17,15 +17,6 @@ Please make sure to be compliant with the
 add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
 mainly streaming videos or other Non-HTML content.
 
-## Quick Tunnel for Testing
-
-You can get started with zero setup by using
-[Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
-See [below](#option-quick_tunnel) for the detailed configuration.
-
-**Please note that it is not recommended to use the quick tunnel for production
-use since the URL can change anytime.**
-
 ## Installation
 
 The installation of this add-on is pretty straightforward but requires some prerequisites
@@ -68,13 +59,11 @@ Please check the index below for further information.
 - [`additional_hosts`](#option-additional_hosts)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
-- [`quick_tunnel`](#option-quick_tunnel)
 - [`data_folder`](#option-data_folder)
 - [`custom_config`](#option-custom_config-advanced-option)
 - [`warp_enable`](#option-warp_enable-advanced-option)
 - [`warp_routes`](#option-warp_routes)
 - [`log_level`](#option-log_level)
-- [`reset_cloudflared_files`](#option-reset_cloudflared_files)
 - [`warp_reset`](#option-warp_reset)
 - [`tunnel_token`](#option-tunnel_token)
 
@@ -190,25 +179,6 @@ or directly to the tunnel URL that you can get from the CNAME entry of
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
-
-### Option: `quick_tunnel`
-
-You can get started with zero setup by using
-[Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/trycloudflare).
-Set `quick_tunnel` to `true` , all other configuration will be ignored. After
-starting the addon, check the logs for your unique randomly generated
-`trycloudflare.com` URL.
-Please note that you still have to add the `http` integration settings to your
-HA-config as described [here](#configurationyaml).
-
-Quick Tunnel add-on configuration:
-
-```yaml
-quick_tunnel: true
-external_hostname: ""
-tunnel_name: ""
-additional_hosts: []
-```
 
 ### Option: `data_folder`
 
@@ -346,19 +316,6 @@ Please note that each level automatically includes log messages from a
 more severe level, e.g., `debug` also shows `info` messages. By default,
 the `log_level` is set to `info`, which is the recommended setting unless
 you are troubleshooting.
-
-### Option: `reset_cloudflared_files`
-
-In case something went wrong or you want to reset your Cloudflare Tunnel
-for some other reason (e.g., switch to another Cloudflare account), you can reset
-all your local Cloudflare files by setting this option to `true`.
-
-```yaml
-reset_cloudflared_files: true
-```
-
-**Note**: _After deleting the files, the option `reset_cloudflared_files` will
-automatically be removed from the add-on configuration._
 
 ### Option: `warp_reset`
 
