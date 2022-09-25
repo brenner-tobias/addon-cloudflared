@@ -16,6 +16,19 @@ checkConfig() {
 
     local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
+    # Check if 'tunnel_name' is a non-empty string
+    if bashio::config.is_empty 'tunnel_name' ; then
+        bashio::exit.nok "'tunnel_name' is empty, please enter a valid String"
+    fi
+
+    # Check if 'custom_config' and 'data_folder' are both included in config.
+    if bashio::config.true 'custom_config' ; then
+        if ! bashio::config.has_value 'data_folder' ; then
+            bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
+        fi
+        bashio::exit.ok "Running with Custom-Config and skipping further validations"
+    fi
+
     # Check if 'external_hostname' is a non-empty string
     if bashio::config.is_empty 'external_hostname' ; then
         bashio::exit.nok "'external_hostname' is empty, please enter a valid String"
@@ -24,11 +37,6 @@ checkConfig() {
     # Check if 'external_hostname' includes a valid hostname
     if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
         bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
-    fi
-
-    # Check if 'tunnel_name' is a non-empty string
-    if bashio::config.is_empty 'tunnel_name' ; then
-        bashio::exit.nok "'tunnel_name' is empty, please enter a valid String"
     fi
 
     # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
@@ -63,11 +71,6 @@ checkConfig() {
     # Check if 'catch_all_service' and 'nginx_proxy_manager' are both included in config.
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
-    fi
-
-    # Check if 'custom_config' and 'data_folder' are both included in config.
-    if bashio::config.true 'custom_config' && ! bashio::config.has_value 'data_folder' ; then
-        bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
     fi
 
     # Check if 'warp_enable' and 'warp_routes' are both included in config.
