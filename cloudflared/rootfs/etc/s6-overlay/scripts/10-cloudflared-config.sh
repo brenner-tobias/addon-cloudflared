@@ -22,7 +22,7 @@ checkConfig() {
     fi
 
     # Check if 'custom_config' and 'data_folder' are both included in config.
-    if bashio::config.true 'custom_config' && ! bashio::config.has_value 'data_folder' ; then
+    if bashio::config.true 'custom_config' ; then
         if ! bashio::config.has_value 'data_folder' ; then
             bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
         fi
