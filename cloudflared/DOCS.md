@@ -33,7 +33,8 @@ and a manual step at the first set-up.
 
 The following instructions describe the necessary steps to use this add-on to expose your
 HA instance via the Cloudflare tunnel. If you only want to expose other services, you can do
-so by setting other configuration options shown [below](#configuration).
+so by setting other configuration options shown [below](#configuration) and leaving `external_hostname`
+empty.
 
 1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
