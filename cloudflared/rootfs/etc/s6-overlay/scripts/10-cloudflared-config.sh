@@ -29,14 +29,15 @@ checkConfig() {
         bashio::exit.ok "Running with Custom-Config and skipping further validations"
     fi
 
-    # Check if 'external_hostname' is a non-empty string
-    if bashio::config.is_empty 'external_hostname' ; then
-        bashio::exit.nok "'external_hostname' is empty, please enter a valid String"
-    fi
-
-    # Check if 'external_hostname' includes a valid hostname
-    if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
-        bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
+    # Check if 'external_hostname' includes a valid hostname 
+    if bashio::config.has_value 'external_hostname' ; then
+        if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
+            bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
+        fi
+    else
+        if bashio::config.is_empty 'additional_hosts' ; then
+          bashio::exit.nok "Cannot run without tunnel_token, custom_config, external_hostname or additional_hosts. Please set at least one of these add-on options."
+        fi  
     fi
 
     # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
@@ -198,8 +199,10 @@ createConfig() {
         bashio::exit.nok "Error checking if SSL is enabled"
     fi
 
-    # Add Service for Home-Assistant
-    config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
+    # Add Service for Home-Assistant if 'external_hostname' is set
+    if bashio::config.has_value 'external_hostname' ; then
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
+    fi
 
     # Check for configured additional hosts and add them if existing
     if bashio::config.has_value 'additional_hosts' ; then
@@ -256,10 +259,12 @@ createConfig() {
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    # Create DNS entry for external hostname of HomeAssistant
-    bashio::log.info "Creating new DNS entry ${external_hostname}..."
-    cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
-    || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
+    # Create DNS entry for external hostname of HomeAssistant if 'external_hostname' is set
+    if bashio::config.has_value 'external_hostname' ; then
+        bashio::log.info "Creating new DNS entry ${external_hostname}..."
+        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
+        || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
+    fi
 
     # Check for configured additional hosts and create DNS entries for them if existing
     if bashio::config.has_value 'additional_hosts' ; then
