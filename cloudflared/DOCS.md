@@ -24,9 +24,6 @@ and a manual step at the first set-up.
 
 ### Prerequisites
 
-1. Before starting, please make sure to remove all other add-ons or configuration
-   entries handling SSL certificates, domain names and so on (e.g. DuckDNS) and
-   restart your Home Assistant instance.
 1. If you don't yet have a working Cloudflare set-up:
    Get a domain name and set-up Cloudflare. See section
    [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
@@ -34,7 +31,9 @@ and a manual step at the first set-up.
 
 ### Initial Add-on Setup for local tunnels
 
-The following instructions describe the minimum necessary steps to use this add-on:
+The following instructions describe the necessary steps to use this add-on to expose your
+HA instance via the Cloudflare tunnel. If you only want to expose other services, you can do
+so by setting other configuration options shown [below](#configuration).
 
 1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
 1. Set the `external_hostname` add-on option with your domain name or a subdomain
