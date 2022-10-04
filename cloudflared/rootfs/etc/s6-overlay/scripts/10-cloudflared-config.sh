@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 checkConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Checking Add-on config..."
+    bashio::log.info "Checking add-on config..."
 
     local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
@@ -31,7 +31,7 @@ checkConfig() {
         bashio::exit.nok "Cannot run without tunnel_token, external_hostname, custom_config, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
-    # Check if 'external_hostname' includes a valid hostname 
+    # Check if 'external_hostname' includes a valid hostname
     if bashio::config.has_value 'external_hostname' ; then
         if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
             bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
@@ -197,7 +197,7 @@ createConfig() {
         bashio::exit.nok "Error checking if SSL is enabled"
     fi
 
-    # Add Service for Home-Assistant if 'external_hostname' is set
+    # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname' ; then
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
     fi
@@ -257,7 +257,7 @@ createConfig() {
 createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    # Create DNS entry for external hostname of HomeAssistant if 'external_hostname' is set
+    # Create DNS entry for external hostname of Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname' ; then
         bashio::log.info "Creating new DNS entry ${external_hostname}..."
         cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
