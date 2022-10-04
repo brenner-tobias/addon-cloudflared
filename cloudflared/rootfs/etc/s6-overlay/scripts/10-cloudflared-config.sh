@@ -29,15 +29,18 @@ checkConfig() {
         bashio::exit.ok "Running with Custom-Config and skipping further validations"
     fi
 
+    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'custom_config' &&
+        bashio::config.is_empty 'additional_hosts' && bashio::config.is_empty 'catch_all_service' &&
+        bashio::config.is_empty 'nginx_proxy_manager'; 
+    then
+        bashio::exit.nok "Cannot run without tunnel_token, custom_config, external_hostname or additional_hosts. Please set at least one of these add-on options."
+    fi
+
     # Check if 'external_hostname' includes a valid hostname 
     if bashio::config.has_value 'external_hostname' ; then
         if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
             bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
         fi
-    else
-        if bashio::config.is_empty 'additional_hosts' ; then
-          bashio::exit.nok "Cannot run without tunnel_token, custom_config, external_hostname or additional_hosts. Please set at least one of these add-on options."
-        fi  
     fi
 
     # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
