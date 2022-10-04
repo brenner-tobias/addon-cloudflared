@@ -31,7 +31,7 @@ checkConfig() {
 
     if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'custom_config' &&
         bashio::config.is_empty 'additional_hosts' && bashio::config.is_empty 'catch_all_service' &&
-        bashio::config.is_empty 'nginx_proxy_manager'; 
+        bashio::config.is_empty 'nginx_proxy_manager';
     then
         bashio::exit.nok "Cannot run without tunnel_token, custom_config, external_hostname or additional_hosts. Please set at least one of these add-on options."
     fi
