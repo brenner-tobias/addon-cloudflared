@@ -1,35 +1,34 @@
 # Home Assistant Add-on: Cloudflared
 
 Cloudflared connects your Home Assistant Instance via a secure tunnel to a domain
-or subdomain at Cloudflare. Doing that, you can expose your Home Assitant to the
-Internet without opening ports in your router. Additionally, you can utilize
-Cloudflare Teams, their Zero Trust platform to further secure your Home Assistant
+or subdomain at Cloudflare. This allows you to expose your Home Assistant
+instance and other services to the Internet without opening ports on your router.
+Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this add-on, you have to own a domain name (e.g. example.com) and use the
-DNS servers of Cloudflare. If you do not have one, you can get one for free at
+**To use this add-on, you must own a domain name (e.g. example.com) with Cloudflare
+as the DNS server. If you do not have one, you can get one for free at
 [Freenom][freenom] following [this article][domainarticle].**
 
 ## Disclaimer
 
-Please make sure to be compliant with the
+Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
-mainly streaming videos or other Non-HTML content.
+add-on. For example [section 2.8][cloudflare-sssa-28] could be breached when
+streaming videos (e.g. Plex) or other non-HTML content.
 
 ## Installation
 
-The installation of this add-on is pretty straightforward but requires some prerequisites
-and a manual step at the first set-up.
+The installation of this add-on is pretty straightforward but requires some
+prerequisites and a manual step during the first set up.
 
 ### Prerequisites
 
-1. If you don't yet have a working Cloudflare set-up:
-   Get a domain name and set-up Cloudflare. See section
-   [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
+1. If you don't have a domain using Cloudflare DNS, see
+   [Domain name and Cloudflare set up](#domain-name-and-cloudflare-set-up) for details.
 1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
-### Initial Add-on Setup for remote tunnels
+### Initial add-on set up for remote tunnels
 
 If you created a Cloudflare Tunnel from the Zero Trust Dashboard, you can provide
 your tunnel token to connect to your remote managed tunnel.
@@ -44,10 +43,10 @@ hosts (including Home Assistant) by yourself.
 1. Start the "Cloudflared" add-on, check the logs to see whether everything went
    as expected.
 
-### Initial Add-on Setup for local tunnels
+### Initial add-on setup for local tunnels
 
 The following instructions describe the necessary steps to use this add-on to
-expose your HA instance via the Cloudflare tunnel. If you only want to expose
+expose your HA instance via a Cloudflare Tunnel. If you only want to expose
 other services, you can do so by setting other configuration options shown
 [below](#configuration) and leaving `external_hostname` empty.
 
@@ -118,7 +117,7 @@ warp_routes:
 If you want to change the default tunnel name to something different than
 "homeassistant", you can do so by using this option.
 
-**Note**: _The tunnel name needs to be unique in your Cloudflare Account._
+**Note**: _The tunnel name needs to be unique in your Cloudflare account._
 
 ```yaml
 tunnel_name: "myHomeAssistant"
@@ -153,7 +152,7 @@ additional_hosts:
 
 **Note**: _If you delete a hostname from the list, it will not be served
 anymore. Nevertheless, you should also manually delete the DNS entry from
-Cloudflare since it can not be deleted by the Add-on._
+Cloudflare since it can not be deleted by the add-on._
 
 ### Option: `catch_all_service`
 
@@ -180,7 +179,7 @@ or directly to the tunnel URL that you can get from the CNAME entry of
 
 ### Option: `nginx_proxy_manager`
 
-If you want to use Cloudflare Tunnel with the Add-on
+If you want to use Cloudflare Tunnel with the add-on
 [Nginx Proxy Manager][nginx_proxy_manager], you can do so by setting this option.
 It will automatically set the catch_all_service to the internal URL of Nginx Proxy
 Manager. You do not have to add the option `catch_all_service` to your config (if
@@ -369,9 +368,9 @@ Make sure to add the [trusted proxy setting](#configurationyaml) correctly.
 Make sure to copy and paste the code snippet without adapting anything.
 There is no need to adapt IP ranges as the add-on is working as proxy.
 
-## Securing access to the Cloudflare account
+### Securing access to your Cloudflare account
 
-The add-on downloads after authentication a `cert.pem` file to authenticate
+The add-on downloads after authentication a `cert.pem` file to authenticate
 your instance of cloudflared against your Cloudflare account.
 You can not revoke access to this file from your Cloudflare account!
 The [issue](https://github.com/cloudflare/cloudflared/issues/93)
@@ -380,12 +379,12 @@ still persists.
 Workaround:
 
 1. Create a new Cloudflare account and invite it to your Cloudflare account
-   that manages your Domain:\
-   Cloudflare Dashboard -> Manage Account -> Members -> Invite Member
+   that manages your domain:\
+   `Cloudflare Dashboard -> Manage Account -> Members -> Invite Member`
 1. Instead of using your primary account to authenticate the tunnel,
    use your secondary account.
 
-If your `cert.pem` file is compromised, you can revoke your
+If your `cert.pem` file is compromised, you can revoke your
 secondary account from your primary account.
 
 ## Securing access to Home Assistant
@@ -400,12 +399,12 @@ You can also use Cloudflare Access to present an authentication page before user
 are able to access Home Assistant, see the
 [self-hosted applications][self-hosted-applications] docs.
 
-## Domain Name and Cloudflare Set-Up
+## Domain name and Cloudflare set up
 
 To use this plugin, you need a domain name that is using Cloudflare for its
 DNS entries.
 
-### Domain Name
+### Domain name
 
 If you do not already have a domain name, get one. You can get one at Freenom
 following [this article][domainarticle].
