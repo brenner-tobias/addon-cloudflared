@@ -33,7 +33,7 @@ checkConfig() {
         bashio::config.is_empty 'additional_hosts' && bashio::config.is_empty 'catch_all_service' &&
         bashio::config.is_empty 'nginx_proxy_manager';
     then
-        bashio::exit.nok "Cannot run without tunnel_token, custom_config, external_hostname or additional_hosts. Please set at least one of these add-on options."
+        bashio::exit.nok "Cannot run without tunnel_token, external_hostname, custom_config, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
     # Check if 'external_hostname' includes a valid hostname 
@@ -396,7 +396,7 @@ resetWarp() {
 # ------------------------------------------------------------------------------
 declare default_config=/tmp/config.json
 external_hostname=""
-tunnel_name=""
+tunnel_name="homeassistant"
 tunnel_uuid=""
 data_path="/data"
 
@@ -423,8 +423,11 @@ main() {
 
     checkConfig
 
+    if bashio::config.has_value 'tunnel_name' ; then
+        tunnel_name="$(bashio::config 'tunnel_name')"
+    fi
+
     external_hostname="$(bashio::config 'external_hostname')"
-    tunnel_name="$(bashio::config 'tunnel_name')"
 
     if ! hasCertificate ; then
         createCertificate

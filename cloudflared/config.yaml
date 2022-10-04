@@ -21,7 +21,6 @@ map:
   - config:rw
 options:
   external_hostname: ""
-  tunnel_name: "homeassistant"
   additional_hosts: []
   tunnel_token: ""
 schema:
