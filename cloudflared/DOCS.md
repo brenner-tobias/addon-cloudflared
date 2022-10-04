@@ -70,6 +70,7 @@ advanced configuration options.
 There are more advanced configuration options this add-on provides.
 Please check the index below for further information.
 
+- [`tunnel_name`](#option-tunnel_name)
 - [`additional_hosts`](#option-additional_hosts)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
@@ -88,7 +89,6 @@ Example basic add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
-tunnel_name: "homeassistant"
 additional_hosts: []
 ```
 
@@ -96,7 +96,6 @@ Example extended add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
-tunnel_name: "homeassistant"
 additional_hosts:
   - hostname: "router.example.com"
     service: "http://192.168.1.1"
@@ -113,6 +112,17 @@ warp_routes:
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
+
+### Option: `tunnel_name`
+
+If you want to change the default tunnel name to something different than
+"homeassistant", you can do so by using this option.
+
+**Note**: _The tunnel name needs to be unique in your Cloudflare Account._
+
+```yaml
+tunnel_name: "myHomeAssistant"
+```
 
 ### Option: `additional_hosts`
 
