@@ -16,11 +16,6 @@ checkConfig() {
 
     local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
-    # Check if 'tunnel_name' is a non-empty string
-    if bashio::config.is_empty 'tunnel_name' ; then
-        bashio::exit.nok "'tunnel_name' is empty, please enter a valid String"
-    fi
-
     # Check if 'custom_config' and 'data_folder' are both included in config.
     if bashio::config.true 'custom_config' ; then
         if ! bashio::config.has_value 'data_folder' ; then
