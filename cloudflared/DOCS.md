@@ -29,6 +29,21 @@ and a manual step at the first set-up.
    [Domain Name and Cloudflare Set-Up](#domain-name-and-cloudflare-set-up) for details.
 1. **Decide whether to use a [local or managed tunnel][addon-remote-or-local].**
 
+### Initial Add-on Setup for remote tunnels
+
+If you created a Cloudflare Tunnel from the Zero Trust Dashboard, you can provide
+your tunnel token to connect to your remote managed tunnel.
+Keep in mind, when using this option, that you need to configure all
+hosts (including Home Assistant) by yourself.
+
+1. Add the `http` integration settings to your HA-config as described [below](#configurationyaml).
+1. Create a Cloudflare Tunnel in the Cloudflare Teams dashboard following
+   [this how-to][addon-remote-tunnel] for a step by step guide.
+1. Set `tunnel_token` to your [tunnel token][create-remote-managed-tunnel],
+   all other configuration will be ignored.
+1. Start the "Cloudflared" add-on, check the logs to see whether everything went
+   as expected.
+
 ### Initial Add-on Setup for local tunnels
 
 The following instructions describe the necessary steps to use this add-on to
@@ -45,13 +60,12 @@ other services, you can do so by setting other configuration options shown
 1. Check the logs of the "Cloudflared" add-on and **follow the instruction to authenticate
    at Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
-1. A tunnel and a DNS entry will be created and show up in your Cloudflare DNS /
-   Teams dashboard.
+1. A tunnel will be created and show up in your Cloudflare Teams dashboard.
 
 Please review the rest of this documentation for further information and more
 advanced configuration options.
 
-## Configuration
+## Configuration for local tunnels
 
 There are more advanced configuration options this add-on provides.
 Please check the index below for further information.
@@ -65,7 +79,6 @@ Please check the index below for further information.
 - [`warp_routes`](#option-warp_routes)
 - [`log_level`](#option-log_level)
 - [`warp_reset`](#option-warp_reset)
-- [`tunnel_token`](#option-tunnel_token)
 
 ### Overview: Add-on Configuration
 
@@ -276,22 +289,6 @@ warp_routes:
 **Note**: _By default, Cloudflare Zero Trust excludes traffic for private
 address spaces (RFC 191), you need to adapt the
 [Split Tunnel][cloudflared-route-st] configuration._
-
-### Option: `tunnel_token`
-
-If you created a Cloudflare Tunnel from the Zero Trust Dashboard, you can provide
-your tunnel token to connect to your remote managed tunnel.
-Keep in mind, when using this option, that you need to configure all
-hosts (including Home Assistant) by yourself.
-Set `tunnel_token` to your [tunnel token][create-remote-managed-tunnel],
-all other configuration will be ignored. After starting the addon, check the
-logs to see whether everything went as expected.
-
-Check out [this how-to][addon-remote-tunnel] to get a step by step
-guide on how to set up a remote managed tunnel with this add-on.
-
-Please note that you still have to add the `http` integration settings to your
-HA-config as described [here](#configurationyaml).
 
 ### Option: `log_level`
 
