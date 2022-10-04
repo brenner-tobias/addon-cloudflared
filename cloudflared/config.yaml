@@ -21,12 +21,11 @@ map:
   - config:rw
 options:
   external_hostname: ""
-  tunnel_name: "homeassistant"
   additional_hosts: []
-  tunnel_token: ""
 schema:
   external_hostname: str?
   tunnel_name: str?
+  tunnel_token: str?
   additional_hosts:
     - hostname: str
       service: str
@@ -40,4 +39,3 @@ schema:
   warp_routes:
     - str?
   warp_reset: bool?
-  tunnel_token: str?
