@@ -39,17 +39,17 @@ configuration:
       You can provide your own Cloudflare ingress configuration when this
       option is enabled.
   warp_enable:
-    name: Enable Cloudflare Warp
+    name: (Deprecated) Enable Cloudflare Warp
     description: >-
       This option enables Cloudflare Warp functionality. Warp allows you to
       route your whole network through the Cloudflare Tunnel.
   warp_routes:
-    name: Define Cloudflare Warp routes
+    name: (Deprecated) Define Cloudflare Warp routes
     description: >-
       Define networks to route through your Cloudflare Tunnel if Warp function
       is enabled.
   warp_reset:
-    name: Reset Cloudflare Warp
+    name: (Deprecated) Reset Cloudflare Warp
     description: >-
       When enabled, the Cloudflare Warp related add-on configuration will
       be reset upon next add-on start.

@@ -181,6 +181,9 @@ createConfig() {
 
     # Add Warp configuration
     if bashio::config.true 'warp_enable' ; then
+        bashio::log.warning "You are using the Warp-Option"
+        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
+        bashio::log.warning "We strongly suggest to migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
         bashio::log.debug "Add Warp-routing..."
         config=$(bashio::jq "${config}" ".\"warp-routing\" += {\"enabled\": true}")
     fi
