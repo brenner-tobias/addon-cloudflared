@@ -75,10 +75,10 @@ Please check the index below for further information.
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
 - [`data_folder`](#option-data_folder)
 - [`custom_config`](#option-custom_config-advanced-option)
-- [`warp_enable`](#option-warp_enable-advanced-option)
-- [`warp_routes`](#option-warp_routes)
+- [`warp_enable (Deprecated)`](#option-warp_enable-advanced-option)
+- [`warp_routes (Deprecated)`](#option-warp_routes)
 - [`log_level`](#option-log_level)
-- [`warp_reset`](#option-warp_reset)
+- [`warp_reset (Deprecated)`](#option-warp_reset)
 
 ### Overview: Add-on Configuration
 
@@ -263,6 +263,10 @@ services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
 ### Option: `warp_enable` (advanced option)
 
+**Deprecated**: Please note that this option is deprecated and will be
+removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
+in your Zero Trust dashboard.
+
 If you want to route your home network(s) you can set this option to
 `true`. This will enable proxying network traffic through your tunnel.
 
@@ -280,6 +284,10 @@ An excerpt from the above documentation:
 - Install the WARP client on the devices you want to allow into your network.
 
 ### Option: `warp_routes`
+
+**Deprecated**: Please note that this option is deprecated and will be
+removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
+in your Zero Trust dashboard.
 
 This option controls which routes will be added to your tunnel.
 
@@ -324,6 +332,10 @@ the `log_level` is set to `info`, which is the recommended setting unless
 you are troubleshooting.
 
 ### Option: `warp_reset`
+
+**Deprecated**: Please note that this option is deprecated and will be
+removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
+in your Zero Trust dashboard if you are using this option.
 
 In case something went wrong or you no longer want to use this add-on to
 route your networks, you can reset warp related settings by setting this option
