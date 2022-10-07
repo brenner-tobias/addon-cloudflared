@@ -15,9 +15,6 @@ streaming videos (e.g. Plex) or other non-HTML content.
 
 ## Initial setup
 
-The installation of this add-on is pretty straightforward but requires some
-prerequisites and a manual step during the first set up.
-
 ### Prerequisites
 
 1. A domain name (e.g. example.com) using Cloudflare for DNS. If you don't have
