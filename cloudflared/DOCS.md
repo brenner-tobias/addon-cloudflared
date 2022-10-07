@@ -368,6 +368,7 @@ http:
   trusted_proxies:
     - 172.30.33.0/24
 ```
+
 Remember to restart Home Assistant when the configuration is changed.
 
 If you need assistance changing the config, please follow the
