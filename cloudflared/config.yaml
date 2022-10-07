@@ -24,12 +24,12 @@ options:
   additional_hosts: []
 schema:
   external_hostname: str?
-  tunnel_name: str?
-  tunnel_token: str?
   additional_hosts:
     - hostname: str
       service: str
       disableChunkedEncoding: bool?
+  tunnel_name: str?
+  tunnel_token: str?
   catch_all_service: str?
   nginx_proxy_manager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
