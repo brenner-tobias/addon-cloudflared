@@ -7,7 +7,7 @@ configuration:
   external_hostname:
     name: External Home Assistant Hostname
     description: >-
-      Set this to your domain name or a subdomain that you want to use to
+      Set this to your domain name or subdomain that you want to use to
       access Home Assistant.
   tunnel_name:
     name: Cloudflare Tunnel Name
@@ -28,7 +28,7 @@ configuration:
     name: Enable Catch-All Nginx-Proxy-Manager
     description: >-
       Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
-      Add-On.
+      Add-on.
   data_folder:
     name: Custom Data Folder
     description: >-

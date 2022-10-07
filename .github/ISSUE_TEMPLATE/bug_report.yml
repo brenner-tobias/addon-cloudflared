@@ -26,7 +26,7 @@ body:
       placeholder: 2.x.x
       description: >-
         Can be found in:
-        [Settings -> Add-Ons -> Cloudflared](https://my.home-assistant.io/redirect/supervisor_addon/?addon=9074a9fa_cloudflared).
+        [Settings -> Add-ons -> Cloudflared](https://my.home-assistant.io/redirect/supervisor_addon/?addon=9074a9fa_cloudflared).
   - type: input
     attributes:
       label: What was the last working version of Cloudflared?

@@ -16,6 +16,9 @@ If you want to set up a more sophisticated tunnel with full flexibility and
 maintain it from the Cloudflare Zero Trust Dashboard, you should go for the
 remote managed tunnel. Have a look at this [how-to](remote-tunnel.md).
 
+Keep in mind, when using remote tunnels, you will need to configure all hosts
+(including Home Assistant) by yourself.
+
 ## Cloudflare Documentation
 
 Revise the [official Cloudflare documentation][cloudflare-docs]
