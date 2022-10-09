@@ -30,7 +30,7 @@ configuration:
       Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
       Add-on.
   data_folder:
-    name: Custom Data Folder
+    name: (Deprecated) Custom Data Folder
     description: >-
       Set custom data folder to store Cloudflare configuration.
   custom_config:
