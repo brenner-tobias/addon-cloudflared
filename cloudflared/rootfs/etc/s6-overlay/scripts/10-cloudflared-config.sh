@@ -438,11 +438,13 @@ main() {
             bashio::log.warning "You are using the data_folder option"
             bashio::log.warning "Please note that this option is deprecated and will be removed soon."
             bashio::log.warning "We will auto-migrate your files to the default location '/data'"
+            data_path="/$(bashio::config 'data_folder')/cloudflared"
             migrateFilesToDefault
             bashio::log.warning "Sucessfully migrated your files to the default location"
             bashio::log.warning "Removing the 'data_folder' option"
             bashio::addon.option 'data_folder'
             bashio::log.warning "Starting add-on with default location"
+            data_path="/data"
         fi
     fi
 
