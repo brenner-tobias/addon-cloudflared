@@ -75,7 +75,7 @@ advanced configurations can be achieved using the remote tunnel setup.
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
 - [`data_folder`](#option-data_folder)
-- [`custom_config`](#option-custom_config-advanced-option)
+- [`custom_config (Deprecated)`](#option-custom_config-advanced-option)
 - [`log_level`](#option-log_level)
 
 ### Overview: Add-on configuration
@@ -221,6 +221,10 @@ from custom data folder to another custom data folder or back to default.
 You have to take care of moving the files accordingly.
 
 ### Option: `custom_config` (advanced option)
+
+**Deprecated**: Please note that this option is deprecated and will be
+removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
+in your Zero Trust dashboard.
 
 The `custom_config` option can be used to create a custom `config.yml`
 file to create more complex ingress configurations.
