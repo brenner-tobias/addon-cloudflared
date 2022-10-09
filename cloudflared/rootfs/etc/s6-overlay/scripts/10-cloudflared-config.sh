@@ -71,11 +71,6 @@ checkConfig() {
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
-
-    # Check if 'warp_enable' and 'warp_routes' are both included in config.
-    if bashio::config.true 'warp_enable' && ! bashio::config.has_value 'warp_routes' ; then
-        bashio::exit.nok "The config option 'warp_enable' can only be used in combination with defined routes defined in 'warp_routes'."
-    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -178,15 +173,6 @@ createConfig() {
     # Add tunnel information
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
-
-    # Add Warp configuration
-    if bashio::config.true 'warp_enable' ; then
-        bashio::log.warning "You are using the Warp-Option"
-        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
-        bashio::log.warning "We strongly suggest to migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
-        bashio::log.debug "Add Warp-routing..."
-        config=$(bashio::jq "${config}" ".\"warp-routing\" += {\"enabled\": true}")
-    fi
 
     bashio::log.debug "Checking if SSL is used..."
     if bashio::var.true "$(bashio::core.ssl)" ; then
@@ -332,63 +318,6 @@ hasCustomConfig() {
     bashio::exit.nok "No custom config found: ${data_path}/config.yml please create custom config file or remove 'custom_config' option"
 }
 
-# ------------------------------------------------------------------------------
-# Delete all routes assigned to tunnel id
-# ------------------------------------------------------------------------------
-deleteRoutes() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    # Remove already linked routes
-    bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
-    # Get routes linked to tunnel id
-    existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
-                    tunnel --loglevel "${CLOUDFLARED_LOG}" \
-                    route ip list --filter-tunnel-id "${tunnel_uuid}" --output json) || bashio::exit.nok "Failed getting routes"
-    # Remove routes one by one
-    for route in $(echo "${existing_tunnel_routes}" | jq -cr ".[] | .network") ; do
-        cloudflared --origincert="${data_path}/cert.pem" \
-            tunnel --loglevel "${CLOUDFLARED_LOG}" \
-            route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
-        bashio::log.debug "Removing route ${route}"
-    done
-}
-
-# ------------------------------------------------------------------------------
-# Create route for local IPs if Warp is enabled
-# ------------------------------------------------------------------------------
-createRoutes() {
-    # Delete routes
-    deleteRoutes
-
-    # Get value from add-on option set by user
-    routes+=($(bashio::config 'warp_routes'))
-
-    for route in "${routes[@]}" ; do
-
-        bashio::log.info "Adding route ${route} to ${tunnel_name} tunnel"
-        # add route
-        cloudflared --origincert="${data_path}/cert.pem" \
-            tunnel --loglevel "${CLOUDFLARED_LOG}" \
-            route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}. Check logs above for more information on this error."
-    done
-
-}
-
-# ------------------------------------------------------------------------------
-# Reset routes and config options
-# ------------------------------------------------------------------------------
-resetWarp() {
-    bashio::log.warning "Reset cloudflared warp routes and add-on warp options"
-    # Delete routes
-    deleteRoutes
-
-    bashio::log.debug "Removing 'warp_*' options from add-on config"
-    bashio::addon.option 'warp_enable'
-    bashio::addon.option 'warp_routes'
-    bashio::addon.option 'warp_reset'
-
-    bashio::log.warning "Warp disabled successfully"
-}
-
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -441,17 +370,9 @@ main() {
         fi
     fi
 
-    if bashio::config.true 'warp_reset' ; then
-        resetWarp
-    fi
-
     createConfig
 
     createDNS
-
-    if bashio::config.true 'warp_enable' ; then
-        createRoutes
-    fi
 
     bashio::log.info "Finished setting-up the Cloudflare Tunnel"
 }

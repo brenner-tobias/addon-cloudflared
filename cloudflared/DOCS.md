@@ -76,10 +76,7 @@ advanced configurations can be achieved using the remote tunnel setup.
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
 - [`data_folder`](#option-data_folder)
 - [`custom_config`](#option-custom_config-advanced-option)
-- [`warp_enable (Deprecated)`](#option-warp_enable-advanced-option)
-- [`warp_routes (Deprecated)`](#option-warp_routes)
 - [`log_level`](#option-log_level)
-- [`warp_reset (Deprecated)`](#option-warp_reset)
 
 ### Overview: Add-on configuration
 
@@ -106,9 +103,6 @@ additional_hosts:
     disableChunkedEncoding: true
 nginx_proxy_manager: true
 log_level: "debug"
-warp_enable: true
-warp_routes:
-  - 192.168.1.0/24
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
@@ -262,52 +256,6 @@ ingress:
 `external_hostname` options will be ignored. Make sure to add all needed
 services (e.g. a homeassistant ingress rule) inside `config.yml`.
 
-### Option: `warp_enable` (advanced option)
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-If you want to route your home network(s) you can set this option to
-`true`. This will enable proxying network traffic through your tunnel.
-
-Before setting this to `true` please have a look at the [cloudflared documentation][cloudflared-route].
-
-This add-on will take care of setting up the Cloudflare Tunnel and routing
-specific configuration. All other configuration is up to you.
-
-An excerpt from the above documentation:
-
-- Enable HTTP filtering by turning on the Proxy switch under Settings >
-  Network > L7 Firewall.
-- Create device enrollment rules to determine which devices can enroll
-  to your Zero Trust organization.
-- Install the WARP client on the devices you want to allow into your network.
-
-### Option: `warp_routes`
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-This option controls which routes will be added to your tunnel.
-
-This option is mandatory if `warp_enable` is set to `true`.
-
-See the example below on how to specify networks (IP/CIDR) in
-`warp_routes`.
-
-```yaml
-warp_enable: true
-warp_routes:
-  - 192.168.0.0/24
-  - 192.168.10.0/24
-```
-
-**Note**: _By default, Cloudflare Zero Trust excludes traffic for private
-address spaces (RFC 191), you need to adapt the
-[Split Tunnel][cloudflared-route-st] configuration._
-
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -331,24 +279,6 @@ Please note that each level automatically includes log messages from a
 more severe level, e.g., `debug` also shows `info` messages. By default,
 the `log_level` is set to `info`, which is the recommended setting unless
 you are troubleshooting.
-
-### Option: `warp_reset`
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard if you are using this option.
-
-In case something went wrong or you no longer want to use this add-on to
-route your networks, you can reset warp related settings by setting this option
-to `true`.
-
-```yaml
-warp_reset: true
-```
-
-**Note**: _This will remove the routes assigned to your tunnel. The add-on
-options `warp_reset`, `warp_enable` and `warp_routes` will automatically be
-removed from the add-on configuration._
 
 ## Home Assistant configuration
 
