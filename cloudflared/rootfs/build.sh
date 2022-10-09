@@ -43,4 +43,4 @@ rm -rf /etc/cont-init.d
 
 # Add needed packages
 apk add --no-cache \
-    yq=4.25.1-r4
+    yq=4.25.1-r5

@@ -34,7 +34,7 @@ configuration:
     description: >-
       Set custom data folder to store Cloudflare configuration.
   custom_config:
-    name: Enable Custom Configuration
+    name: (Deprecated) Enable Custom Configuration
     description: >-
       You can provide your own Cloudflare ingress configuration when this
       option is enabled.
