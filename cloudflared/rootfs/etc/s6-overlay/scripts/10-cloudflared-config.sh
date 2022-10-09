@@ -429,10 +429,10 @@ main() {
 
     # Check for custom data path
     if bashio::config.has_value 'data_folder'; then
+        bashio::log.info "Data path set to ${data_path}"
         data_path="/$(bashio::config 'data_folder')/cloudflared"
+        mkdir -p "${data_path}"
         if bashio::config.true 'custom_config' ; then
-            bashio::log.info "Data path set to ${data_path}"
-            mkdir -p "${data_path}"
             migrateFiles
         else
             bashio::log.warning "You are using the data_folder option"
