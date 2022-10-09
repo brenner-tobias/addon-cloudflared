@@ -74,7 +74,7 @@ advanced configurations can be achieved using the remote tunnel setup.
 - [`additional_hosts`](#option-additional_hosts)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
-- [`data_folder`](#option-data_folder)
+- [`data_folder (Deprecated)`](#option-data_folder)
 - [`custom_config (Deprecated)`](#option-custom_config-advanced-option)
 - [`warp_enable (Deprecated)`](#option-warp_enable-advanced-option)
 - [`warp_routes (Deprecated)`](#option-warp_routes)
@@ -204,6 +204,10 @@ Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
 
 ### Option: `data_folder`
+
+**Deprecated**: Please note that this option is deprecated and will be
+removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
+in your Zero Trust dashboard.
 
 The `data_folder` option allows to change the default storage
 location (`/data`) for the automatically created `cert.pem` and
