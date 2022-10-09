@@ -435,6 +435,9 @@ main() {
         createTunnel
     fi
     if bashio::config.true 'custom_config' ; then
+        bashio::log.warning "You are using the custom_config option"
+        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
+        bashio::log.warning "We strongly suggest to migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
         if hasCustomConfig ; then
             bashio::log.info "Finished setting-up the Cloudflare Tunnel with custom config file"
             bashio::exit.ok
