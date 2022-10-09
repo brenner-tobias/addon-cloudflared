@@ -429,16 +429,15 @@ main() {
 
     # Check for custom data path
     if bashio::config.has_value 'data_folder'; then
+        data_path="/$(bashio::config 'data_folder')/cloudflared"
+        bashio::log.info "Data path set to ${data_path}"
+        mkdir -p "${data_path}"
         if bashio::config.true 'custom_config' ; then
-            data_path="/$(bashio::config 'data_folder')/cloudflared"
-            bashio::log.info "Data path set to ${data_path}"
-            mkdir -p "${data_path}"
             migrateFiles
         else
             bashio::log.warning "You are using the data_folder option"
             bashio::log.warning "Please note that this option is deprecated and will be removed soon."
             bashio::log.warning "We will auto-migrate your files to the default location '/data'"
-            data_path="/$(bashio::config 'data_folder')/cloudflared"
             migrateFilesToDefault
             bashio::log.warning "Sucessfully migrated your files to the default location"
             bashio::log.warning "Removing the 'data_folder' option"
