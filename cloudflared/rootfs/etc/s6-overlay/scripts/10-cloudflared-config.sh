@@ -297,6 +297,22 @@ migrateFiles() {
 }
 
 # ------------------------------------------------------------------------------
+# Migrate config files from custom data path to default data path (/data)
+# ------------------------------------------------------------------------------
+migrateFilesToDefault() {
+    if bashio::fs.file_exists "${data_path}/cert.pem"; then
+        bashio::log.warning "Migrating ${data_path}/cert.pem to /data/cert.pem"
+        mv "${data_path}/cert.pem" /data/cert.pem \
+            || bashio::exit.nok "Migration failed."
+    fi
+    if bashio::fs.file_exists "${data_path}/tunnel.json"; then
+        bashio::log.warning "Migrating ${data_path}/tunnel.json to /data/tunnel.json"
+        mv "${data_path}/tunnel.json" /data/tunnel.json \
+            || bashio::exit.nok "Migration failed."
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Create cloudflare DNS entry for external hostname and additional hosts
 # ------------------------------------------------------------------------------
 createCustomDNS() {
@@ -413,14 +429,21 @@ main() {
 
     # Check for custom data path
     if bashio::config.has_value 'data_folder'; then
-        bashio::log.warning "You are using the data_folder option"
-        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
-        bashio::log.warning "We strongly suggest to migrate your files to the default folder '/data'"
-        bashio::log.warning "or migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
-        data_path="/$(bashio::config 'data_folder')/cloudflared"
-        bashio::log.info "Data path set to ${data_path}"
-        mkdir -p "${data_path}"
-        migrateFiles
+        if bashio::config.true 'custom_config' ; then
+            data_path="/$(bashio::config 'data_folder')/cloudflared"
+            bashio::log.info "Data path set to ${data_path}"
+            mkdir -p "${data_path}"
+            migrateFiles
+        else
+            bashio::log.warning "You are using the data_folder option"
+            bashio::log.warning "Please note that this option is deprecated and will be removed soon."
+            bashio::log.warning "We will auto-migrate your files to the default location '/data'"
+            migrateFilesToDefault
+            bashio::log.warning "Sucessfully migrated your files to the default location"
+            bashio::log.warning "Removing the 'data_folder' option"
+            bashio::addon.option 'data_folder'
+            bashio::log.warning "Starting add-on with default location"
+        fi
     fi
 
     checkConfig
