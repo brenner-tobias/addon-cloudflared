@@ -17,8 +17,13 @@ checkLegacyOptions() {
     if bashio::config.has_value 'data_folder' ; then
         bashio::log.warning "Your config contains the option 'data_folder'"
         bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Auto-migrating your files to the default location '/data'"
+        data_path="/$(bashio::config 'data_folder')/cloudflared"
+        migrateFilesToDefault
+        bashio::log.warning "Removing the 'data_folder' option"
         bashio::addon.option 'data_folder'
-        bashio::log.warning "The option 'data_folder' was removed from your add-on configuration"
+        data_path="/data"
+        bashio::log.warning "Starting add-on with default location"
     fi
 
     if bashio::config.has_value 'custom_config' ; then
@@ -302,6 +307,22 @@ createDNS() {
             cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${host}" \
             || bashio::exit.nok "Failed to create DNS entry ${host}."
         done
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Migrate config files from custom data path to default data path (/data)
+# ------------------------------------------------------------------------------
+migrateFilesToDefault() {
+    if bashio::fs.file_exists "${data_path}/cert.pem"; then
+        bashio::log.warning "Migrating ${data_path}/cert.pem to /data/cert.pem"
+        mv "${data_path}/cert.pem" /data/cert.pem \
+            || bashio::exit.nok "Migration failed."
+    fi
+    if bashio::fs.file_exists "${data_path}/tunnel.json"; then
+        bashio::log.warning "Migrating ${data_path}/tunnel.json to /data/tunnel.json"
+        mv "${data_path}/tunnel.json" /data/tunnel.json \
+            || bashio::exit.nok "Migration failed."
     fi
 }
 
