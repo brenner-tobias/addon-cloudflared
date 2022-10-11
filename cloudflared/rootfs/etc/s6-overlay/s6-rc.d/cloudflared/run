@@ -12,15 +12,8 @@ if bashio::config.has_value 'tunnel_token' ; then
 
 else
     data_path="/data"
-    if bashio::config.has_value 'data_folder'; then
-        data_path="/$(bashio::config 'data_folder')/cloudflared"
-    fi
-    # Check status file which exists when custom_config exists
-    if bashio::config.true "custom_config"; then
-        config="${data_path}/config.yml"
-    else
-        config="${default_config}"
-    fi
+    config="${default_config}"
+    
     certificate="${data_path}/cert.pem"
     tunnel_name="$(bashio::config 'tunnel_name')"
 
