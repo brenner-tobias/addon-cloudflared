@@ -48,7 +48,8 @@ jobs:
       - name: 🚀 Check installed and latest version
         id: check_version
         run: |
-          json=$(jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json)
+          json=$(jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' \
+            ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json)
           echo "$json" > ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json
       - name: 🚀 Commit & Create Pull Request
         uses: peter-evans/create-pull-request@v4
