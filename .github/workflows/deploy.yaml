@@ -80,9 +80,9 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
       - name: 🏗 Set up QEMU
-        uses: docker/setup-qemu-action@v2.0.0
+        uses: docker/setup-qemu-action@v2.1.0
       - name: 🏗 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.0.0
+        uses: docker/setup-buildx-action@v2.1.0
       - name: 🏗 Set up Codenotary Community Attestation Service (CAS)
         uses: frenck/action-setup-cas@v0.1.0
       - name: ℹ️ Compose build flags
@@ -106,7 +106,7 @@ jobs:
             exit 1
           fi
       - name: 🏗  Login to GitHub Container Registry
-        uses: docker/login-action@v2.0.0
+        uses: docker/login-action@v2.1.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -120,7 +120,7 @@ jobs:
             --signerID "${{ needs.information.outputs.base_image_signer }}" \
             "docker://${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
-        uses: docker/build-push-action@v3.1.1
+        uses: docker/build-push-action@v3.2.0
         with:
           load: true
           # yamllint disable rule:line-length
