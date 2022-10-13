@@ -120,7 +120,7 @@ jobs:
             --signerID "${{ needs.information.outputs.base_image_signer }}" \
             "docker://${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
-        uses: docker/build-push-action@v3.1.1
+        uses: docker/build-push-action@v3.2.0
         with:
           load: true
           # yamllint disable rule:line-length
