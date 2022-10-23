@@ -32,10 +32,10 @@ DNS servers of Cloudflare. If you do not have one, you can get one for free at
 
 ## Disclaimer
 
-Please make sure to be compliant with the
+Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-add-on. Especially [section 2.8][cloudflare-sssa-28] could be breached when
-mainly streaming videos or other Non-HTML content.
+add-on. For example [section 2.8][cloudflare-sssa-28] could be breached when
+streaming videos (e.g. Plex) or other non-HTML content.
 
 ## Installation
 
