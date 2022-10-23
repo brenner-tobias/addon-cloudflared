@@ -80,40 +80,31 @@ advanced configurations can be achieved using the remote tunnel setup.
 
 **Note**: _Remember to restart the add-on when the configuration is changed._
 
-Example basic add-on configuration:
-
-```yaml
-external_hostname: "ha.example.com"
-additional_hosts: []
-```
-
-Example extended add-on configuration:
+Example add-on configuration:
 
 ```yaml
 external_hostname: "ha.example.com"
 additional_hosts:
   - hostname: "router.example.com"
     service: "http://192.168.1.1"
-  - hostname: "diskstation.example.com"
-    service: "https://192.168.1.2:5001"
   - hostname: "website.example.com"
     service: "http://192.168.1.3:8080"
-    disableChunkedEncoding: true
-nginx_proxy_manager: true
-log_level: "debug"
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
 
-### Option: `tunnel_name`
+### Option: `external_hostname`
 
-If you want to change the default tunnel name to something different than
-"homeassistant", you can do so by using this option.
+Set the `external_hostname` option to the domain name or subdomain that you want
+to use to access Home Assistant on.
+
+This is optional, `additional_hosts` can be used instead to only expose other
+services.
 
 **Note**: _The tunnel name needs to be unique in your Cloudflare account._
 
 ```yaml
-tunnel_name: "myHomeAssistant"
+external_hostname: "ha.example.com"
 ```
 
 ### Option: `additional_hosts`
@@ -122,8 +113,8 @@ You can use the internal reverse proxy of Cloudflare Tunnel to define additional
 hosts next to Home Assistant. That way, you can use the tunnel to also access
 other systems like a diskstation, router or anything else.
 
-Like with the `external_hostname` of Home Assistant, DNS entries will be
-automatically created at Cloudflare.
+Like the `external_hostname` option used for Home Assistant, DNS entries will
+be automatically created at Cloudflare.
 
 Add the (optional) `disableChunkedEncoding` option to a hostname, to disable
 chunked transfer encoding. This is useful if you are running a WSGI server,
@@ -146,6 +137,17 @@ additional_hosts:
 **Note**: _If you delete a hostname from the list, it will not be served
 anymore. Nevertheless, you should also manually delete the DNS entry from
 Cloudflare since it can not be deleted by the add-on._
+
+### Option: `tunnel_name`
+
+The `tunnel_name` option allows changing the tunnel name to something other
+than the default of `homeassistant`.
+
+**Note**: _The tunnel name needs to be unique in your Cloudflare account._
+
+```yaml
+tunnel_name: "myHomeAssistant"
+```
 
 ### Option: `catch_all_service`
 
