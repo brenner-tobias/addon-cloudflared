@@ -370,6 +370,6 @@ main() {
 
     createDNS
 
-    bashio::log.info "Finished setting-up the Cloudflare Tunnel"
+    bashio::log.info "Finished setting up the Cloudflare Tunnel"
 }
 main "$@"
