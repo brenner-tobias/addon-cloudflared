@@ -45,8 +45,8 @@ empty and set `additional_hosts` as [shown below](#configuration).
    authenticate with Cloudflare**.
    You need to copy a URL from the logs and visit it to authenticate.
 
-A tunnel will now have been created and show up in your Cloudflare Teams
-dashboard. Please review the additional configuration options listed below.
+A tunnel should now be listed in your Cloudflare Teams dashboard.
+Please review the additional configuration options below.
 
 ### Remote tunnel add-on setup (advanced setups only)
 
@@ -62,16 +62,17 @@ Trust Dashboard and provide the token to the add-on.
 1. Start the "Cloudflared" add-on, check the logs to see whether everything went
    as expected.
 
-The tunnel you created should now be associated with the Cloudflared add-on.
-The configuration options listed below are ignored when using a remote tunnel.
+Your tunnel should now be associated with the Cloudflared add-on. Any
+configuration changes should be made in the Cloudflare Teams dashboard.
 
 ## Configuration
 
 **These configuration options only apply to the local tunnel setup**. More
-advanced configurations can be achieved using the remote tunnel setup.
+advanced config can be achieved using the remote tunnel setup.
 
-- [`tunnel_name`](#option-tunnel_name)
+- [`external_hostname`](#option-external_hostname)
 - [`additional_hosts`](#option-additional_hosts)
+- [`tunnel_name`](#option-tunnel_name)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
 - [`log_level`](#option-log_level)
