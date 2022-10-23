@@ -13,20 +13,20 @@
 [![Github Actions][github-actions-shield]][github-actions]
 ![Project Maintenance][maintenance-shield]
 
-Connect remotely to your Home Assistant instance without opening ports using
-Cloudflare Tunnel.
+Connect remotely to your Home Assistant and other services, without opening ports
+using Cloudflare Tunnel.
 
 ## About
 
 Cloudflared connects your Home Assistant Instance via a secure tunnel to a domain
-or subdomain at Cloudflare. Doing that, you can expose your Home Assistant to the
-Internet without opening any ports in your router. Additionally, you can utilize
-Cloudflare Teams, their Zero Trust platform to further secure your Home Assistant
+or subdomain at Cloudflare. This allows you to expose your Home Assistant
+instance and other services to the Internet without opening ports on your router.
+Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this add-on, you have to own a domain name (e.g. example.com) and use the
-DNS servers of Cloudflare. If you do not have one, you can get one for free at
-[Freenom][freenom] following [this article][domainarticle].**
+**To use this add-on, you need a domain name (e.g. example.com) that is using
+Cloudflare for its DNS entries. If you do not have one, you can get one for
+free at [Freenom][freenom] following [this article][domainarticle].**
 
 [:books: Read the full add-on documentation][docs]
 
