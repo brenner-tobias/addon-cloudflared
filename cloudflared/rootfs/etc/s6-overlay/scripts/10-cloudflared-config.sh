@@ -33,7 +33,7 @@ checkLegacyOptions() {
         bashio::addon.option 'custom_config'
         bashio::log.warning "The option 'custom_config' was removed from your add-on configuration"
     fi
-    
+
     if bashio::config.has_value 'warp_enable' ; then
         bashio::log.warning "Your config contains the option 'warp_enable'"
         bashio::log.warning "This option is not supported anymore"
@@ -69,7 +69,7 @@ checkConfig() {
     local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
     # Check for minimum configuration options
-    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'additional_hosts' && 
+    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'additional_hosts' &&
         bashio::config.is_empty 'catch_all_service' && bashio::config.is_empty 'nginx_proxy_manager';
     then
         bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
@@ -292,7 +292,7 @@ createDNS() {
 
     # Create DNS entry for external hostname of Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname' ; then
-        bashio::log.info "Creating new DNS entry ${external_hostname}..."
+        bashio::log.info "Creating DNS entry ${external_hostname}..."
         cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
         || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
     fi
@@ -300,7 +300,7 @@ createDNS() {
     # Check for configured additional hosts and create DNS entries for them if existing
     if bashio::config.has_value 'additional_hosts' ; then
         for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            bashio::log.info "Creating new DNS entry ${host}..."
+            bashio::log.info "Creating DNS entry ${host}..."
             if bashio::var.is_empty "${host}" ; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' is empty, please enter a valid String"
             fi
@@ -370,6 +370,6 @@ main() {
 
     createDNS
 
-    bashio::log.info "Finished setting-up the Cloudflare Tunnel"
+    bashio::log.info "Finished setting up the Cloudflare Tunnel"
 }
 main "$@"
