@@ -8,6 +8,58 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Checks for legacy options and removes them
+# ------------------------------------------------------------------------------
+checkLegacyOptions() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::log.info "Checking config for legacy options..."
+
+    if bashio::config.has_value 'data_folder' ; then
+        bashio::log.warning "Your config contains the option 'data_folder'"
+        bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Auto-migrating your files to the default location '/data'"
+        data_path="/$(bashio::config 'data_folder')/cloudflared"
+        migrateFilesToDefault
+        bashio::log.warning "Removing the 'data_folder' option"
+        bashio::addon.option 'data_folder'
+        data_path="/data"
+        bashio::log.warning "Starting add-on with default location"
+    fi
+
+    if bashio::config.has_value 'custom_config' ; then
+        bashio::log.warning "Your config contains the option 'custom_config'"
+        bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
+        bashio::addon.option 'custom_config'
+        bashio::log.warning "The option 'custom_config' was removed from your add-on configuration"
+    fi
+    
+    if bashio::config.has_value 'warp_enable' ; then
+        bashio::log.warning "Your config contains the option 'warp_enable'"
+        bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
+        bashio::addon.option 'warp_enable'
+        bashio::log.warning "The option 'warp_enable' was removed from your add-on configuration"
+    fi
+
+    if bashio::config.has_value 'warp_routes' ; then
+        bashio::log.warning "Your config contains the option 'warp_routes'"
+        bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
+        bashio::addon.option 'warp_routes'
+        bashio::log.warning "The option 'warp_routes' was removed from your add-on configuration"
+    fi
+
+    if bashio::config.has_value 'warp_reset' ; then
+        bashio::log.warning "Your config contains the option 'warp_reset'"
+        bashio::log.warning "This option is not supported anymore"
+        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
+        bashio::addon.option 'warp_reset'
+        bashio::log.warning "The option 'warp_reset' was removed from your add-on configuration"
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Checks if the config is valid
 # ------------------------------------------------------------------------------
 checkConfig() {
@@ -16,19 +68,11 @@ checkConfig() {
 
     local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
-    # Check if 'custom_config' and 'data_folder' are both included in config.
-    if bashio::config.true 'custom_config' ; then
-        if ! bashio::config.has_value 'data_folder' ; then
-            bashio::exit.nok "The config option 'custom_config' can only be used in combination with a custom 'data_folder' option."
-        fi
-        bashio::exit.ok "Running with Custom-Config and skipping further validations"
-    fi
-
-    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'custom_config' &&
-        bashio::config.is_empty 'additional_hosts' && bashio::config.is_empty 'catch_all_service' &&
-        bashio::config.is_empty 'nginx_proxy_manager';
+    # Check for minimum configuration options
+    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'additional_hosts' && 
+        bashio::config.is_empty 'catch_all_service' && bashio::config.is_empty 'nginx_proxy_manager';
     then
-        bashio::exit.nok "Cannot run without tunnel_token, external_hostname, custom_config, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
+        bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
     # Check if 'external_hostname' includes a valid hostname
@@ -70,11 +114,6 @@ checkConfig() {
     # Check if 'catch_all_service' and 'nginx_proxy_manager' are both included in config.
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
-    fi
-
-    # Check if 'warp_enable' and 'warp_routes' are both included in config.
-    if bashio::config.true 'warp_enable' && ! bashio::config.has_value 'warp_routes' ; then
-        bashio::exit.nok "The config option 'warp_enable' can only be used in combination with defined routes defined in 'warp_routes'."
     fi
 }
 
@@ -179,15 +218,6 @@ createConfig() {
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
-    # Add Warp configuration
-    if bashio::config.true 'warp_enable' ; then
-        bashio::log.warning "You are using the Warp-Option"
-        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
-        bashio::log.warning "We strongly suggest to migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
-        bashio::log.debug "Add Warp-routing..."
-        config=$(bashio::jq "${config}" ".\"warp-routing\" += {\"enabled\": true}")
-    fi
-
     bashio::log.debug "Checking if SSL is used..."
     if bashio::var.true "$(bashio::core.ssl)" ; then
         ha_service_protocol="https"
@@ -281,22 +311,6 @@ createDNS() {
 }
 
 # ------------------------------------------------------------------------------
-# Migrate config files from default data path (/data) to custom data path
-# ------------------------------------------------------------------------------
-migrateFiles() {
-    if bashio::fs.file_exists '/data/cert.pem'; then
-        bashio::log.warning "Migrating /data/cert.pem to ${data_path}/cert.pem"
-        mv /data/cert.pem "${data_path}/cert.pem" \
-            || bashio::exit.nok "Migration failed."
-    fi
-    if bashio::fs.file_exists '/data/tunnel.json'; then
-        bashio::log.warning "Migrating /data/tunnel.json to ${data_path}/tunnel.json"
-        mv /data/tunnel.json "${data_path}/tunnel.json" \
-            || bashio::exit.nok "Migration failed."
-    fi
-}
-
-# ------------------------------------------------------------------------------
 # Migrate config files from custom data path to default data path (/data)
 # ------------------------------------------------------------------------------
 migrateFilesToDefault() {
@@ -312,99 +326,6 @@ migrateFilesToDefault() {
     fi
 }
 
-# ------------------------------------------------------------------------------
-# Create cloudflare DNS entry for external hostname and additional hosts
-# ------------------------------------------------------------------------------
-createCustomDNS() {
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    # Check for configured additional hosts and create DNS entries for them if existing
-    for host in $( yq e '.ingress[].hostname | select(. == "*")' "${data_path}/config.yml" ); do
-        bashio::log.info "Creating new DNS entry ${host}..."
-        if bashio::var.is_empty "${host}" ; then
-            bashio::exit.nok "'hostname' is empty, please check your config file."
-        fi
-        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${host}" \
-        || bashio::exit.nok "Failed to create DNS entry ${host}."
-    done
-}
-
-# ------------------------------------------------------------------------------
-# Check if custom config file exists and is valid
-# ------------------------------------------------------------------------------
-hasCustomConfig() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Checking for existing custom config ${data_path}/config.yml"
-    if bashio::fs.file_exists "${data_path}/config.yml" ; then
-        bashio::log.info "Custom config found, validating..."
-        if cloudflared tunnel --loglevel "${CLOUDFLARED_LOG}" --config="${data_path}/config.yml" ingress validate ; then
-            createCustomDNS
-            return "${__BASHIO_EXIT_OK}"
-        else
-            bashio::exit.nok "Your custom config is invalid. Please correct errors or remove 'custom_config' option"
-        fi
-    fi
-
-    bashio::exit.nok "No custom config found: ${data_path}/config.yml please create custom config file or remove 'custom_config' option"
-}
-
-# ------------------------------------------------------------------------------
-# Delete all routes assigned to tunnel id
-# ------------------------------------------------------------------------------
-deleteRoutes() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    # Remove already linked routes
-    bashio::log.info "Removing already configured routes for tunnel ${tunnel_name}"
-    # Get routes linked to tunnel id
-    existing_tunnel_routes=$(cloudflared --origincert="${data_path}/cert.pem" \
-                    tunnel --loglevel "${CLOUDFLARED_LOG}" \
-                    route ip list --filter-tunnel-id "${tunnel_uuid}" --output json) || bashio::exit.nok "Failed getting routes"
-    # Remove routes one by one
-    for route in $(echo "${existing_tunnel_routes}" | jq -cr ".[] | .network") ; do
-        cloudflared --origincert="${data_path}/cert.pem" \
-            tunnel --loglevel "${CLOUDFLARED_LOG}" \
-            route ip delete "${route}" || bashio::exit.nok "Failed deleting route ${route}"
-        bashio::log.debug "Removing route ${route}"
-    done
-}
-
-# ------------------------------------------------------------------------------
-# Create route for local IPs if Warp is enabled
-# ------------------------------------------------------------------------------
-createRoutes() {
-    # Delete routes
-    deleteRoutes
-
-    # Get value from add-on option set by user
-    routes+=($(bashio::config 'warp_routes'))
-
-    for route in "${routes[@]}" ; do
-
-        bashio::log.info "Adding route ${route} to ${tunnel_name} tunnel"
-        # add route
-        cloudflared --origincert="${data_path}/cert.pem" \
-            tunnel --loglevel "${CLOUDFLARED_LOG}" \
-            route ip add "${route}" "${tunnel_uuid}" || bashio::exit.nok "Failed adding route ${route}. Check logs above for more information on this error."
-    done
-
-}
-
-# ------------------------------------------------------------------------------
-# Reset routes and config options
-# ------------------------------------------------------------------------------
-resetWarp() {
-    bashio::log.warning "Reset cloudflared warp routes and add-on warp options"
-    # Delete routes
-    deleteRoutes
-
-    bashio::log.debug "Removing 'warp_*' options from add-on config"
-    bashio::addon.option 'warp_enable'
-    bashio::addon.option 'warp_routes'
-    bashio::addon.option 'warp_reset'
-
-    bashio::log.warning "Warp disabled successfully"
-}
-
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -417,6 +338,8 @@ data_path="/data"
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
+    checkLegacyOptions
+
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
         bashio::log.info ""
@@ -425,26 +348,6 @@ main() {
         bashio::log.info "will be ignored."
         bashio::log.info ""
         bashio::exit.ok
-    fi
-
-    # Check for custom data path
-    if bashio::config.has_value 'data_folder'; then
-        data_path="/$(bashio::config 'data_folder')/cloudflared"
-        bashio::log.info "Data path set to ${data_path}"
-        mkdir -p "${data_path}"
-        if bashio::config.true 'custom_config' ; then
-            migrateFiles
-        else
-            bashio::log.warning "You are using the data_folder option"
-            bashio::log.warning "Please note that this option is deprecated and will be removed soon."
-            bashio::log.warning "We will auto-migrate your files to the default location '/data'"
-            migrateFilesToDefault
-            bashio::log.warning "Sucessfully migrated your files to the default location"
-            bashio::log.warning "Removing the 'data_folder' option"
-            bashio::addon.option 'data_folder'
-            bashio::log.warning "Starting add-on with default location"
-            data_path="/data"
-        fi
     fi
 
     checkConfig
@@ -462,27 +365,10 @@ main() {
     if ! hasTunnel ; then
         createTunnel
     fi
-    if bashio::config.true 'custom_config' ; then
-        bashio::log.warning "You are using the custom_config option"
-        bashio::log.warning "Please note that this option is deprecated and will be removed soon."
-        bashio::log.warning "We strongly suggest to migrate to Cloudflare Managed Tunnels in your Zero Trust dashboard."
-        if hasCustomConfig ; then
-            bashio::log.info "Finished setting-up the Cloudflare Tunnel with custom config file"
-            bashio::exit.ok
-        fi
-    fi
-
-    if bashio::config.true 'warp_reset' ; then
-        resetWarp
-    fi
 
     createConfig
 
     createDNS
-
-    if bashio::config.true 'warp_enable' ; then
-        createRoutes
-    fi
 
     bashio::log.info "Finished setting-up the Cloudflare Tunnel"
 }

@@ -74,12 +74,7 @@ advanced configurations can be achieved using the remote tunnel setup.
 - [`additional_hosts`](#option-additional_hosts)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
-- [`data_folder (Deprecated)`](#option-data_folder)
-- [`custom_config (Deprecated)`](#option-custom_config-advanced-option)
-- [`warp_enable (Deprecated)`](#option-warp_enable-advanced-option)
-- [`warp_routes (Deprecated)`](#option-warp_routes)
 - [`log_level`](#option-log_level)
-- [`warp_reset (Deprecated)`](#option-warp_reset)
 
 ### Overview: Add-on configuration
 
@@ -106,9 +101,6 @@ additional_hosts:
     disableChunkedEncoding: true
 nginx_proxy_manager: true
 log_level: "debug"
-warp_enable: true
-warp_routes:
-  - 192.168.1.0/24
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
@@ -203,119 +195,6 @@ or directly to the tunnel URL that you can get from the CNAME entry of
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
 
-### Option: `data_folder`
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-The `data_folder` option allows to change the default storage
-location (`/data`) for the automatically created `cert.pem` and
-`tunnel.json` file.
-
-Possible values are:
-
-- `config`: Files will be stored in /config/cloudflared.
-- `share`: Files will be stored in /share/cloudflared.
-- `ssl`: Files will be stored in /ssl/cloudflared.
-
-```yaml
-data_folder: ssl
-```
-
-The add-on takes care of moving the created files from the default location
-to the custom `data_folder` when adding the option after initial add-on setup.
-
-**Note**: There are currently no automations in place when changing
-from custom data folder to another custom data folder or back to default.
-You have to take care of moving the files accordingly.
-
-### Option: `custom_config` (advanced option)
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-The `custom_config` option can be used to create a custom `config.yml`
-file to create more complex ingress configurations.
-
-The option can only be used in combination with the `data_folder` option.
-
-See [cloudflared documentation][cloudflared-ingress] for further details on
-the needed file structure and content options.
-
-For example: if you set `data_folder: ssl` the add-on will search for
-`/ssl/cloudflared/config.yml` when `custom_config: true`.
-
-Your file will be validated on add-on startup and all errors will be logged.
-
-For your custom config.yml you have to add values for `tunnel` and the tunnel
-credentials file. The tunnel credentials file is located in your
-`data_folder/cloudflared` and is named `tunnel.json`.
-
-The `tunnel.json` file contains your `<tunnel UUID>` as `TunnelID` attribute.
-
-```yaml
----
-tunnel: <tunnel UUID>
-credentials-file: "/ssl/cloudflared/tunnel.json"
-ingress:
-  - hostname: homeassistant.example.com
-    service: http://homeassistant:8123
-    originRequest:
-      noTLSVerify: true
-```
-
-**Note**: If you use a custom `config.yml` file, `additional_hosts` and
-`external_hostname` options will be ignored. Make sure to add all needed
-services (e.g. a homeassistant ingress rule) inside `config.yml`.
-
-### Option: `warp_enable` (advanced option)
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-If you want to route your home network(s) you can set this option to
-`true`. This will enable proxying network traffic through your tunnel.
-
-Before setting this to `true` please have a look at the [cloudflared documentation][cloudflared-route].
-
-This add-on will take care of setting up the Cloudflare Tunnel and routing
-specific configuration. All other configuration is up to you.
-
-An excerpt from the above documentation:
-
-- Enable HTTP filtering by turning on the Proxy switch under Settings >
-  Network > L7 Firewall.
-- Create device enrollment rules to determine which devices can enroll
-  to your Zero Trust organization.
-- Install the WARP client on the devices you want to allow into your network.
-
-### Option: `warp_routes`
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard.
-
-This option controls which routes will be added to your tunnel.
-
-This option is mandatory if `warp_enable` is set to `true`.
-
-See the example below on how to specify networks (IP/CIDR) in
-`warp_routes`.
-
-```yaml
-warp_enable: true
-warp_routes:
-  - 192.168.0.0/24
-  - 192.168.10.0/24
-```
-
-**Note**: _By default, Cloudflare Zero Trust excludes traffic for private
-address spaces (RFC 191), you need to adapt the
-[Split Tunnel][cloudflared-route-st] configuration._
-
 ### Option: `log_level`
 
 The `log_level` option controls the level of log output by the addon and can
@@ -339,24 +218,6 @@ Please note that each level automatically includes log messages from a
 more severe level, e.g., `debug` also shows `info` messages. By default,
 the `log_level` is set to `info`, which is the recommended setting unless
 you are troubleshooting.
-
-### Option: `warp_reset`
-
-**Deprecated**: Please note that this option is deprecated and will be
-removed soon. We strongly suggest to migrate to Cloudflare Managed Tunnels
-in your Zero Trust dashboard if you are using this option.
-
-In case something went wrong or you no longer want to use this add-on to
-route your networks, you can reset warp related settings by setting this option
-to `true`.
-
-```yaml
-warp_reset: true
-```
-
-**Note**: _This will remove the routes assigned to your tunnel. The add-on
-options `warp_reset`, `warp_enable` and `warp_routes` will automatically be
-removed from the add-on configuration._
 
 ## Home Assistant configuration
 
@@ -475,10 +336,6 @@ SOFTWARE.
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
-[cloudflared-ingress]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
-[cloudflared-route]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/
-[cloudflared-route-st]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net#optional-ensure-that-traffic-can-reach-your-network
-[remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#set-up-a-tunnel-remotely-dashboard-setup
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
 [self-hosted-applications]: https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/
 [addon-remote-tunnel]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/remote-tunnel.md

@@ -29,30 +29,6 @@ configuration:
     description: >-
       Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
       Add-on.
-  data_folder:
-    name: (Deprecated) Custom Data Folder
-    description: >-
-      Set custom data folder to store Cloudflare configuration.
-  custom_config:
-    name: (Deprecated) Enable Custom Configuration
-    description: >-
-      You can provide your own Cloudflare ingress configuration when this
-      option is enabled.
-  warp_enable:
-    name: (Deprecated) Enable Cloudflare Warp
-    description: >-
-      This option enables Cloudflare Warp functionality. Warp allows you to
-      route your whole network through the Cloudflare Tunnel.
-  warp_routes:
-    name: (Deprecated) Define Cloudflare Warp routes
-    description: >-
-      Define networks to route through your Cloudflare Tunnel if Warp function
-      is enabled.
-  warp_reset:
-    name: (Deprecated) Reset Cloudflare Warp
-    description: >-
-      When enabled, the Cloudflare Warp related add-on configuration will
-      be reset upon next add-on start.
   tunnel_token:
     name: Cloudflare Tunnel Token
     description: >-
