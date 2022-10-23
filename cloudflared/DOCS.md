@@ -284,7 +284,7 @@ are able to access Home Assistant, see the
 
 ## Domain name and Cloudflare set up
 
-To use this plugin, you need a domain name that is using Cloudflare for its
+To use this add-on, you need a domain name that is using Cloudflare for its
 DNS entries.
 
 ### Domain name
