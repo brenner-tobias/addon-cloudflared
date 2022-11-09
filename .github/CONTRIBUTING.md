@@ -25,6 +25,6 @@ Even better: You could submit a pull request with a fix / new feature!
    developer, or if you do not have permission to do that, you may request
    the reviewer to merge it for you.
 
-[coc]: /CODE_OF_CONDUCT.md
+[coc]: /.github/CODE_OF_CONDUCT.md
 [github]: https://github.com/brenner-tobias/addon-cloudflared/issues
 [prs]: https://github.com/brenner-tobias/addon-cloudflared/pulls
