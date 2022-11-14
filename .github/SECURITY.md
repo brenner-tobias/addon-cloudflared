@@ -9,7 +9,7 @@ do not create a GitHub issue for it!**
 ## Reporting a vulnerability
 
 Please create a [new Security Advisory](https://github.com/brenner-tobias/addon-cloudflared/security/advisories/new)
-with a  detailed description of the vulnerability you have discovered.
+with a detailed description of the vulnerability you have discovered.
 
 In the report, please include as much information as possible, including:
 
