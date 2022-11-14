@@ -1,16 +1,15 @@
 # Security Policy
 
 If you believe you have found a security vulnerability in this repository,
-please report it directly to me as described below.
+please report it via [GitHub Security Advisories](https://github.com/brenner-tobias/addon-cloudflared/security/advisories).
 
 **Please DO NOT report security vulnerabilities publicly. So
 do not create a GitHub issue for it!**
 
 ## Reporting a vulnerability
 
-Please send me a detailed description of the vulnerability you have
-discovered privately via email. Contact information needed for this
-is listed down below.
+Please create a [new Security Advisory](https://github.com/brenner-tobias/addon-cloudflared/security/advisories/new)
+with a  detailed description of the vulnerability you have discovered.
 
 In the report, please include as much information as possible, including:
 
@@ -22,9 +21,3 @@ In the report, please include as much information as possible, including:
 - Code (if any), that is needed for reproducing the issue.
 - If you have an idea for a fix, patch or any other adjustment for mitigating
   the vulnerability reported.
-
-## Contact information
-
-Please contact me, Tobias Brenner, directly via:
-
-dev@brenner.tech (not for support!)
