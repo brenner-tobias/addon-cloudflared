@@ -1,10 +1,10 @@
 ---
 build_from:
-  aarch64: ghcr.io/hassio-addons/base/aarch64:12.2.6
-  amd64: ghcr.io/hassio-addons/base/amd64:12.2.6
-  armhf: ghcr.io/hassio-addons/base/armhf:12.2.6
-  armv7: ghcr.io/hassio-addons/base/armv7:12.2.6
-  i386: ghcr.io/hassio-addons/base/i386:12.2.6
+  aarch64: ghcr.io/hassio-addons/base/aarch64:12.2.7
+  amd64: ghcr.io/hassio-addons/base/amd64:12.2.7
+  armhf: ghcr.io/hassio-addons/base/armhf:12.2.7
+  armv7: ghcr.io/hassio-addons/base/armv7:12.2.7
+  i386: ghcr.io/hassio-addons/base/i386:12.2.7
 codenotary:
   base_image: codenotary@frenck.dev
   signer: dev@brenner.tech
