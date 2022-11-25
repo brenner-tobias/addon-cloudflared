@@ -32,35 +32,36 @@ In the following steps a Cloudflare Tunnel will be automatically created by the
 add-on to expose your Home Assistant instance.
 
 If you only want to expose other services, you can leave `external_hostname`
-empty and set `additional_hosts` as [shown below](#configuration).
+empty and set `additional_hosts` as [described below](#configuration).
 
-1. Add the `http` integration settings to your Home Assistant config as
-   [described below](#configurationyaml).
-1. Set the `external_hostname` add-on option to the domain name or subdomain
-   that you want to use to access Home Assistant.
-1. (Optional) Change the `tunnel_name` add-on option (default: `homeassistant`).
-1. Start the "Cloudflared" add-on. **This will overwrite any existing DNS entries
-   matching `external_hostname` or `additional_hosts`**.
-1. Check the logs of the "Cloudflared" add-on and **follow the instruction to
-   authenticate with Cloudflare**.
-   You need to copy a URL from the logs and visit it to authenticate.
+1. Configure the `http` integration in your Home Assistant config as
+   [described below](#configurationyaml)
+1. Set `external_hostname` add-on option to the domain/subdomain
+   you want to use for remote access e.g. `ha.example.com`
+1. Start the add-on (this will overwrite any existing DNS entries matching
+   `external_hostname` or `additional_hosts`)
+1. Paste the URL from the add-on logs in a new tab to authenticate with Cloudflare
+1. Access your Home Assistant via the remote URL without port e.g.
+   `https://ha.example.com/`
 
 A tunnel should now be listed in your Cloudflare Teams dashboard.
 Please review the additional configuration options below.
 
-### Remote tunnel add-on setup (advanced setups only)
+### Remote tunnel add-on setup (advanced)
 
 In the following steps you will manually create a Cloudflare Tunnel in the Zero
 Trust Dashboard and provide the token to the add-on.
 
-1. Add the `http` integration settings to your Home Assistant config as
-   [described below](#configurationyaml).
+1. Configure the `http` integration in to your Home Assistant config as
+   [described below](#configurationyaml)
 1. Create a Cloudflare Tunnel in the Cloudflare Teams dashboard following
-   [this how-to][addon-remote-tunnel].
+   [this how-to][addon-remote-tunnel]
 1. Set `tunnel_token` add-on option to your [tunnel token][create-remote-managed-tunnel]
-   (all other configuration will be ignored).
-1. Start the "Cloudflared" add-on, check the logs to see whether everything went
-   as expected.
+   (all other configuration will be ignored)
+1. Start the add-on, check the logs to confirm everything went as
+   expected
+1. Access your Home Assistant via the remote URL without port e.g.
+   `https://ha.example.com/`
 
 Your tunnel should now be associated with the Cloudflared add-on. Any
 configuration changes should be made in the Cloudflare Teams dashboard.
