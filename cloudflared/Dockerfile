@@ -1,9 +1,12 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:12.2.7
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:13.0.0
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Set S6 verbosity level
+ENV S6_VERBOSITY=1
 
 # Setup base
 ARG BUILD_ARCH=amd64

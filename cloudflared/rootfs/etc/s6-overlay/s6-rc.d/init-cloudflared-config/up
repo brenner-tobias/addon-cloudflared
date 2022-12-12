@@ -1,1 +1,1 @@
-/bin/bash -c /etc/s6-overlay/scripts/10-cloudflared-config.sh
+/bin/bash -c /etc/s6-overlay/scripts/cloudflared-config.sh
