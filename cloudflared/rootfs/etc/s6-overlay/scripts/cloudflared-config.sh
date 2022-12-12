@@ -8,58 +8,6 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Checks for legacy options and removes them
-# ------------------------------------------------------------------------------
-checkLegacyOptions() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Checking config for legacy options..."
-
-    if bashio::config.has_value 'data_folder' ; then
-        bashio::log.warning "Your config contains the option 'data_folder'"
-        bashio::log.warning "This option is not supported anymore"
-        bashio::log.warning "Auto-migrating your files to the default location '/data'"
-        data_path="/$(bashio::config 'data_folder')/cloudflared"
-        migrateFilesToDefault
-        bashio::log.warning "Removing the 'data_folder' option"
-        bashio::addon.option 'data_folder'
-        data_path="/data"
-        bashio::log.warning "Starting add-on with default location"
-    fi
-
-    if bashio::config.has_value 'custom_config' ; then
-        bashio::log.warning "Your config contains the option 'custom_config'"
-        bashio::log.warning "This option is not supported anymore"
-        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
-        bashio::addon.option 'custom_config'
-        bashio::log.warning "The option 'custom_config' was removed from your add-on configuration"
-    fi
-
-    if bashio::config.has_value 'warp_enable' ; then
-        bashio::log.warning "Your config contains the option 'warp_enable'"
-        bashio::log.warning "This option is not supported anymore"
-        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
-        bashio::addon.option 'warp_enable'
-        bashio::log.warning "The option 'warp_enable' was removed from your add-on configuration"
-    fi
-
-    if bashio::config.has_value 'warp_routes' ; then
-        bashio::log.warning "Your config contains the option 'warp_routes'"
-        bashio::log.warning "This option is not supported anymore"
-        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
-        bashio::addon.option 'warp_routes'
-        bashio::log.warning "The option 'warp_routes' was removed from your add-on configuration"
-    fi
-
-    if bashio::config.has_value 'warp_reset' ; then
-        bashio::log.warning "Your config contains the option 'warp_reset'"
-        bashio::log.warning "This option is not supported anymore"
-        bashio::log.warning "Please migrate to a Cloudflare Managed Tunnel for extended funtionality"
-        bashio::addon.option 'warp_reset'
-        bashio::log.warning "The option 'warp_reset' was removed from your add-on configuration"
-    fi
-}
-
-# ------------------------------------------------------------------------------
 # Checks if the config is valid
 # ------------------------------------------------------------------------------
 checkConfig() {
@@ -366,8 +314,6 @@ main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     setCloudflaredLogLevel
-
-    checkLegacyOptions
 
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
