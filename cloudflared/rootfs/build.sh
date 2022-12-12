@@ -40,3 +40,8 @@ chmod +x /usr/bin/cloudflared
 
 # Remove legacy cont-init.d services
 rm -rf /etc/cont-init.d
+
+# Remove s-6 legacy/deprecated (and not needed) services
+rm /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/legacy-cont-init
+rm /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/fix-attrs
+rm /package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/legacy-services
