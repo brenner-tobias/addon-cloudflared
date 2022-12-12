@@ -259,22 +259,6 @@ createDNS() {
 }
 
 # ------------------------------------------------------------------------------
-# Migrate config files from custom data path to default data path (/data)
-# ------------------------------------------------------------------------------
-migrateFilesToDefault() {
-    if bashio::fs.file_exists "${data_path}/cert.pem"; then
-        bashio::log.warning "Migrating ${data_path}/cert.pem to /data/cert.pem"
-        mv "${data_path}/cert.pem" /data/cert.pem \
-            || bashio::exit.nok "Migration failed."
-    fi
-    if bashio::fs.file_exists "${data_path}/tunnel.json"; then
-        bashio::log.warning "Migrating ${data_path}/tunnel.json to /data/tunnel.json"
-        mv "${data_path}/tunnel.json" /data/tunnel.json \
-            || bashio::exit.nok "Migration failed."
-    fi
-}
-
-# ------------------------------------------------------------------------------
 # Set Cloudflared log level
 # ------------------------------------------------------------------------------
 setCloudflaredLogLevel() {
