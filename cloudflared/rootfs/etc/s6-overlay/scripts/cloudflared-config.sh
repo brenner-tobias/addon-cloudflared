@@ -330,6 +330,7 @@ migrateFilesToDefault() {
 # Set Cloudflared log level
 # ------------------------------------------------------------------------------
 setCloudflaredLogLevel() {
+local cloudflared_log
 
 # Map Home Assistant log levels to Cloudflared
 if bashio::config.exists 'log_level' ; then
