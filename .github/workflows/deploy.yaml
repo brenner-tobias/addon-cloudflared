@@ -11,6 +11,8 @@ on:
     branches: [main]
     types:
       - completed
+concurrency:
+  group: deploy
 
 jobs:
   information:
@@ -38,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
       - name: 🚀 Run add-on information action
         id: information
-        uses: frenck/action-addon-information@v1.4
+        uses: frenck/action-addon-information@v1.4.1
       - name: 🚀 Process possible slug override
         id: override
         run: |
@@ -46,7 +48,7 @@ jobs:
           if [[ ! -z "${{ inputs.slug }}" ]]; then
             slug="${{ inputs.slug }}"
           fi
-          echo "::set-output name=slug::$slug"
+          echo "slug=$slug" >> $GITHUB_OUTPUT
       - name: ℹ️ Gather version and environment
         id: release
         run: |
@@ -62,8 +64,9 @@ jobs:
               environment="beta"
             fi
           fi
-          echo "::set-output name=environment::${environment}"
-          echo "::set-output name=version::${version}"
+
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
 
   deploy:
     name: 👷 Build & Deploy ${{ matrix.architecture }}
@@ -73,34 +76,28 @@ jobs:
       matrix:
         architecture: ${{ fromJson(needs.information.outputs.architectures) }}
     steps:
-      - name: 🔂 Wait for other runs to complete
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v2.1.0
       - name: 🏗 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.2.1
-      - name: 🏗 Set up Codenotary Community Attestation Service (CAS)
-        uses: frenck/action-setup-cas@v0.1.1
       - name: ℹ️ Compose build flags
         id: flags
         run: |
-          echo "::set-output name=date::$(date +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "date=$(date +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
           from=$(yq --no-colors eval ".build_from.${{ matrix.architecture }}" "${{ needs.information.outputs.build }}")
-          echo "::set-output name=from::${from}"
+          echo "from=$from" >> $GITHUB_OUTPUT
           if [[ "${{ matrix.architecture}}" = "amd64" ]]; then
-            echo "::set-output name=platform::linux/amd64"
+            echo "platform=linux/amd64" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "i386" ]]; then
-            echo "::set-output name=platform::linux/386"
+            echo "platform=linux/386" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "armhf" ]]; then
-            echo "::set-output name=platform::linux/arm/v6"
+            echo "platform=linux/arm/v6" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "armv7" ]]; then
-            echo "::set-output name=platform::linux/arm/v7"
+            echo "platform=linux/arm/v7" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "aarch64" ]]; then
-            echo "::set-output name=platform::linux/arm64/v8"
+            echo "platform=linux/arm64/v8" >> $GITHUB_OUTPUT
           else
             echo "::error ::Could not determine platform for architecture ${{ matrix.architecture }}"
             exit 1
@@ -115,10 +112,10 @@ jobs:
         run: docker pull "${{ steps.flags.outputs.from }}"
       - name: ✅ Verify authenticity of base image
         if: needs.information.outputs.base_image_signer != 'null'
-        run: |
-          cas authenticate \
-            --signerID "${{ needs.information.outputs.base_image_signer }}" \
-            "docker://${{ steps.flags.outputs.from }}"
+        uses: codenotary/cas-authenticate-docker-image-github-action@main
+        with:
+          asset: docker://${{ steps.flags.outputs.from }}
+          signerID: ${{ needs.information.outputs.base_image_signer }}
       - name: 🚀 Build
         uses: docker/build-push-action@v3.2.0
         with:
@@ -142,28 +139,21 @@ jobs:
             BUILD_REF=${{ github.sha }}
             BUILD_REPOSITORY=${{ github.repository }}
             BUILD_VERSION=${{ needs.information.outputs.version }}
-      - name: 🔏 Notarize
+      # yamllint disable rule:line-length
+      - name: 🔏 Notarize new image
         if: needs.information.outputs.signer != 'null'
-        # yamllint disable rule:line-length
-        run: |
-          if ! cas authenticate \
-            --signerID "${{ needs.information.outputs.signer }}" \
-            --silent \
-            "docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}";
-          then
-            cas notarize \
-              --api-key="${{ secrets.CAS_API_KEY }}" \
-              --name "${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}" \
-              "docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}"
-          fi
+        id: notarize_new_image
+        uses: codenotary/cas-notarize-docker-image-github-action@main
+        with:
+          asset: docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}
+          cas_api_key: ${{ secrets.CAS_API_KEY }}
       - name: 🚀 Push
-        # yamllint disable rule:line-length
         run: |
           docker push \
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.environment }}"
           docker push \
             "ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}"
-
+      # yamllint enable rule:line-length
   publish-edge:
     name: 📢 Publish to edge repository
     if: needs.information.outputs.environment == 'edge'
@@ -174,11 +164,17 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
+      - name: 🔣 Generate App Token
+        uses: tibdex/github-app-token@v1
+        id: token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_SECRET }}
       - name: 🚀 Dispatch repository updater update signal
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/ha-addons-edge
+          token: ${{ steps.token.outputs.token }}
+          repository: ${{ github.repository_owner }}/repository-edge
           event-type: update
           client-payload: >
             {
@@ -187,7 +183,6 @@ jobs:
               "repository": "${{ github.repository }}",
               "version": "${{ needs.information.outputs.version }}"
             }
-
   publish-stable:
     name: 📢 Publish to stable repository
     if: needs.information.outputs.environment == 'stable'
@@ -198,11 +193,17 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Dispatch repository updater update signal
-        uses: peter-evans/repository-dispatch@v2
+      - name: 🔣 Generate App Token
+        uses: tibdex/github-app-token@v1
+        id: token
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/ha-addons
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_SECRET }}
+      - name: 🚀 Dispatch repository updater update signal
+        uses: peter-evans/repository-dispatch@v2.0.0
+        with:
+          token: ${{ steps.token.outputs.token }}
+          repository: ${{ github.repository_owner }}/repository-stable
           event-type: update
           client-payload: >
             {
