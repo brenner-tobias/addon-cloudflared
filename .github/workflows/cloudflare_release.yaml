@@ -1,64 +1,95 @@
 ---
-name: Cloudflare Release
+name: Github Release Updater
 # yamllint disable-line rule:truthy
 on:
   schedule:
     - cron: "00 18 * * *"
   workflow_dispatch:
+
+env:
+  VERSION_FILE_PATH: ./cloudflared/versions.json
+  PR_LABELS: "dependencies"
+
 jobs:
-  cloudflare-release:
-    name: ℹ️ Check Cloudflared Release
+  information:
+    name: Gather Repositories
     runs-on: ubuntu-latest
     outputs:
-      update_available: ${{ steps.check_version.outputs.update_available }}
-      latest_version: ${{ steps.check_version.outputs.latest_version }}
-      target: ${{ steps.information.outputs.target }}
+      repositories: ${{ steps.information.outputs.repositories }}
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
-      - name: ℹ️ Gather Cloudflared latest version
-        id: cloudflare_version
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: cloudflare/cloudflared
-          excludes: "prerelease, draft"
-      - name: 🚀 Run add-on information action
+      - name: 🚀 Get repository names
         id: information
-        uses: frenck/action-addon-information@v1.4
-      - name: 🚀 Check installed and latest version
-        id: check_version
         run: |
-          latest_version="${{ steps.cloudflare_version.outputs.release }}"
-          current_version=$(jq -r .version ./${{ steps.information.outputs.target }}/cloudflared_version.json)
-          if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then
-                  echo "::set-output name=update_available::false"
-          else
-                  echo "::set-output name=update_available::true"
-                  echo "::set-output name=latest_version::$latest_version"
-          fi
-  update:
-    name: 🚀 Update cloudflared to latest version
-    if: needs.cloudflare-release.outputs.update_available == 'true'
+          repositories=$(jq -rc 'keys' $VERSION_FILE_PATH )
+          echo "repositories=$repositories" >> $GITHUB_OUTPUT
+
+  build:
+    name: Check ${{ matrix.repository }}
     needs:
-      - cloudflare-release
+      - information
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ${{ fromJson( needs.information.outputs.repositories) }}
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
-      - name: 🚀 Check installed and latest version
+#      - name: 🔣 Generate Token
+#        uses: tibdex/github-app-token@v1
+#        id: token
+#        with:
+#          app_id: ${{ secrets.APP_ID }}
+#          private_key: ${{ secrets.APP_SECRET }}
+      - name: ℹ️ Gather latest release version
+        uses: rez0n/actions-github-release@main
+        id: version
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ matrix.repository }}
+          type: "stable"
+      - name: 🚀 Compare installed and latest version
+        id: compare_versions
+        run: |
+          latest_version="${{ steps.version.outputs.release }}"
+          current_version=$(jq -r '."${{ matrix.repository }}"' $VERSION_FILE_PATH)
+          if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then
+                  echo "update_available=false" >> $GITHUB_OUTPUT
+          else
+                  echo "update_available=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🚀 Update version file
+        if: steps.compare_versions.outputs.update_available == 'true'
         id: check_version
         run: |
-          json=$(jq '.version |= "${{ needs.cloudflare-release.outputs.latest_version }}"' \
-            ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json)
-          echo "$json" > ./${{ needs.cloudflare-release.outputs.target }}/cloudflared_version.json
-      - name: 🚀 Commit & Create Pull Request
+          json=$(jq '."${{ matrix.repository }}" |= "${{ steps.version.outputs.release }}"' $VERSION_FILE_PATH)
+          echo "$json" > $VERSION_FILE_PATH
+          jq . $VERSION_FILE_PATH
+
+      - name: 🚀 Commit & create pull request
         uses: peter-evans/create-pull-request@v4
+        id: cpr
+        if: steps.compare_versions.outputs.update_available == 'true'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
-          branch: "cloudflared-${{ needs.cloudflare-release.outputs.latest_version }}"
+          token: ${{ secrets.GITHUB_TOKEN }} # Should be ${{ steps.token.outputs.token }} if Github App token is used
+          commit-message: "ℹ️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          branch: "${{ matrix.repository }}-${{ steps.version.outputs.release }}"
           delete-branch: true
-          title: "ℹ️ Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
-          body: "Update Cloudflared to version ${{ needs.cloudflare-release.outputs.latest_version }}"
-          assignees: "elcajon,brenner-tobias"
-          labels: "dependencies"
+          title: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          body: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          labels: ${{ env.PR_LABELS }}
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+#      - name: 🔁 Enable Pull Request Automerge
+#        if: steps.cpr.outputs.pull-request-operation == 'created'
+#        uses: peter-evans/enable-pull-request-automerge@v2
+#        with:
+#          token: ${{ steps.token.outputs.token }}
+#          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+#      - name: ☑️ Auto approve
+#        if: steps.cpr.outputs.pull-request-operation == 'created'
+#        uses: juliangruber/approve-pull-request-action@v1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          number: ${{ steps.cpr.outputs.pull-request-number }}
