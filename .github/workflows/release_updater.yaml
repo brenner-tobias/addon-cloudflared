@@ -36,12 +36,12 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
-#      - name: 🔣 Generate Token
-#        uses: tibdex/github-app-token@v1
-#        id: token
-#        with:
-#          app_id: ${{ secrets.APP_ID }}
-#          private_key: ${{ secrets.APP_SECRET }}
+      # - name: 🔣 Generate Token
+      #   uses: tibdex/github-app-token@v1
+      #   id: token
+      #   with:
+      #     app_id: ${{ secrets.APP_ID }}
+      #     private_key: ${{ secrets.APP_SECRET }}
       - name: ℹ️ Gather latest release version
         uses: rez0n/actions-github-release@main
         id: version
@@ -73,7 +73,7 @@ jobs:
         id: cpr
         if: steps.compare_versions.outputs.update_available == 'true'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Should be ${{ steps.token.outputs.token }} if Github App token is used
+          token: ${{ secrets.GITHUB_TOKEN }}  # Should be ${{ steps.token.outputs.token }} if Github App token is used
           commit-message: "ℹ️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
           branch: "${{ matrix.repository }}-${{ steps.version.outputs.release }}"
           delete-branch: true
