@@ -1,0 +1,95 @@
+---
+name: Github Release Updater
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "00 18 * * *"
+  workflow_dispatch:
+
+env:
+  VERSION_FILE_PATH: ./cloudflared/versions.json
+  PR_LABELS: "dependencies"
+
+jobs:
+  information:
+    name: Gather Repositories
+    runs-on: ubuntu-latest
+    outputs:
+      repositories: ${{ steps.information.outputs.repositories }}
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
+      - name: 🚀 Get repository names
+        id: information
+        run: |
+          repositories=$(jq -rc 'keys' $VERSION_FILE_PATH )
+          echo "repositories=$repositories" >> $GITHUB_OUTPUT
+
+  build:
+    name: Check ${{ matrix.repository }}
+    needs:
+      - information
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ${{ fromJson( needs.information.outputs.repositories) }}
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
+      # - name: 🔣 Generate Token
+      #   uses: tibdex/github-app-token@v1
+      #   id: token
+      #   with:
+      #     app_id: ${{ secrets.APP_ID }}
+      #     private_key: ${{ secrets.APP_SECRET }}
+      - name: ℹ️ Gather latest release version
+        uses: rez0n/actions-github-release@main
+        id: version
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ matrix.repository }}
+          type: "stable"
+      - name: 🚀 Compare installed and latest version
+        id: compare_versions
+        run: |
+          latest_version="${{ steps.version.outputs.release }}"
+          current_version=$(jq -r '."${{ matrix.repository }}"' $VERSION_FILE_PATH)
+          if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$latest_version" ]; then
+                  echo "update_available=false" >> $GITHUB_OUTPUT
+          else
+                  echo "update_available=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🚀 Update version file
+        if: steps.compare_versions.outputs.update_available == 'true'
+        id: check_version
+        run: |
+          json=$(jq '."${{ matrix.repository }}" |= "${{ steps.version.outputs.release }}"' $VERSION_FILE_PATH)
+          echo "$json" > $VERSION_FILE_PATH
+          jq . $VERSION_FILE_PATH
+
+      - name: 🚀 Commit & create pull request
+        uses: peter-evans/create-pull-request@v4
+        id: cpr
+        if: steps.compare_versions.outputs.update_available == 'true'
+        with:
+          # Should be ${{ steps.token.outputs.token }} if Github App token is used
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "ℹ️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          branch: "${{ matrix.repository }}-${{ steps.version.outputs.release }}"
+          delete-branch: true
+          title: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          body: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
+          labels: ${{ env.PR_LABELS }}
+#      - name: 🔁 Enable Pull Request Automerge
+#        if: steps.cpr.outputs.pull-request-operation == 'created'
+#        uses: peter-evans/enable-pull-request-automerge@v2
+#        with:
+#          token: ${{ steps.token.outputs.token }}
+#          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+#      - name: ☑️ Auto approve
+#        if: steps.cpr.outputs.pull-request-operation == 'created'
+#        uses: juliangruber/approve-pull-request-action@v1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          number: ${{ steps.cpr.outputs.pull-request-number }}
