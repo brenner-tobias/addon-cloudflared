@@ -73,7 +73,8 @@ jobs:
         id: cpr
         if: steps.compare_versions.outputs.update_available == 'true'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Should be ${{ steps.token.outputs.token }} if Github App token is used
+          # Should be ${{ steps.token.outputs.token }} if Github App token is used
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ℹ️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
           branch: "${{ matrix.repository }}-${{ steps.version.outputs.release }}"
           delete-branch: true
