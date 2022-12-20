@@ -81,7 +81,6 @@ jobs:
           title: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
           body: "⬆️ Update ${{ matrix.repository }} to version ${{ steps.version.outputs.release }}"
           labels: ${{ env.PR_LABELS }}
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 #      - name: 🔁 Enable Pull Request Automerge
 #        if: steps.cpr.outputs.pull-request-operation == 'created'
 #        uses: peter-evans/enable-pull-request-automerge@v2
