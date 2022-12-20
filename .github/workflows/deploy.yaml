@@ -164,17 +164,11 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: 🔣 Generate App Token
-        uses: tibdex/github-app-token@v1
-        id: token
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_SECRET }}
       - name: 🚀 Dispatch repository updater update signal
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ steps.token.outputs.token }}
-          repository: ${{ github.repository_owner }}/repository-edge
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: ${{ github.repository_owner }}/ha-addons-edge
           event-type: update
           client-payload: >
             {
@@ -183,6 +177,7 @@ jobs:
               "repository": "${{ github.repository }}",
               "version": "${{ needs.information.outputs.version }}"
             }
+
   publish-stable:
     name: 📢 Publish to stable repository
     if: needs.information.outputs.environment == 'stable'
@@ -193,17 +188,11 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: 🔣 Generate App Token
-        uses: tibdex/github-app-token@v1
-        id: token
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_SECRET }}
       - name: 🚀 Dispatch repository updater update signal
-        uses: peter-evans/repository-dispatch@v2.0.0
+        uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ steps.token.outputs.token }}
-          repository: ${{ github.repository_owner }}/repository-stable
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: ${{ github.repository_owner }}/ha-addons
           event-type: update
           client-payload: >
             {
