@@ -281,6 +281,7 @@ fi
 
 # Write log level to S6 environment
 printf "%s" "${log}" > /var/run/s6/container_environment/CLOUDFLARED_LOG
+CLOUDFLARED_LOG=${log}
 bashio::log.debug "Cloudflared log level set to \"${log}\""
 
 }
