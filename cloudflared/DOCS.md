@@ -300,6 +300,16 @@ Plase this rule as the last in your ruleset (free account can have up to 5 such 
 
 You can Watch know _Security / Events_ log for possible rejections for traffic not matched by the first explicit _Allow_ rule and fine-tune it as needed.
 
+The problem is apparently caused by Cloudflare falsely detect app location update traffic as a malicious bot attacking the web-site. The app may use unusual header, which are not typical for human browser-based behavior.
+
+You may noticed that after a while you can remove the rule and the traffic is still accepted. This is probably because Cloudflare algorithms learned that the traffic it legitimate.
+
+If you still see that some sporadic 503 errors here and there, when working over Cloudflare tunnel, you may try:
+
+1. Disabling _Bot Fight Mode_ in Security / Bot.
+2. Disabling _Browser Integrity Check_ in _Security Setting.
+3. Set _Security Level_ to _Low_ to reduce risk of showing Challenge page to the _Companion App_.
+
 ### Securing access to your Cloudflare account
 
 The add-on downloads after authentication a `cert.pem` file to authenticate
