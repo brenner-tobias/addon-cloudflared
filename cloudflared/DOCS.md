@@ -287,9 +287,9 @@ For that, navigate to _Cloudflare / Security / WAF / Create firewall rule_ and c
 There _xx.yyy.zz_ is your domain where you expose your HA installation.
 Set _action_ to this rule to _allow_.
 
-Once you saved, the rule will be applied immediatel. You can try force-updating location via _Settings / Location / Update location_.
+Once you saved, the rule will be applied immediately. You can now force app updating location by clicking the link _Settings / Location / Update location_.
 
-In _Settings / Debugging / Event Log_ you will see notifications about successful update:
+In _Settings / Debugging / Event Log_ you should see notifications about successful update:
 
 ```
 Location Update: Location update triggered by user
