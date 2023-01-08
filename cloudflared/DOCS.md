@@ -258,27 +258,28 @@ There is no need to adapt IP ranges as the add-on is working as proxy.
 ### Webhook failed with the status code 503 while updating location
 
 Cloudflare use heuritstic-based rules to reject bots and web-site attacts.
-Sometimes this results in false positives.
+Sometimes this results in false positives, rejects legitimate Companion App traffic breaking some app features.
+
 In this particular case a fresh Cloudflare account without any configured firewall rules
 (which means - allow all) has rejected some requests, while allowing most of them to pass through.
 Cloudflare Security / Events section in that case is empty.
 
-In _Companion App / Event Log_ following messages are observed:
+In _Companion App / Event Log_ following messages were observed:
 
 ```
 Network Request: Webhook failed with the status code 503
 ```
 
-Device tracking and automation rules like _iPhone left home zone_ are  disfunctional, because device updates are blocked by Cloudflare.
+Device tracking and automation rules like _iPhone left home zone_ were  disfunctional, because device updates were blocked by Cloudflare.
 
-If you download logs over _Companion App / Debugging_ you will see the following requests:
+If you download logs over _Companion App / Debugging_ you will see the following failed requests:
 ```
 2023-01-06 14:39:37.478 [Info] [main] [ClientEventStore.swift:8] ClientEventStore > networkRequest: Webhook failed with status code 503 [:]
 2023-01-06 14:39:37.482 [Error] [main] [WebhookManager.swift:633] urlSession(_:task:didCompleteWithError:) > failed request to 6BEA5895-63A8-42B1-9FFC-5801A86BB1DB for WebhookResponseLocation: unacceptableStatusCode(503)
 ```
 
-To mitigate this problem you can create an explicit pass firewall rule for traffic related to your HA sub-domain.
-For that navigate to _Cloudflare / Security / WAF / Create firewall rule_ and create rule:
+To mitigate this problem you can create an explicit firewall pass rule for traffic related to your HA sub-domain.
+For that, navigate to _Cloudflare / Security / WAF / Create firewall rule_ and create the rule:
 
 ```
 (http.host eq "xx.yyy.zz")
@@ -286,23 +287,31 @@ For that navigate to _Cloudflare / Security / WAF / Create firewall rule_ and cr
 There _xx.yyy.zz_ is your domain where you expose your HA installation.
 Set _action_ to this rule to _allow_.
 
-Once you saved, the rule will be applied immediately, you can try force updating location via _Settings / Location / Update location_.
+Once you saved, the rule will be applied immediatel. You can try force-updating location via _Settings / Location / Update location_.
+
 In _Settings / Debugging / Event Log_ you will see notifications about successful update:
+
 ```
 Location Update: Location update triggered by user
 ```
 
 To further troubleshoot error caused by Cloudflare blocking your traffic you can create a default _capture all_ rule e.g. with expression:
+
 ```
 (ip.src in {0.0.0.0/0})
 ```
-Plase this rule as the last in your ruleset (free account can have up to 5 such rules).
 
-You can Watch know _Security / Events_ log for possible rejections for traffic not matched by the first explicit _Allow_ rule and fine-tune it as needed.
+Place this rule as the last in your WAF ruleset.
+
+You can check know _Security / Events_ log for possible rejections for traffic not matched by the first explicit _Allow_ rule and fine-tune it as needed to include all traffic direct to HA appliance from the app.
+
+_Root cause_
 
 The problem is apparently caused by Cloudflare falsely detect app location update traffic as a malicious bot attacking the web-site. The app may use unusual header, which are not typical for human browser-based behavior.
 
 You may noticed that after a while you can remove the rule and the traffic is still accepted. This is probably because Cloudflare algorithms learned that the traffic it legitimate.
+
+_Other methods to try_
 
 If you still see that some sporadic 503 errors here and there, when working over Cloudflare tunnel, you may try:
 
