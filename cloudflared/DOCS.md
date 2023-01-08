@@ -307,7 +307,7 @@ You may noticed that after a while you can remove the rule and the traffic is st
 If you still see that some sporadic 503 errors here and there, when working over Cloudflare tunnel, you may try:
 
 1. Disabling _Bot Fight Mode_ in Security / Bot.
-2. Disabling _Browser Integrity Check_ in _Security Setting.
+2. Disabling _Browser Integrity Check_ in _Security Setting_.
 3. Set _Security Level_ to _Low_ to reduce risk of showing Challenge page to the _Companion App_.
 
 ### Securing access to your Cloudflare account
