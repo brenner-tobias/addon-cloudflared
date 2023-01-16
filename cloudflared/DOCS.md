@@ -247,59 +247,10 @@ Remember to restart Home Assistant when the configuration is changed.
 If you need assistance changing the config, please follow the
 [Advanced Configuration Tutorial][advancedconfiguration].
 
-## Troubleshooting
+## Add-On Wiki
 
-### 400: Bad Request error
-
-Make sure to add the [trusted proxy setting](#configurationyaml) correctly.
-Make sure to copy and paste the code snippet without adapting anything.
-There is no need to adapt IP ranges as the add-on is working as proxy.
-
-### Securing access to your Cloudflare account
-
-The add-on downloads after authentication a `cert.pem` file to authenticate
-your instance of cloudflared against your Cloudflare account.
-You can not revoke access to this file from your Cloudflare account!
-The [issue](https://github.com/cloudflare/cloudflared/issues/93)
-still persists.
-
-Workaround:
-
-1. Create a new Cloudflare account and invite it to your Cloudflare account
-   that manages your domain:\
-   `Cloudflare Dashboard -> Manage Account -> Members -> Invite Member`
-1. Instead of using your primary account to authenticate the tunnel,
-   use your secondary account.
-
-If your `cert.pem` file is compromised, you can revoke your
-secondary account from your primary account.
-
-## Securing access to Home Assistant
-
-After your tunnel is setup and working, you may wish to add additional security
-measures.
-
-For example you could add a [WAF rule](https://developers.cloudflare.com/waf/) in
-Cloudflare which blocks requests outside your country.
-
-You can also use Cloudflare Access to present an authentication page before users
-are able to access Home Assistant, see the
-[self-hosted applications][self-hosted-applications] docs.
-
-## Domain name and Cloudflare set up
-
-To use this add-on, you need a domain name that is using Cloudflare for its
-DNS entries.
-
-### Domain name
-
-If you do not already have a domain name, get one. You can get one at
-[Freenom][freenom] following [this article][domainarticle].
-
-### Cloudflare
-
-Create a free Cloudflare account at [cloudflare.com][cloudflare] and follow
-the tutorial [Getting started with Cloudflare][cloudflaretutorial].
+For more advance [How-Tos][how-tos] and a Troubleshooting Section[troubleshooting],
+please visit the [Add-On Wiki on GitHub][addon-wiki].
 
 ## Authors & contributors
 
@@ -330,17 +281,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 [addon-installation]: https://github.com/brenner-tobias/addon-cloudflared#installation
+[addon-wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
-[cloudflare]: https://www.cloudflare.com/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
 [cloudflare-sssa-28]: https://www.cloudflare.com/en-gb/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
-[cloudflaretutorial]: https://support.cloudflare.com/hc/en-us/articles/360027989951-Getting-Started-with-Cloudflare
-[domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
-[freenom]: https://freenom.com
+[how-tos]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias
+[troubleshooting]: https://github.com/brenner-tobias/addon-cloudflared/wiki/Troubleshooting
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
-[self-hosted-applications]: https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/
-[addon-remote-tunnel]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/remote-tunnel.md
-[addon-remote-or-local]: https://github.com/brenner-tobias/addon-cloudflared/blob/main/docs/tunnels.md
+[addon-remote-tunnel]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos#how-to-configure-remote-tunnels
+[addon-remote-or-local]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos#local-vs-remote-managed-tunnels
