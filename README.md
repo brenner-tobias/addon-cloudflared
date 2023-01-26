@@ -24,9 +24,9 @@ instance and other services to the Internet without opening ports on your router
 Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this add-on, you need a domain name (e.g. example.com) that is using
-Cloudflare for its DNS entries. If you do not have one, you can get one for
-free at [Freenom][freenom] following [this article][domainarticle].**
+**To use this add-on, you have to own a domain name (e.g. example.com) that is
+using Cloudflare for its DNS entries. You can find more information about that
+in our [Wiki][wiki]**
 
 [:books: Read the full add-on documentation][docs]
 
@@ -86,7 +86,6 @@ SOFTWARE.
 [cloudflare-sssa-28]: https://www.cloudflare.com/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
-[freenom]: https://freenom.com
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
 [ha-addons]: https://github.com/brenner-tobias/ha-addons
@@ -100,3 +99,4 @@ SOFTWARE.
 [tobias]: https://github.com/brenner-tobias
 [my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
 [my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fbrenner-tobias%2Fha-addons
+[wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
