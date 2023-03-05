@@ -249,7 +249,7 @@ If you need assistance changing the config, please follow the
 
 ## Add-On Wiki
 
-For more advance [How-Tos][how-tos] and a Troubleshooting Section[troubleshooting],
+For more advance [How-Tos][how-tos] and a [Troubleshooting Section](troubleshooting),
 please visit the [Add-On Wiki on GitHub][addon-wiki].
 
 ## Authors & contributors
