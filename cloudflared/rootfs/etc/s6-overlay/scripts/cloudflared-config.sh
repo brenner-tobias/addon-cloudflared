@@ -14,7 +14,7 @@ checkConfig() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Checking add-on config..."
 
-    local validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
+    local validHostnameRegex="^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$"
 
     # Check for minimum configuration options
     if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'additional_hosts' &&
