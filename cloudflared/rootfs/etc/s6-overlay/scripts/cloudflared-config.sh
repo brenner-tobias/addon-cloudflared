@@ -26,7 +26,7 @@ checkConfig() {
     # Check if 'external_hostname' includes a valid hostname
     if bashio::config.has_value 'external_hostname' ; then
         if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
-            bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'external_hostname'."
+            bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'external_hostname'."
         fi
     fi
 
@@ -46,7 +46,7 @@ checkConfig() {
             fi
             # Check if hostname of 'additional_host' includes a valid hostname
             if ! [[ ${hostname} =~ ${validHostnameRegex} ]] ; then
-                bashio::exit.nok "'${hostname}' in 'additional_hosts' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') in the 'hostname'."
+                bashio::exit.nok "'${hostname}' in 'additional_hosts' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'hostname'."
             fi
             if bashio::var.is_empty "${service}" ; then
                 bashio::exit.nok "'service' in 'additional_hosts' for hostname ${hostname} is empty, please enter a valid String"
