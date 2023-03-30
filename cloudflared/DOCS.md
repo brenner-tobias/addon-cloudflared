@@ -172,7 +172,9 @@ Any other incoming traffic will be routed to the defined service._
 In order to route hostnames through the tunnel, you have to create individual
 CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
 or directly to the tunnel URL that you can get from the CNAME entry of
-`external_hostname`.
+`external_hostname`.  
+Alternatively you can add a [wildcard DNS record](https://blog.cloudflare.com/wildcard-proxy-for-everyone/)
+in Cloudflare by adding a CNAME record with `*` as name.
 
 ### Option: `nginx_proxy_manager`
 
@@ -194,7 +196,9 @@ to Nginx Proxy Manager._
 In order to route hostnames through the tunnel, you have to create individual
 CNAME records in Cloudflare for all of them, pointing to your `external_hostname`
 or directly to the tunnel URL that you can get from the CNAME entry of
-`external_hostname`.
+`external_hostname`.  
+Alternatively you can add a [wildcard DNS record](https://blog.cloudflare.com/wildcard-proxy-for-everyone/)
+in Cloudflare by adding a CNAME record with `*` as name.
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
