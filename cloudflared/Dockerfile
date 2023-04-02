@@ -10,14 +10,13 @@ ENV S6_VERBOSITY=1
 
 # Setup base
 ARG BUILD_ARCH=amd64
+ARG CLOUDFLARED_VERSION="2023.3.1"
 
 # Copy root filesystem
 COPY rootfs /
 
-COPY versions.json /versions.json
-
 # Run the script that installes cloudflared
-RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}"
+RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}" "${CLOUDFLARED_VERSION}"
 
 # Build arguments
 ARG BUILD_ARCH
