@@ -30,6 +30,7 @@ schema:
       disableChunkedEncoding: bool?
   tunnel_name: str?
   tunnel_token: str?
+  post_quantum: bool?
   catch_all_service: str?
   nginx_proxy_manager: bool?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
