@@ -7,7 +7,7 @@ declare default_config=/tmp/config.json
 
 if bashio::config.has_value 'tunnel_token' ; then
     tunnel_token=$(bashio::config 'tunnel_token')
-    exec cloudflared --no-autoupdate \
+    exec cloudflared --no-autoupdate --post-quantum \
             tunnel --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
 
 else
@@ -20,6 +20,6 @@ else
     bashio::log.info "Connecting Cloudflare Tunnel..."
     bashio::log.debug "using ${config} config file"
 
-    exec cloudflared --origincert=${certificate} --no-autoupdate \
+    exec cloudflared --origincert=${certificate} --no-autoupdate --post-quantum \
         tunnel --config=${config} --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run "${tunnel_name}"
 fi
