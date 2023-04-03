@@ -151,6 +151,20 @@ than the default of `homeassistant`.
 tunnel_name: "myHomeAssistant"
 ```
 
+### Option: `post_quantum`
+
+If you want Cloudflared to use post-quantum cryptography for the tunnel,
+set this flag.
+
+**Note**: _When `post_quantum` is set, cloudflared restricts itself to QUIC
+transport for the tunnel connection. This might lead to problems for some users.
+Also, it will only allow post-quantum hybrid key exchanges and not fall back to
+a non post-quantum connection._
+
+```yaml
+post_quantum: true
+```
+
 ### Option: `catch_all_service`
 
 If you want to forward all requests from any hostnames not defined in the

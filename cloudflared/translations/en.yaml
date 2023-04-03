@@ -19,6 +19,12 @@ configuration:
     name: Additional Hosts
     description: >-
       Define a list of additional hosts to be routed by the Cloudflare Tunnel.
+  post_quantum:
+    name: Use Post-Quantum Cryptography
+    description: >-
+      Check to make the tunnel use Post-Quantum Cryptography. Warning: This
+      will also restricts the tunnel to QUIC, which might lead to problems
+      for some users.
   catch_all_service:
     name: Catch-All Service
     description: >-
