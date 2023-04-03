@@ -15,6 +15,8 @@ cloudflared_options+=(--no-autoupdate)
 
 # Check for post_quantum option
 if bashio::config.true 'post_quantum' ; then
+    bashio::log.info "Running Cloudflared with Post-Quantum Cryptography"
+    bashio::log.info "If connection problems occur, disable this option."
     cloudflared_options+=(--post-quantum)
 fi
 
@@ -33,6 +35,7 @@ else
 fi    
 
 bashio::log.info "Connecting Cloudflare Tunnel..."
+bashio::log.debug "cloudflared ${cloudflared_options[@]} tunnel ${tunnel_options[@]} run ${run_options[@]}"
 exec cloudflared "${cloudflared_options[@]}" \
          tunnel "${tunnel_options[@]}" \
          run "${run_options[@]}"
