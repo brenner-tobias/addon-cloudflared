@@ -85,12 +85,12 @@ advanced config can be achieved using the remote tunnel setup.
 Example add-on configuration:
 
 ```yaml
-external_hostname: "ha.example.com"
+external_hostname: ha.example.com
 additional_hosts:
-  - hostname: "router.example.com"
-    service: "http://192.168.1.1"
-  - hostname: "website.example.com"
-    service: "http://192.168.1.3:8080"
+  - hostname: router.example.com
+    service: http://192.168.1.1
+  - hostname: website.example.com
+    service: http://192.168.1.3:8080
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
@@ -106,7 +106,7 @@ services.
 **Note**: _The tunnel name needs to be unique in your Cloudflare account._
 
 ```yaml
-external_hostname: "ha.example.com"
+external_hostname: ha.example.com
 ```
 
 ### Option: `additional_hosts`
@@ -127,12 +127,12 @@ Please find below an example entry for three additional hosts:
 
 ```yaml
 additional_hosts:
-  - hostname: "router.example.com"
-    service: "http://192.168.1.1"
-  - hostname: "diskstation.example.com"
-    service: "https://192.168.1.2:5001"
-  - hostname: "website.example.com"
-    service: "http://192.168.1.3:8080"
+  - hostname: router.example.com
+    service: http://192.168.1.1
+  - hostname: diskstation.example.com
+    service: https://192.168.1.2:5001
+  - hostname: website.example.com
+    service: http://192.168.1.3:8080
     disableChunkedEncoding: true
 ```
 
@@ -148,7 +148,7 @@ than the default of `homeassistant`.
 **Note**: _The tunnel name needs to be unique in your Cloudflare account._
 
 ```yaml
-tunnel_name: "myHomeAssistant"
+tunnel_name: myHomeAssistant
 ```
 
 ### Option: `post_quantum`
@@ -176,7 +176,7 @@ as reverse proxy, you should set the flag `nginx_proxy_manager` ([see
 below](#option-nginx_proxy_manager)) and not use this option._
 
 ```yaml
-catch_all_service: "http://192.168.1.100"
+catch_all_service: http://192.168.1.100
 ```
 
 **Note**: _This will still route your defined `external_hostname`to Home Assistant
