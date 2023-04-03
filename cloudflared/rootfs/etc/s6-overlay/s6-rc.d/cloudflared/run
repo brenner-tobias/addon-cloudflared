@@ -5,37 +5,30 @@
 # ==============================================================================
 declare config_file="/tmp/config.json"
 declare certificate="/data/cert.pem"
-declare -a cloudflared_options
-declare -a tunnel_options
-declare -a run_options
+declare -a options
 
 
-# Set common cloudflared options
-cloudflared_options+=(--no-autoupdate)
+# Set common cloudflared tunnel options
+options+=(--no-autoupdate)
+options+=(--metrics="0.0.0.0:36500")
+options+=(--loglevel="${CLOUDFLARED_LOG}")
 
 # Check for post_quantum option
 if bashio::config.true 'post_quantum' ; then
-    bashio::log.info "Running Cloudflared with Post-Quantum Cryptography"
-    bashio::log.info "If connection problems occur, disable this option."
-    cloudflared_options+=(--post-quantum)
+    options+=(--post-quantum)
 fi
-
-# Set common cloudflared tunnel options
-tunnel_options+=(--metrics="0.0.0.0:36500")
-tunnel_options+=(--loglevel="${CLOUDFLARED_LOG}")
 
 # Check if we run local or remote managed tunnel and set related options
 if bashio::config.has_value 'tunnel_token' ; then
-    run_options+=(--token="$(bashio::config 'tunnel_token')")
+    options+=(run --token="$(bashio::config 'tunnel_token')")
 else
     bashio::log.debug "using ${config_file} config file"
-    cloudflared_options+=(--origincert=${certificate})
-    tunnel_options+=(--config=${config_file})
-    run_options+=("$(bashio::config 'tunnel_name')")
+    options+=(--origincert=${certificate})
+    options+=(--config=${config_file})
+    options+=(run "$(bashio::config 'tunnel_name')")
 fi    
 
 bashio::log.info "Connecting Cloudflare Tunnel..."
-bashio::log.debug "cloudflared ${cloudflared_options[@]} tunnel ${tunnel_options[@]} run ${run_options[@]}"
-exec cloudflared "${cloudflared_options[@]}" \
-         tunnel "${tunnel_options[@]}" \
-         run "${run_options[@]}"
+bashio::log.debug "cloudflared tunnel ${options[@]}"
+exec cloudflared \
+        tunnel "${options[@]}"
