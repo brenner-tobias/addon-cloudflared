@@ -3,32 +3,36 @@
 # Home Assistant Add-on: Cloudflared
 # Runs the Cloudflare Tunnel for Home Assistant
 # ==============================================================================
-declare default_config=/tmp/config.json
+declare config_file="/tmp/config.json"
+declare certificate="/data/cert.pem"
+declare -a cloudflared_options
+declare -a tunnel_options
+declare -a run_options
 
-if bashio::config.has_value 'tunnel_token' ; then
-    tunnel_token=$(bashio::config 'tunnel_token')
-    if bashio::config.true 'post_quantum' ; then
-        exec cloudflared --no-autoupdate --post-quantum \
-            tunnel --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
-    else
-        exec cloudflared --no-autoupdate \
-            tunnel --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run --token="${tunnel_token}"
-    fi
-else
-    data_path="/data"
-    config="${default_config}"
-    
-    certificate="${data_path}/cert.pem"
-    tunnel_name="$(bashio::config 'tunnel_name')"
 
-    bashio::log.info "Connecting Cloudflare Tunnel..."
-    bashio::log.debug "using ${config} config file"
+# Set common cloudflared options
+cloudflared_options+=(--no-autoupdate)
 
-    if bashio::config.true 'post_quantum' ; then
-        exec cloudflared --origincert=${certificate} --no-autoupdate --post-quantum \
-            tunnel --config=${config} --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run "${tunnel_name}"
-    else
-        exec cloudflared --origincert=${certificate} --no-autoupdate \
-            tunnel --config=${config} --metrics="0.0.0.0:36500" --loglevel="${CLOUDFLARED_LOG}" run "${tunnel_name}"
-    fi
+# Check for post_quantum option
+if bashio::config.true 'post_quantum' ; then
+    cloudflared_options+=(--post-quantum)
 fi
+
+# Set common cloudflared tunnel options
+tunnel_options+=(--metrics="0.0.0.0:36500")
+tunnel_options+=(--loglevel="${CLOUDFLARED_LOG}")
+
+# Check if we run local or remote managed tunnel and set related options
+if bashio::config.has_value 'tunnel_token' ; then
+    run_options+=(--token="$(bashio::config 'tunnel_token')")
+else
+    bashio::log.debug "using ${config_file} config file"
+    cloudflared_options+=(--origincert=${certificate})
+    tunnel_options+=(--config=${config_file})
+    run_options+=("$(bashio::config 'tunnel_name')")
+fi    
+
+bashio::log.info "Connecting Cloudflare Tunnel..."
+exec cloudflared "${cloudflared_options[@]}" \
+         tunnel "${tunnel_options[@]}" \
+         run "${run_options[@]}"
