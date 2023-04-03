@@ -34,7 +34,7 @@
     {
       "groupName": "Add-on base image",
       "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
     {
