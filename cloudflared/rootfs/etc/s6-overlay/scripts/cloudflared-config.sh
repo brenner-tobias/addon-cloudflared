@@ -146,7 +146,7 @@ createTunnel() {
     cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}" \
     || bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Zero Trust Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
-    https://one.dash.cloudflare.com / Access / Tunnels"
+    Visit https://one.dash.cloudflare.com, then click on Access / Tunnels"
 
     bashio::log.debug "Created new tunnel: $(cat "${data_path}"/tunnel.json)"
 
