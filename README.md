@@ -26,7 +26,7 @@ connection.
 
 **To use this add-on, you have to own a domain name (e.g. example.com) that is
 using Cloudflare for its DNS entries. You can find more information about that
-in our [Wiki][wiki]**
+in our [Wiki][wiki]**.
 
 [:books: Read the full add-on documentation][docs]
 
@@ -34,8 +34,7 @@ in our [Wiki][wiki]**
 
 Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-add-on. For example [section 2.8][cloudflare-sssa-28] could be breached when
-streaming videos (e.g. Plex) or other non-HTML content.
+add-on.
 
 ## Installation
 
