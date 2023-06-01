@@ -10,8 +10,7 @@ connection.
 
 Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-add-on. For example [section 2.8][cloudflare-sssa-28] could be breached when
-streaming videos (e.g. Plex) or other non-HTML content.
+add-on.
 
 ## Initial setup
 
@@ -304,7 +303,6 @@ SOFTWARE.
 [addon-wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
-[cloudflare-sssa-28]: https://www.cloudflare.com/en-gb/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [how-tos]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias

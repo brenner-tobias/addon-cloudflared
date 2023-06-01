@@ -82,7 +82,6 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
-[cloudflare-sssa-28]: https://www.cloudflare.com/terms/#:~:text=2.8%20Limitation%20on%20Serving%20Non%2DHTML%20Content
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
