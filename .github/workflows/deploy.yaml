@@ -103,7 +103,7 @@ jobs:
             exit 1
           fi
       - name: 🏗  Login to GitHub Container Registry
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v2.2.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
