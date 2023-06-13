@@ -117,7 +117,7 @@ jobs:
           asset: docker://${{ steps.flags.outputs.from }}
           signerID: ${{ needs.information.outputs.base_image_signer }}
       - name: 🚀 Build
-        uses: docker/build-push-action@v4.1.0
+        uses: docker/build-push-action@v4.1.1
         with:
           load: true
           # yamllint disable rule:line-length
