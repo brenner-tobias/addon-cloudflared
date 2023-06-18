@@ -16,4 +16,4 @@ if [[ "${1}" -ne 0 ]] && [[ "${1}" -ne 256 ]]; then
   /run/s6/basedir/bin/halt
 fi
 
-bashio::log.info "cloudflared stoped, restarting..."
+bashio::log.info "cloudflared stopped, restarting..."
