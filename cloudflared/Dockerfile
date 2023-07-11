@@ -18,6 +18,10 @@ COPY rootfs /
 # Run the script that installes cloudflared
 RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}" "${CLOUDFLARED_VERSION}"
 
+# Health check
+HEALTHCHECK \
+    CMD curl --fail 127.0.0.1:36500/ready | jq -e 'select(.status == 200).status' || exit 1
+
 # Build arguments
 ARG BUILD_ARCH
 ARG BUILD_DATE
