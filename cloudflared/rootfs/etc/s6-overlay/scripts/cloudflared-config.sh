@@ -343,8 +343,10 @@ main() {
 
     setCloudflaredLogLevel
 
-    # Run connectivity checks in background to not delay startup
-    checkConnectivity &
+    # Run connectivity checks if debug mode activated
+    if bashio::debug ; then
+        checkConnectivity
+    fi
 
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
