@@ -72,30 +72,35 @@ checkConnectivity() {
     local pass_test=true
 
     # Check for region1 TCP
+    bashio::log.debug "Checking region1.v2.argotunnel.com TCP port 7844"
     if ! nc -z -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
         bashio::log.warning "region1.v2.argotunnel.com TCP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region1 UDP
+    bashio::log.debug "Checking region1.v2.argotunnel.com UDP port 7844"
     if ! nc -z -u -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
         bashio::log.warning "region1.v2.argotunnel.com UDP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region2 TCP
+    bashio::log.debug "Checking region2.v2.argotunnel.com TCP port 7844"
     if ! nc -z -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
         bashio::log.warning "region2.v2.argotunnel.com TCP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region2 UDP
+    bashio::log.debug "Checking region2.v2.argotunnel.com UDP port 7844"
     if ! nc -z -u -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
         bashio::log.warning "region2.v2.argotunnel.com UDP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for API TCP
+    bashio::log.debug "Checking api.cloudflare.com TCP port 443"
     if ! nc -z -w 1 api.cloudflare.com 443 &> /dev/null ; then
         bashio::log.warning "api.cloudflare.com TCP port 443 not reachable"
         pass_test=false
@@ -345,6 +350,7 @@ main() {
 
     # Run connectivity checks if debug mode activated
     if bashio::debug ; then
+        bashio::log.debug "Checking connectivity to Cloudflare"
         checkConnectivity
     fi
 
