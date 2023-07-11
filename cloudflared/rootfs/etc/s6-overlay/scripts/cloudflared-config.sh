@@ -66,6 +66,49 @@ checkConfig() {
 }
 
 # ------------------------------------------------------------------------------
+# Checks if Cloudflare services are reachable
+# ------------------------------------------------------------------------------
+checkConnectivity() {
+    local pass_test=true
+
+    # Check for region1 TCP
+    if ! nc -z -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
+        bashio::log.warning "region1.v2.argotunnel.com TCP port 7844 not reachable"
+        pass_test=false
+    fi
+
+    # Check for region1 UDP
+    if ! nc -z -u -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
+        bashio::log.warning "region1.v2.argotunnel.com UDP port 7844 not reachable"
+        pass_test=false
+    fi
+
+    # Check for region2 TCP
+    if ! nc -z -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
+        bashio::log.warning "region2.v2.argotunnel.com TCP port 7844 not reachable"
+        pass_test=false
+    fi
+
+    # Check for region2 UDP
+    if ! nc -z -u -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
+        bashio::log.warning "region2.v2.argotunnel.com UDP port 7844 not reachable"
+        pass_test=false
+    fi
+
+    # Check for API TCP
+    if ! nc -z -w 1 api.cloudflare.com 443 &> /dev/null ; then
+        bashio::log.warning "api.cloudflare.com TCP port 443 not reachable"
+        pass_test=false
+    fi
+
+    if bashio::var.false ${pass_test} ; then
+        bashio::log.warning "Some necessary services may not be reachable from your host."
+        bashio::log.warning "Please review lines above and check your firewall/router settings."
+    fi
+
+}
+
+# ------------------------------------------------------------------------------
 # Check if Cloudflared certificate (authorization) is available
 # ------------------------------------------------------------------------------
 hasCertificate() {
@@ -299,6 +342,9 @@ main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     setCloudflaredLogLevel
+
+    # Run connectivity checks in background to not delay startup
+    checkConnectivity &
 
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
