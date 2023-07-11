@@ -20,8 +20,8 @@ RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}" "${CLOUDFLARED_VERSION}"
 
 # Health check
 HEALTHCHECK \
-    --start-period=300s \
-    CMD curl --fail 127.0.0.1:36500/ready | jq -e 'select(.status == 200).status' || exit 1
+    --start-period=120s \
+    CMD (curl --fail 127.0.0.1:36500/ready | jq -en 'select(.status == 200).status') || exit 1
 
 # Build arguments
 ARG BUILD_ARCH
