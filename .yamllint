@@ -22,6 +22,8 @@ rules:
     min-spaces-after: 1
     max-spaces-after: 1
   comments:
+    ignore: |
+      .github/workflows/
     level: error
     require-starting-space: true
     min-spaces-from-content: 2
