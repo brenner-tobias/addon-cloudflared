@@ -17,7 +17,7 @@ add-on.
 ### Prerequisites
 
 1. A domain name (e.g. example.com) using Cloudflare for DNS. If you don't have
-   one see [Domain name and Cloudflare set up](#domain-name-and-cloudflare-set-up).
+   one see [Domain name and Cloudflare set up][how-tos].
 1. Decide between a local tunnel (managed by the add-on) or a remote tunnel
    (managed in Cloudflare's interface). [Learn more][addon-remote-or-local].
 1. This add-on should be [installed][addon-installation] but not started yet.
