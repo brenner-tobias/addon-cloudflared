@@ -110,12 +110,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Download base image
         run: docker pull "${{ steps.flags.outputs.from }}"
-      - name: ✅ Verify authenticity of base image
-        if: needs.information.outputs.base_image_signer != 'null'
-        uses: codenotary/cas-authenticate-docker-image-github-action@main
-        with:
-          asset: docker://${{ steps.flags.outputs.from }}
-          signerID: ${{ needs.information.outputs.base_image_signer }}
       - name: 🚀 Build
         uses: docker/build-push-action@v5.0.0
         with:
@@ -140,13 +134,6 @@ jobs:
             BUILD_REPOSITORY=${{ github.repository }}
             BUILD_VERSION=${{ needs.information.outputs.version }}
       # yamllint disable rule:line-length
-      - name: 🔏 Notarize new image
-        if: needs.information.outputs.signer != 'null'
-        id: notarize_new_image
-        uses: codenotary/cas-notarize-docker-image-github-action@main
-        with:
-          asset: docker://ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:${{ needs.information.outputs.version }}
-          cas_api_key: ${{ secrets.CAS_API_KEY }}
       - name: 🚀 Push
         run: |
           docker push \
