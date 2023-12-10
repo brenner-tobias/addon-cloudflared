@@ -79,7 +79,7 @@ SOFTWARE.
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
+[armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
 [docs]: cloudflared/DOCS.md
@@ -87,7 +87,7 @@ SOFTWARE.
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
 [ha-addons]: https://github.com/brenner-tobias/ha-addons
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
+[i386-shield]: https://img.shields.io/badge/i386-no-red.svg
 [issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
 [license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
