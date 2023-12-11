@@ -19,16 +19,8 @@ case $arch in
         arch="arm64"
     ;;
 
-    "armhf")
-        arch="arm"
-    ;;
-
     "armv7")
         arch="arm"
-    ;;
-
-    "i386")
-        arch="386"
     ;;
 esac
 
