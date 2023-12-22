@@ -57,7 +57,7 @@ Feel free to [open an issue here][issue] on GitHub.
 
 MIT License
 
-Copyright (c) 2023 Tobias Brenner
+Copyright (c) 2024 Tobias Brenner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,7 @@ SOFTWARE.
 [i386-shield]: https://img.shields.io/badge/i386-no-red.svg
 [issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
 [license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
 [releases-shield]: https://img.shields.io/github/v/release/brenner-tobias/addon-cloudflared?include_prereleases
 [releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
