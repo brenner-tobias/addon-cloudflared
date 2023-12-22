@@ -49,9 +49,12 @@ Got questions?
 
 Feel free to [open an issue here][issue] on GitHub.
 
-## Author
+## Authors & contributors
 
-[Tobias Brenner][tobias]
+The original setup of this repository is by [Tobias Brenner][tobias].
+
+For a full list of all authors and contributors,
+check [the contributor's page][contributors].
 
 ## License
 
@@ -82,6 +85,7 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
+[contributors]: https://github.com/brenner-tobias/addon-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
