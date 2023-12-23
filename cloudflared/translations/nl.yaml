@@ -7,7 +7,7 @@ configuration:
   external_hostname:
     name: Externe Hostname voor Home Assistant
     description: >-
-      Stel hier je domeinnaam of subdomein in die je wilt gebruiken voor 
+      Stel hier je domeinnaam of subdomein in die je wilt gebruiken voor
       toegang tot Home Assistant.
   tunnel_name:
     name: Naam van de Cloudflare Tunnel
@@ -39,5 +39,5 @@ configuration:
     name: Cloudflare Tunnel Token
     description: >-
       Alle andere opties wordt genegeerd wanneer deze optie is ingeschakeld.
-      Gebruik deze optie als je de tunel met het Cloudflare Dashboard 
+      Gebruik deze optie als je de tunel met het Cloudflare Dashboard
       instelt.
