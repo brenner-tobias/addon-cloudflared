@@ -1,0 +1,42 @@
+---
+configuration:
+  log_level:
+    name: Log Level
+    description: >-
+      Legt das Log-Level für das Add-on und den Cloudflared-Dienst fest.
+  external_hostname:
+    name: Externer Hostname von Home Assistant
+    description: >-
+      Domänenname oder Subdomäne, die für den Zugriff auf Home Assistant 
+      verwenden werden soll.
+  tunnel_name:
+    name: Cloudflare Tunnel Name
+    description: >-
+      Namen des Tunnels, der für die Kommunikation zu dem Cloudflare-Edge-Server 
+      erstellt wird. Der Standardwert sollte für die meisten Anwendungsfälle passend sein.
+  additional_hosts:
+    name: Zusätzliche Hosts
+    description: >-
+      Liste von zusätzlichen Hosts / Services, die durch den Cloudflare-Tunnel zugänglich 
+      gemacht werden sollen.
+  post_quantum:
+    name: Post-Quantum-Kryptographie verwenden
+    description: >-
+      Aktiviert die Verwendung von Post-Quantum-Kryptographie für den Tunnel.
+      Achtung: Schränkt den Tunnel auf das QUIC Protokoll ein, was bei einigen 
+      Benutzern zu Problemen Probleme führen kann.
+  catch_all_service:
+    name: Catch-All-Dienst
+    description: >-
+      Definiert einen Catch-All-Dienst, der für alle Dienste bzw. Hostnamen
+      aufgerufen wird, die nicht konfiguriert sind.
+  nginx_proxy_manager:
+    name: Nginx-Proxy-Manager als Catch-All aktivieren
+    description: >-
+      Setzt das "Nginx-Proxy-Manager Add-on als Catch-All-Dienst.
+  tunnel_token:
+    name: Cloudflare Tunnel Token
+    description: >-
+      Wenn diese Option gesetzt ist, werden alle anderen Optionen ignoriert. 
+      Wird verwendet, wenn der Tunnel mit dem Cloudflare Dashboard
+      eingerichtet wird.
