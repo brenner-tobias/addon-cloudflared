@@ -12,7 +12,7 @@ configuration:
   tunnel_name:
     name: Cloudflare Tunnel Name
     description: >-
-      Namen des Tunnels, der für die Kommunikation zu dem Cloudflare-Edge-Server
+      Name des Tunnels, der für die Kommunikation zu dem Cloudflare-Edge-Server
       erstellt wird. Der Standardwert sollte für die meisten Anwendungsfälle passend sein.
   additional_hosts:
     name: Zusätzliche Hosts
@@ -24,7 +24,7 @@ configuration:
     description: >-
       Aktiviert die Verwendung von Post-Quantum-Kryptographie für den Tunnel.
       Achtung: Schränkt den Tunnel auf das QUIC Protokoll ein, was bei einigen
-      Benutzern zu Problemen Probleme führen kann.
+      Benutzern zu Problemen führen kann.
   catch_all_service:
     name: Catch-All-Dienst
     description: >-
