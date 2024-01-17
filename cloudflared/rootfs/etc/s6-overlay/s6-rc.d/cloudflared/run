@@ -23,6 +23,9 @@ if bashio::config.has_value 'tunnel_token' ; then
     options+=(run --token="$(bashio::config 'tunnel_token')")
 else
     bashio::log.debug "using ${config_file} config file"
+    if bashio::config.has_value 'run_parameters' ; then
+        options+=("$(bashio::config 'run_parameters')")
+    fi
     options+=(--origincert=${certificate})
     options+=(--config=${config_file})
     options+=(run "$(bashio::config 'tunnel_name')")
