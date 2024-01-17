@@ -25,6 +25,10 @@ configuration:
       Check to make the tunnel use Post-Quantum Cryptography. Warning: This
       will also restricts the tunnel to QUIC, which might lead to problems
       for some users.
+  run_parameters:
+    name: Add run parameters
+    description: >-
+      Possibility to add run parameters to Cloudflared
   catch_all_service:
     name: Catch-All Service
     description: >-
