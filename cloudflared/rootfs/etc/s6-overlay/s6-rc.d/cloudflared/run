@@ -19,18 +19,21 @@ if bashio::config.true 'post_quantum' ; then
 fi
 
 # Check for additional run parameters
-if bashio::config.has_value 'run_parameters' ; then
-    options+=("$(bashio::config 'run_parameters')")
+if bashio::config.has_value 'run_parameters'; then
+    while read -r run_parameter; do
+        options+=("${run_parameter}")
+    done <<< "$(bashio::config 'run_parameters')"
 fi
+
 # Check if we run local or remote managed tunnel and set related options
 if bashio::config.has_value 'tunnel_token' ; then
     options+=(run --token="$(bashio::config 'tunnel_token')")
 else
     bashio::log.debug "using ${config_file} config file"
-    options+=(--origincert=${certificate})
-    options+=(--config=${config_file})
+    options+=(--origincert="${certificate}")
+    options+=(--config="${config_file}")
     options+=(run "$(bashio::config 'tunnel_name')")
-fi    
+fi
 
 bashio::log.info "Connecting Cloudflare Tunnel..."
 bashio::log.debug "cloudflared tunnel ${options[@]}"

@@ -23,9 +23,10 @@ schema:
       service: str
       disableChunkedEncoding: bool?
   tunnel_name: str?
-  tunnel_token: str?
-  post_quantum: bool?
-  run_parameters: str?
   catch_all_service: str?
   nginx_proxy_manager: bool?
+  tunnel_token: str?
+  post_quantum: bool?
+  run_parameters:
+    - str?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
