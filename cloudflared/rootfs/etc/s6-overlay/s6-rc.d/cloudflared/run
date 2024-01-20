@@ -20,12 +20,12 @@ if bashio::config.true 'post_quantum' ; then
 fi
 
 # Check for additional run parameters
-if bashio::config.has_value 'run_parameters'; then
+if bashio::config.has_value 'run_parameters' ; then
     bashio::log.trace "bashio::config.has_value 'run_parameters'"
-    while read -r run_parameter; do
+    for run_parameter in $(bashio::config 'run_parameters'); do
         bashio::log.trace "Adding run_parameter: ${run_parameter}"
         options+=("${run_parameter}")
-    done <<< "$(bashio::config 'run_parameters')"
+    done
 fi
 
 # Check if we run local or remote managed tunnel and set related options
