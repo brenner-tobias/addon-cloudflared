@@ -244,6 +244,10 @@ tunnel "origincert" and "config" are added while "token" is added
 for remote managed tunnels. You cannot override these parameters with this
 option._
 
+**Note**: _If you are using an option that requires a path, you can use /config
+as root. This path can be accessed, for example, via the VS-code add-on via
+/addon_configs._
+
 ```yaml
 run_parameters:
   - "--region=us"
