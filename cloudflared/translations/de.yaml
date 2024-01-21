@@ -25,6 +25,10 @@ configuration:
       Aktiviert die Verwendung von Post-Quantum-Kryptographie für den Tunnel.
       Achtung: Schränkt den Tunnel auf das QUIC Protokoll ein, was bei einigen
       Benutzern zu Problemen führen kann.
+  run_parameters:
+    name: Weitere Laufzeitparameter hinzufügen
+    description: >-
+      Bietet die Möglichkeit, den Tunnel mit weiteren Laufzeitparametern zu starten.
   catch_all_service:
     name: Catch-All-Dienst
     description: >-
