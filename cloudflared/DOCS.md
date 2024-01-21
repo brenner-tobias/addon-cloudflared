@@ -222,7 +222,19 @@ post_quantum: true
 
 You can add additional run parameters to the cloudflared demon using this
 parameter. Check the [Cloudflare documentation][cloudflare-run_parameter]
-for all available parameters.
+for all available parameters and their explanation.
+
+Valid parameters to add are:
+
+- --​​edge-bind-address
+- --edge-ip-version
+- --grace-period
+- --logfile
+- --pidfile
+- --protocol
+- --region
+- --retries
+- --tag
 
 **Note**: _These parameters are added to the by default present parameters
 "no-autoupdate", "metrics" and "loglevel". Additionally, for a locally managed
