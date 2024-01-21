@@ -75,6 +75,8 @@ advanced config can be achieved using the remote tunnel setup.
 - [`tunnel_name`](#option-tunnel_name)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
+- [`post_quantum`](#option-post_quantum)
+- [`run_parameters`](#option-run_parameters)
 - [`log_level`](#option-log_level)
 
 ### Overview: Add-on configuration
