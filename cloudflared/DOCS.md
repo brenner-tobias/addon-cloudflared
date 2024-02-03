@@ -237,6 +237,7 @@ Valid parameters to add are:
 - --region
 - --retries
 - --tag
+- --ha-connections
 
 **Note**: _These parameters are added to the by default present parameters
 "no-autoupdate", "metrics" and "loglevel". Additionally, for a locally managed
