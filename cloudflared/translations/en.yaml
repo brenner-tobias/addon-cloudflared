@@ -23,7 +23,7 @@ configuration:
     name: Use Post-Quantum Cryptography
     description: >-
       Check to make the tunnel use Post-Quantum Cryptography. Warning: This
-      will also restricts the tunnel to QUIC, which might lead to problems
+      also restricts the tunnel to QUIC, which might lead to problems
       for some users.
   run_parameters:
     name: Add run parameters
