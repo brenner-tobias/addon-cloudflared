@@ -25,12 +25,12 @@ instance and other services to the Internet without opening ports on your router
 Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-\*\*To use this add-on, you have to own a domain name (e.g. example.com) that is
+**To use this add-on, you have to own a domain name (e.g. example.com) that is
 using Cloudflare for its DNS entries. You can find more information about that
-in our [Wiki][wiki].
+in our [Wiki][wiki].**
 
-Please be aware that domains from **Freenom** do not work anymore, so
-you have to chose / migrate to another registrar.\*\*
+**Please be aware that domains from __Freenom__ do not work anymore, so
+you have to chose / migrate to another registrar.**
 
 [:books: Read the full add-on documentation][docs]
 
