@@ -17,7 +17,9 @@ add-on.
 ### Prerequisites
 
 1. A domain name (e.g. example.com) using Cloudflare for DNS. If you don't have
-   one see [Domain name and Cloudflare set up][how-tos].
+   one see [Domain name and Cloudflare set up][how-tos]. 
+   Please be aware that domains from **Freenom** do not work anymore, so you
+   have to chose / migrate to another registrar.
 1. Decide between a local tunnel (managed by the add-on) or a remote tunnel
    (managed in Cloudflare's interface). [Learn more][addon-remote-or-local].
 1. This add-on should be [installed][addon-installation] but not started yet.
@@ -312,6 +314,9 @@ please visit the [Add-On Wiki on GitHub][addon-wiki].
 
 The original setup of this repository is by [Tobias Brenner][tobias].
 
+For a full list of all authors and contributors,
+check [the contributor's page][contributors].
+
 ## License
 
 MIT License
@@ -343,6 +348,7 @@ SOFTWARE.
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
 [cloudflare-run_parameter]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/
+[contributors]: https://github.com/brenner-tobias/addon-cloudflared/graphs/contributors
 [how-tos]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/brenner-tobias

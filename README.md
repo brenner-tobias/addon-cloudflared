@@ -29,6 +29,9 @@ connection.
 using Cloudflare for its DNS entries. You can find more information about that
 in our [Wiki][wiki]**.
 
+**Note**: _Please be aware that domains from **Freenom** do not work anymore, so 
+you have to chose / migrate to another registrar._
+
 [:books: Read the full add-on documentation][docs]
 
 ## Disclaimer
