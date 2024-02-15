@@ -17,7 +17,7 @@ add-on.
 ### Prerequisites
 
 1. A domain name (e.g. example.com) using Cloudflare for DNS. If you don't have
-   one see [Domain name and Cloudflare set up][how-tos]. 
+   one see [Domain name and Cloudflare set up][how-tos].
    Please be aware that domains from **Freenom** do not work anymore, so you
    have to chose / migrate to another registrar.
 1. Decide between a local tunnel (managed by the add-on) or a remote tunnel
