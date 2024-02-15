@@ -29,7 +29,7 @@ connection.
 using Cloudflare for its DNS entries. You can find more information about that
 in our [Wiki][wiki].**
 
-**Please be aware that domains from __Freenom__ do not work anymore, so
+**Please be aware that domains from **Freenom** do not work anymore, so
 you have to chose / migrate to another registrar.**
 
 [:books: Read the full add-on documentation][docs]
