@@ -234,6 +234,7 @@ Valid parameters to add are:
 - --edge-ip-version
 - --grace-period
 - --logfile
+- --loglevel
 - --pidfile
 - --protocol
 - --region
@@ -255,6 +256,7 @@ as root. This path can be accessed, for example, via the VS-code add-on via
 run_parameters:
   - "--region=us"
   - "--protocol=http2"
+  - "--loglevel=debug"
 ```
 
 ### Option: `log_level`
