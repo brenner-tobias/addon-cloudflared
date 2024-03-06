@@ -310,27 +310,23 @@ createDNS() {
 # Set Cloudflared log level
 # ------------------------------------------------------------------------------
 setCloudflaredLogLevel() {
-local log
 
-# Map Home Assistant log levels to Cloudflared
-if bashio::config.exists 'log_level' ; then
-    case $(bashio::config 'log_level') in
-        "trace") log="info";;
-        "debug") log="info";;
-        "info") log="info";;
-        "notice") log="info";;
-        "warning") log="warn";;
-        "error") log="error";;
-        "fatal") log="fatal";;
-    esac
-else
-    log="info"
+# Set cloudflared log to "info" as default
+CLOUDFLARED_LOG="info"
+
+# Check if user wishes to change log severity
+if bashio::config.has_value 'run_parameters' ; then
+    bashio::log.trace "bashio::config.has_value 'run_parameters'"
+    for run_parameter in $(bashio::config 'run_parameters'); do
+        bashio::log.trace "Checking run_parameter: ${run_parameter}"
+        if [[ $run_parameter == --loglevel=* ]]; then
+            CLOUDFLARED_LOG=${run_parameter#*=}
+            bashio::log.trace "Setting CLOUDFLARED_LOG to: ${run_parameter#*=}"
+        fi
+    done
 fi
 
-# Write log level to S6 environment
-printf "%s" "${log}" > /var/run/s6/container_environment/CLOUDFLARED_LOG
-CLOUDFLARED_LOG=${log}
-bashio::log.debug "Cloudflared log level set to \"${log}\""
+bashio::log.debug "Cloudflared log level set to \"${CLOUDFLARED_LOG}\""
 
 }
 

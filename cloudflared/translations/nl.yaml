@@ -3,7 +3,7 @@ configuration:
   log_level:
     name: Log Level
     description: >-
-      Beschrijft het log level voor add-on en de Cloudflare service.
+      Beschrijft het log level voor de add-on.
   external_hostname:
     name: Externe Hostname voor Home Assistant
     description: >-
