@@ -306,6 +306,30 @@ createDNS() {
     fi
 }
 
+# ------------------------------------------------------------------------------
+# Set Cloudflared log level
+# ------------------------------------------------------------------------------
+setCloudflaredLogLevel() {
+
+# Set cloudflared log to "info" as default
+CLOUDFLARED_LOG="info"
+
+# Check if user wishes to change log severity
+if bashio::config.has_value 'run_parameters' ; then
+    bashio::log.trace "bashio::config.has_value 'run_parameters'"
+    for run_parameter in $(bashio::config 'run_parameters'); do
+        bashio::log.trace "Checking run_parameter: ${run_parameter}"
+        if [[ $run_parameter == --loglevel=* ]]; then
+            CLOUDFLARED_LOG=${run_parameter#*=}
+            bashio::log.trace "Setting CLOUDFLARED_LOG to: ${run_parameter#*=}"
+        fi
+    done
+fi
+
+bashio::log.debug "Cloudflared log level set to \"${CLOUDFLARED_LOG}\""
+
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -317,6 +341,8 @@ data_path="/data"
 
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
+
+    setCloudflaredLogLevel
 
     # Run connectivity checks if debug mode activated
     if bashio::debug ; then
