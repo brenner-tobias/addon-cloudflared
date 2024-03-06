@@ -265,6 +265,9 @@ The `log_level` option controls the level of log output by the addon and can
 be changed to be more or less verbose, which might be useful when you are
 dealing with an unknown issue.
 
+**Note**: _If you want to change the log level of the tunnel itself you can
+use the `run_parameters` `--loglevel` option._
+
 ```yaml
 log_level: debug
 ```

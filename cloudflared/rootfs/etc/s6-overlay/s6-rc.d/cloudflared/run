@@ -11,7 +11,6 @@ declare -a options
 # Set common cloudflared tunnel options
 options+=(--no-autoupdate)
 options+=(--metrics="0.0.0.0:36500")
-options+=(--loglevel="${CLOUDFLARED_LOG}")
 
 # Check for post_quantum option
 if bashio::config.true 'post_quantum' ; then
