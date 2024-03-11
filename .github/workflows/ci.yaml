@@ -146,10 +146,6 @@ jobs:
           echo "from=$from" >> $GITHUB_OUTPUT
           if [[ "${{ matrix.architecture}}" = "amd64" ]]; then
             echo "platform=linux/amd64" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.architecture }}" = "i386" ]]; then
-            echo "platform=linux/386" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.architecture }}" = "armhf" ]]; then
-            echo "platform=linux/arm/v6" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "armv7" ]]; then
             echo "platform=linux/arm/v7" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "aarch64" ]]; then
