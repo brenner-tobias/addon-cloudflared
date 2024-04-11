@@ -2,7 +2,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: I have a question or need support
-    url: https://community.home-assistant.io/t/new-add-on-cloudflared/
+    url: https://community.home-assistant.io/t/new-add-on-cloudflared/361637
     about: We use GitHub for tracking bugs, check the community forum for help.
   - name: Feature Request
     url: https://github.com/brenner-tobias/addon-cloudflared/discussions/new
