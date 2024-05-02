@@ -4,7 +4,7 @@ name: Lock
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    - cron: "3 25 * * *"
+    - cron: "25 3 * * *"
   workflow_dispatch:
 
 jobs:
