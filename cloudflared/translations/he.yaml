@@ -1,0 +1,43 @@
+---
+configuration:
+  log_level:
+    name: רמת יומן
+    description: >-
+      מגדיר את רמת היומן עבור ההרחבה.
+  external_hostname:
+    name: מארח חיצוני עבור Home Assistant
+    description: >-
+      הגדרת שם הדומיין או תת-הדומיין שלך שבו ברצונך להשתמש 
+      כדי לגשת אל Home Assistant.
+  tunnel_name:
+    name: שם מנהרת Cloudflare
+    description: >-
+      מגדיר את שם המנהרה שנוצרה לתקשורת ביניהן, שירות זה ושרת Cloudflare edge.
+      ערך ברירת המחדל אמור להיות תקין ברוב מקרי השימוש.
+  additional_hosts:
+    name: מארחים נוספים
+    description: >-
+      הגדרת רשימה של מארחים נוספים לניתוב על ידי מנהרת Cloudflare.
+  post_quantum:
+    name: שימוש בקריפטוגרפיה פוסט-קוונטית
+    description: >-
+      יש לסמן כדי לגרום למנהרה להשתמש ב-Post-Quantum Cryptography.
+      אזהרה: זה גם מגביל את המנהרה ל-QUIC, מה שעלול להוביל לבעיות
+      עבור חלק מהמשתמשים.
+  run_parameters:
+    name: הוספת פרמטרים של הפעלה
+    description: >-
+      אפשרות להוסיף פרמטרי ריצה ל-Cloudflared
+  catch_all_service:
+    name: שירות Catch-All
+    description: >-
+      הגדרת שירות הרחבה שייקרא לשירותים שאינם מוגדרים ישירות.
+  nginx_proxy_manager:
+    name: הפעלת Catch-All Nginx-Proxy-Manager
+    description: >-
+      מגדיר את שירות catch-all להרחבה "Nginx-Proxy-Manager Community Add-ons".
+  tunnel_token:
+    name: אסימון מנהרת Cloudflare
+    description: >-
+      כאשר מוגדר, כל האפשרויות האחרות יתעלמו. יש להשתמש באפשרות זו
+      בהגדרת המנהרה עם לוח המחוונים של Cloudflare.
