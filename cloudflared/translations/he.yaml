@@ -7,7 +7,7 @@ configuration:
   external_hostname:
     name: מארח חיצוני עבור Home Assistant
     description: >-
-      הגדרת שם הדומיין או תת-הדומיין שלך שבו ברצונך להשתמש 
+      הגדרת שם הדומיין או תת-הדומיין שלך שבו ברצונך להשתמש
       כדי לגשת אל Home Assistant.
   tunnel_name:
     name: שם מנהרת Cloudflare
