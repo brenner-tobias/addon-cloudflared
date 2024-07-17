@@ -107,7 +107,7 @@ jobs:
       - name: ⤵️ Download base image
         run: docker pull "${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
-        uses: docker/build-push-action@v6.4.0
+        uses: docker/build-push-action@v6.4.1
         with:
           load: true
           # yamllint disable rule:line-length
