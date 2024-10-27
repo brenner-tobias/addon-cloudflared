@@ -7,6 +7,7 @@ description: "Use a Cloudflare Tunnel to remotely
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
 codenotary: dev@brenner.tech
 init: false
+webui: http://[HOST]:[PORT:36500]/metrics
 hassio_api: true
 hassio_role: homeassistant
 arch:
@@ -18,6 +19,10 @@ map:
 options:
   external_hostname: ""
   additional_hosts: []
+ports:
+  36500/tcp: 36500
+ports_description:
+  36500/tcp: Metrics Web interface
 schema:
   external_hostname: str?
   additional_hosts:
