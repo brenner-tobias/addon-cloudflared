@@ -44,3 +44,5 @@ configuration:
       Wenn diese Option gesetzt ist, werden alle anderen Optionen ignoriert.
       Wird verwendet, wenn der Tunnel mit dem Cloudflare Dashboard
       eingerichtet wird.
+network:
+  36500/tcp: Web-Interface für Metriken (36500/tcp)

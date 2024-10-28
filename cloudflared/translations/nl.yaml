@@ -45,3 +45,5 @@ configuration:
       Alle andere opties wordt genegeerd wanneer deze optie is ingeschakeld.
       Gebruik deze optie als je de tunel met het Cloudflare Dashboard
       instelt.
+network:
+  36500/tcp: Webinterface voor statistieken (36500/tcp)
