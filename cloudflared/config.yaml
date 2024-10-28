@@ -7,7 +7,6 @@ description: "Use a Cloudflare Tunnel to remotely
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
 codenotary: dev@brenner.tech
 init: false
-webui: http://[HOST]:[PORT:36500]/metrics
 hassio_api: true
 hassio_role: homeassistant
 arch:
