@@ -12,6 +12,7 @@
 
 [![Github Actions][github-actions-shield]][github-actions]
 ![Project Maintenance][maintenance-shield]
+[![GitHub Activity][commits-shield]][commits]
 ![Reported Installations][installations-shield-stable]
 
 Connect remotely to your Home Assistant and other services, without opening ports
@@ -89,6 +90,8 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
+[commits-shield]: https://img.shields.io/github/commit-activity/y/brenner-tobias/addon-cloudflared.svg
+[commits]: https://github.com/brenner-tobias/addon-cloudflared/commits/main
 [contributors]: https://github.com/brenner-tobias/addon-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
