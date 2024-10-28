@@ -20,9 +20,7 @@ options:
   external_hostname: ""
   additional_hosts: []
 ports:
-  36500/tcp: 36500
-ports_description:
-  36500/tcp: Metrics Web interface
+  36500/tcp: null
 schema:
   external_hostname: str?
   additional_hosts:
