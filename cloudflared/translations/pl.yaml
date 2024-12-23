@@ -7,7 +7,7 @@ configuration:
   external_hostname:
     name: Zewnętrzna nazwa hosta Home Assistant
     description: >-
-      Ustaw tę opcję na nazwę swojej domeny lub subdomeny, 
+      Ustaw tę opcję na nazwę swojej domeny lub subdomeny,
       której chcesz używać aby uzyskać dostęp do Home Assistant.
   tunnel_name:
     name: Nazwa Tunelu Cloudflare
@@ -32,12 +32,12 @@ configuration:
   catch_all_service:
     name: Usługa Catch-All
     description: >-
-      Zdefiniuj usługę typu catch-all, która będzie wywoływana dla usług, 
+      Zdefiniuj usługę typu catch-all, która będzie wywoływana dla usług,
       które nie zostały skonfigurowane bezpośrednio.
   nginx_proxy_manager:
     name: Włącz opcje Catch-All Nginx-Proxy-Manager
     description: >-
-      Ustawia usługę catch-all na dodatek "Nginx-Proxy-Manager Community 
+      Ustawia usługę catch-all na dodatek "Nginx-Proxy-Manager Community
       Add-Ons"
   tunnel_token:
     name: Token Tunelu Cloudflare
