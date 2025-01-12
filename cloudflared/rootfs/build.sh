@@ -24,6 +24,13 @@ case $arch in
     ;;
 esac
 
+# Workaround for live log streaming issue
+# see https://github.com/brenner-tobias/addon-cloudflared/discussions/744
+
+# renovate: datasource=repology depName=debian_12/gnupg versioning=loose
+nginx_version="1.26.2-r4"
+apk add --no-cache nginx="${nginx_version}"
+
 # Download the cloudflared bin
 wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudflaredRelease}/cloudflared-linux-${arch}"
 

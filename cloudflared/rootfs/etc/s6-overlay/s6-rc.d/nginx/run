@@ -1,0 +1,27 @@
+#!/command/with-contenv bashio
+# shellcheck disable=SC2207
+# ==============================================================================
+# Home Assistant Add-on: Cloudflared
+#
+# Configures the nginx service as workaround to get live streaming logs working
+# see https://github.com/brenner-tobias/addon-cloudflared/discussions/744
+# ==============================================================================
+# set up and run nginx
+# ==============================================================================
+
+set -e
+
+bashio::log.debug "Merging options & variables for template"
+# shellcheck disable=SC2046
+JSON_CONF=$(jq --arg port $(bashio::core.port) \
+    '({port: $port})' \
+    /data/options.json)
+bashio::log.debug "Generating nginx.conf from template in /etc/nginx/nginx.conf.gtpl"
+# shellcheck disable=SC2086
+echo $JSON_CONF | tempio \
+    -template /etc/nginx/template/nginx.conf.gtpl \
+    -out /etc/nginx.conf
+
+# start server
+bashio::log.info "Running nginx..."
+exec nginx -c /etc/nginx.conf < /dev/null
