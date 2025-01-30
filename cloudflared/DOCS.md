@@ -139,9 +139,16 @@ additional_hosts:
     disableChunkedEncoding: true
 ```
 
-**Note**: _If you delete a hostname from the list, it will not be served
+**Note 1**: _If you delete a hostname from the list, it will not be served
 anymore. Nevertheless, you should also manually delete the DNS entry from
 Cloudflare since it can not be deleted by the add-on._
+
+**Note 2**: _If you want to fully delete the additional_hosts option,
+you have to add an empty array in the configuration as follows:._
+
+```yaml
+additional_hosts: []
+```
 
 ### Option: `tunnel_name`
 
