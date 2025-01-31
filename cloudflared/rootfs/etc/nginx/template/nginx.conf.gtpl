@@ -33,7 +33,7 @@ http {
             proxy_set_header X-Forwarded-Host $http_host;
         }
 
-        location ~ /api/hassio/.*/logs {
+        location ~ /api/hassio/.*/logs.*/follow {
             proxy_pass http://homeassistant:{{ .port }};
             proxy_set_header Host $http_host;
             proxy_http_version 1.1;
