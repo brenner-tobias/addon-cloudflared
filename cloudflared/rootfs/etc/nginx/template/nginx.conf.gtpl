@@ -40,6 +40,7 @@ http {
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection $connection_upgrade;
             proxy_set_header X-Forwarded-Host $http_host;
+            proxy_read_timeout 1d;
             proxy_cache off;
             proxy_buffering off;
             proxy_hide_header Content-Type;
