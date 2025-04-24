@@ -20,6 +20,8 @@ add-on.
    one see [Domain name and Cloudflare set up][how-tos].
    Please be aware that domains from **Freenom** do not work anymore, so you
    have to chose / migrate to another registrar.
+1. If you have not done already, [activate Websockets in Cloudflare for your
+   domain][cloudflare-websockets].
 1. Decide between a local tunnel (managed by the add-on) or a remote tunnel
    (managed in Cloudflare's interface). [Learn more][addon-remote-or-local].
 1. This add-on should be [installed][addon-installation] but not started yet.
@@ -360,6 +362,7 @@ SOFTWARE.
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
 [cloudflare-run_parameter]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/
+[cloudflare-websockets]: https://developers.cloudflare.com/network/websockets/
 [contributors]: https://github.com/brenner-tobias/addon-cloudflared/graphs/contributors
 [how-tos]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
 [nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
