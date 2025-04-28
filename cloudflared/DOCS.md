@@ -313,6 +313,7 @@ http:
   trusted_proxies:
     - 172.30.33.0/24
 ```
+
 **If you are using non-standard hosting methods of HA (e.g. Proxmox), you
 might have to add another IP(range) here. Check your Cloudflared Add-On logs
 after attempting to connect to find the correct IP.**
