@@ -39,6 +39,12 @@ configuration:
     description: >-
       Ustawia usługę catch-all na dodatek "Nginx-Proxy-Manager Community
       Add-Ons"
+  use_builtin_proxy:
+    name: Użyj wbudowanego proxy Nginx
+    description: >-
+      Połączenie z Home Assistant będzie realizowane przez wbudowane
+      proxy Nginx. (Obejście problemów z logami na żywo).
+      Ta opcja jest domyślnie włączona.
   tunnel_token:
     name: Token Tunelu Cloudflare
     description: >-

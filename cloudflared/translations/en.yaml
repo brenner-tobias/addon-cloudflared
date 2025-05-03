@@ -39,6 +39,12 @@ configuration:
     description: >-
       Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
       Add-on.
+  use_builtin_proxy:
+    name: Use built-in Nginx proxy
+    description: >-
+      The connection to Home Assistant will be made through the built-in
+      Nginx proxy. (Workaround for issues with live logs).
+      This option is enabled by default.
   tunnel_token:
     name: Cloudflare Tunnel Token
     description: >-
