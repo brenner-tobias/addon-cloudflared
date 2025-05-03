@@ -222,7 +222,7 @@ them to wherever you like.
 
 If enabled the connection to Home Assistant will be made through the built-in
 Nginx proxy. The Nginx was implemented as workaround for issues with live logs.
-For reference see discussion #744
+For reference see discussion [#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744)
 
 **Note**: _This option is enabled by default._
 
