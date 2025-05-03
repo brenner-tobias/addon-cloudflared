@@ -220,9 +220,9 @@ them to wherever you like.
 
 ### Option: `use_builtin_proxy`
 
-If enabled the connection to Home Assistant will be made through the built-in
-Nginx proxy. The Nginx was implemented as workaround for issues with live logs.
-For reference see discussion [#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744)
+If enabled, the connection to Home Assistant will be made through the built-in
+Nginx proxy. Nginx was implemented as a workaround for issues with live logs.
+For reference, see discussion [#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744)
 
 **Note**: _This option is enabled by default._
 
