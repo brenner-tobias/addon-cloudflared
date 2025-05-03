@@ -36,6 +36,12 @@ configuration:
     name: הפעלת Catch-All Nginx-Proxy-Manager
     description: >-
       מגדיר את שירות catch-all להרחבה "Nginx-Proxy-Manager Community Add-ons".
+  use_builtin_proxy:
+    name: השתמש ב-Nginx proxy המובנה
+    description: >-
+      החיבור ל-Home Assistant יתבצע דרך ה-Nginx proxy המובנה.
+      (פתרון בעיות עבור בעיות עם יומני חיים).
+      אפשרות זו מופעלת כברירת מחדל.
   tunnel_token:
     name: אסימון מנהרת Cloudflare
     description: >-

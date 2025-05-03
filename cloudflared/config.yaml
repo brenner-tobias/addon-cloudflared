@@ -29,6 +29,7 @@ schema:
   tunnel_name: str?
   catch_all_service: str?
   nginx_proxy_manager: bool?
+  use_builtin_proxy: bool?
   tunnel_token: str?
   post_quantum: bool?
   run_parameters:

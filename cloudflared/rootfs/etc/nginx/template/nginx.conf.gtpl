@@ -25,7 +25,12 @@ http {
         proxy_buffering off;
 
         location / {
+            {{- if not .ssl }}
             proxy_pass http://homeassistant:{{ .port }};
+            {{- else }}
+            proxy_pass https://homeassistant:{{ .port }};
+            proxy_ssl_verify        off;
+            {{- end }}
             proxy_set_header Host $http_host;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -34,7 +39,12 @@ http {
         }
 
         location ~ /api/hassio/.*/logs.*/follow {
+            {{- if not .ssl }}
             proxy_pass http://homeassistant:{{ .port }};
+            {{- else }}
+            proxy_pass https://homeassistant:{{ .port }};
+            proxy_ssl_verify        off;
+            {{- end }}
             proxy_set_header Host $http_host;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
