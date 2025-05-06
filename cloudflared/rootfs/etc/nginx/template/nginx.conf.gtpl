@@ -1,5 +1,5 @@
 daemon off;
-error_log stderr;
+error_log /proc/1/fd/1 warn;
 pid /var/run/nginx.pid;
 
 events {
