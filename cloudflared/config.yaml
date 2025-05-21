@@ -15,11 +15,14 @@ arch:
   - armv7
 map:
   - addon_config:rw
+  - ssl:rw
 options:
   external_hostname: ""
   additional_hosts: []
 ports:
   36500/tcp: null
+  80/tcp: null
+  443/tcp: null
 schema:
   external_hostname: str?
   additional_hosts:

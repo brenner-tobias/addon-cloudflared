@@ -1,0 +1,7 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "Starting Caddy..."
+export XDG_DATA_HOME=/data/caddy-data
+export XDG_CONFIG_HOME=/data/caddy-config
+exec caddy run --config /etc/caddy/Caddyfile

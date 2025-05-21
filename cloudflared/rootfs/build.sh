@@ -5,34 +5,41 @@
 # Container build of Cloudflared
 # ==============================================================================
 
-# Machine architecture as first parameter
-arch=$1
+set -eux
 
-# Cloudflared release as second parameter
-cloudflaredRelease=$2
-
-# Adapt the architecture to the cloudflared specific names if needed
-# see HA Archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
-# see Cloudflared Archs https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation
-case $arch in
-    "aarch64")
-        arch="arm64"
+# Adapt the architecture to the caddy specific names if needed
+# see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
+# see Caddy archs: https://github.com/caddyserver/caddy/releases
+case "${BUILD_ARCH}" in
+"aarch64")
+    caddy_arch="arm64"
     ;;
-
-    "armv7")
-        arch="arm"
+*)
+    caddy_arch="${BUILD_ARCH}"
     ;;
 esac
 
-# Workaround for live log streaming issue
-# see https://github.com/brenner-tobias/addon-cloudflared/discussions/744
+# Download the caddy bin
+wget -q -O- "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${caddy_arch}.tar.gz" |
+    tar -xzf- -C /usr/bin caddy
 
-# renovate: datasource=repology depName=debian_12/gnupg versioning=loose
-nginx_version="1.26.3-r0"
-apk add --no-cache nginx="${nginx_version}"
+# Adapt the architecture to the cloudflared specific names if needed
+# see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
+# see Cloudflared archs: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation
+case "${BUILD_ARCH}" in
+"aarch64")
+    cloudflared_arch="arm64"
+    ;;
+"armv7")
+    cloudflared_arch="arm"
+    ;;
+*)
+    cloudflared_arch="${BUILD_ARCH}"
+    ;;
+esac
 
 # Download the cloudflared bin
-wget -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${cloudflaredRelease}/cloudflared-linux-${arch}"
+wget -q -O /usr/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-${cloudflared_arch}"
 
 # Make the downloaded bin executeable
 chmod +x /usr/bin/cloudflared
@@ -41,6 +48,6 @@ chmod +x /usr/bin/cloudflared
 rm -rf /etc/cont-init.d
 
 # Remove s-6 legacy/deprecated (and not needed) services
-rm /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/legacy-cont-init
-rm /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/fix-attrs
-rm /package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/legacy-services
+rm -f /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/legacy-cont-init
+rm -f /package/admin/s6-overlay/etc/s6-rc/sources/base/contents.d/fix-attrs
+rm -f /package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/legacy-services

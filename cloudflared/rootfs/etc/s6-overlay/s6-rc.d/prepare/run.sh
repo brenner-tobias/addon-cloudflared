@@ -1,5 +1,5 @@
 #!/command/with-contenv bashio
-# shellcheck disable=SC2207
+# shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
 #
@@ -17,21 +17,24 @@ checkConfig() {
     local validHostnameRegex="^(([a-z0-9äöüß]|[a-z0-9äöüß][a-z0-9äöüß\-]*[a-z0-9äöüß])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$"
 
     # Check for minimum configuration options
-    if bashio::config.is_empty 'external_hostname' && bashio::config.is_empty 'additional_hosts' &&
-        bashio::config.is_empty 'catch_all_service' && bashio::config.is_empty 'nginx_proxy_manager';
+    if
+        bashio::config.is_empty 'external_hostname' &&
+            bashio::config.is_empty 'additional_hosts' &&
+            bashio::config.is_empty 'catch_all_service' &&
+            bashio::config.is_empty 'nginx_proxy_manager'
     then
         bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
     # Check if 'external_hostname' includes a valid hostname
-    if bashio::config.has_value 'external_hostname' ; then
-        if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]] ; then
+    if bashio::config.has_value 'external_hostname'; then
+        if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]]; then
             bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'external_hostname'."
         fi
     fi
 
     # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
-    if bashio::config.has_value 'additional_hosts' ; then
+    if bashio::config.has_value 'additional_hosts'; then
         local hostname
         local service
         for additional_host in $(bashio::jq "/data/options.json" ".additional_hosts[]"); do
@@ -41,26 +44,26 @@ checkConfig() {
             if bashio::var.is_empty "${hostname}" && bashio::var.is_empty "${service}"; then
                 bashio::exit.nok "'hostname' and 'service' in 'additional_hosts' are empty, please enter a valid String"
             fi
-            if bashio::var.is_empty "${hostname}" ; then
+            if bashio::var.is_empty "${hostname}"; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' for service ${service} is empty, please enter a valid String"
             fi
             # Check if hostname of 'additional_host' includes a valid hostname
-            if ! [[ ${hostname} =~ ${validHostnameRegex} ]] ; then
+            if ! [[ ${hostname} =~ ${validHostnameRegex} ]]; then
                 bashio::exit.nok "'${hostname}' in 'additional_hosts' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'hostname'."
             fi
-            if bashio::var.is_empty "${service}" ; then
+            if bashio::var.is_empty "${service}"; then
                 bashio::exit.nok "'service' in 'additional_hosts' for hostname ${hostname} is empty, please enter a valid String"
             fi
         done
     fi
 
     # Check if 'catch_all_service' is included in config with an empty String
-    if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service' ; then
+    if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service'; then
         bashio::exit.nok "'catch_all_service' is defined as an empty String. Please remove 'catch_all_service' from the configuration or enter a valid String"
     fi
 
     # Check if 'catch_all_service' and 'nginx_proxy_manager' are both included in config.
-    if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager' ; then
+    if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager'; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
 }
@@ -73,40 +76,40 @@ checkConnectivity() {
 
     # Check for region1 TCP
     bashio::log.debug "Checking region1.v2.argotunnel.com TCP port 7844"
-    if ! nc -z -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
+    if ! nc -z -w 1 region1.v2.argotunnel.com 7844 &>/dev/null; then
         bashio::log.warning "region1.v2.argotunnel.com TCP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region1 UDP
     bashio::log.debug "Checking region1.v2.argotunnel.com UDP port 7844"
-    if ! nc -z -u -w 1 region1.v2.argotunnel.com 7844 &> /dev/null ; then
+    if ! nc -z -u -w 1 region1.v2.argotunnel.com 7844 &>/dev/null; then
         bashio::log.warning "region1.v2.argotunnel.com UDP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region2 TCP
     bashio::log.debug "Checking region2.v2.argotunnel.com TCP port 7844"
-    if ! nc -z -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
+    if ! nc -z -w 1 region2.v2.argotunnel.com 7844 &>/dev/null; then
         bashio::log.warning "region2.v2.argotunnel.com TCP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for region2 UDP
     bashio::log.debug "Checking region2.v2.argotunnel.com UDP port 7844"
-    if ! nc -z -u -w 1 region2.v2.argotunnel.com 7844 &> /dev/null ; then
+    if ! nc -z -u -w 1 region2.v2.argotunnel.com 7844 &>/dev/null; then
         bashio::log.warning "region2.v2.argotunnel.com UDP port 7844 not reachable"
         pass_test=false
     fi
 
     # Check for API TCP
     bashio::log.debug "Checking api.cloudflare.com TCP port 443"
-    if ! nc -z -w 1 api.cloudflare.com 443 &> /dev/null ; then
+    if ! nc -z -w 1 api.cloudflare.com 443 &>/dev/null; then
         bashio::log.warning "api.cloudflare.com TCP port 443 not reachable"
         pass_test=false
     fi
 
-    if bashio::var.false ${pass_test} ; then
+    if bashio::var.false ${pass_test}; then
         bashio::log.warning "Some necessary services may not be reachable from your host."
         bashio::log.warning "Please review lines above and check your firewall/router settings."
     fi
@@ -119,7 +122,7 @@ checkConnectivity() {
 hasCertificate() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Checking for existing certificate..."
-    if bashio::fs.file_exists "${data_path}/cert.pem" ; then
+    if bashio::fs.file_exists "${data_path}/cert.pem"; then
         bashio::log.info "Existing certificate found"
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -154,7 +157,7 @@ hasTunnel() {
     bashio::log.info "Checking for existing tunnel..."
 
     # Check if tunnel file(s) exist
-    if ! bashio::fs.file_exists "${data_path}/tunnel.json" ; then
+    if ! bashio::fs.file_exists "${data_path}/tunnel.json"; then
         bashio::log.notice "No tunnel file found"
         return "${__BASHIO_EXIT_NOK}"
     fi
@@ -191,8 +194,8 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}" \
-    || bashio::exit.nok "Failed to create tunnel.
+    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}" ||
+        bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Zero Trust Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     Visit https://one.dash.cloudflare.com, then click on Access / Tunnels"
 
@@ -215,50 +218,55 @@ createConfig() {
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
     bashio::log.debug "Checking if SSL is used..."
-    if bashio::var.true "$(bashio::core.ssl)" ; then
+    if bashio::var.true "$(bashio::core.ssl)"; then
         ha_service_protocol="https"
     else
         ha_service_protocol="http"
     fi
     bashio::log.debug "ha_service_protocol: ${ha_service_protocol}"
 
-    if bashio::var.is_empty "${ha_service_protocol}" ; then
+    if bashio::var.is_empty "${ha_service_protocol}"; then
         bashio::exit.nok "Error checking if SSL is enabled"
     fi
 
     # Add Service for Home Assistant if 'external_hostname' is set
-    if bashio::config.has_value 'external_hostname' ; then
-        if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy' ; then
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://localhost:8321\"}]")
+    if bashio::config.has_value 'external_hostname'; then
+        if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://${external_hostname}.internal\"}]")
         else
             config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
         fi
     fi
 
     # Check for configured additional hosts and add them if existing
-    if bashio::config.has_value 'additional_hosts' ; then
+    if bashio::config.has_value 'additional_hosts'; then
         # Loop additional_hosts to create json config
         while read -r additional_host; do
             # Check for originRequest configuration option: disableChunkedEncoding
             disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
-            if ! [[ ${disableChunkedEncoding} == "" ]]  ; then
+            if ! [[ ${disableChunkedEncoding} == "" ]]; then
                 additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
                 additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
             fi
+
+            if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
+                additional_host=$(bashio::jq "${additional_host}" '.service = "https://\(.hostname).internal"')
+            fi
+
             # Add additional_host config to ingress config
             config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
-        done <<< "$(jq -c '.additional_hosts[]' /data/options.json )"
+        done <<<"$(jq -c '.additional_hosts[]' /data/options.json)"
     fi
 
     # Check if NGINX Proxy Manager is used to finalize configuration
-    if bashio::config.true 'nginx_proxy_manager' ; then
+    if bashio::config.true 'nginx_proxy_manager'; then
 
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
     else
 
         # Check if catch all service is defined
-        if bashio::config.has_value 'catch_all_service' ; then
+        if bashio::config.has_value 'catch_all_service'; then
 
             bashio::log.info "Runing with Catch all Service"
             # Setting catch all service to defined URL
@@ -273,13 +281,13 @@ createConfig() {
     config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
 
     # Write content of config variable to config file for cloudflared
-    bashio::jq "${config}" "." > "${default_config}"
+    bashio::jq "${config}" "." >"${default_config}"
 
     # Validate config using cloudflared
     bashio::log.info "Validating config file..."
     bashio::log.debug "Validating created config file: $(bashio::jq "${default_config}" ".")"
-    cloudflared tunnel --config="${default_config}" --loglevel "${CLOUDFLARED_LOG}" ingress validate \
-    || bashio::exit.nok "Validation of Config failed, please check the logs above."
+    cloudflared tunnel --config="${default_config}" --loglevel "${CLOUDFLARED_LOG}" ingress validate ||
+        bashio::exit.nok "Validation of Config failed, please check the logs above."
 
     bashio::log.debug "Sucessfully created config file: $(bashio::jq "${default_config}" ".")"
 }
@@ -291,21 +299,21 @@ createDNS() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     # Create DNS entry for external hostname of Home Assistant if 'external_hostname' is set
-    if bashio::config.has_value 'external_hostname' ; then
+    if bashio::config.has_value 'external_hostname'; then
         bashio::log.info "Creating DNS entry ${external_hostname}..."
-        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" \
-        || bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
+        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" ||
+            bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
     fi
 
     # Check for configured additional hosts and create DNS entries for them if existing
-    if bashio::config.has_value 'additional_hosts' ; then
+    if bashio::config.has_value 'additional_hosts'; then
         for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
             bashio::log.info "Creating DNS entry ${host}..."
-            if bashio::var.is_empty "${host}" ; then
+            if bashio::var.is_empty "${host}"; then
                 bashio::exit.nok "'hostname' in 'additional_hosts' is empty, please enter a valid String"
             fi
-            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${host}" \
-            || bashio::exit.nok "Failed to create DNS entry ${host}."
+            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${host}" ||
+                bashio::exit.nok "Failed to create DNS entry ${host}."
         done
     fi
 }
@@ -315,22 +323,22 @@ createDNS() {
 # ------------------------------------------------------------------------------
 setCloudflaredLogLevel() {
 
-# Set cloudflared log to "info" as default
-CLOUDFLARED_LOG="info"
+    # Set cloudflared log to "info" as default
+    CLOUDFLARED_LOG="info"
 
-# Check if user wishes to change log severity
-if bashio::config.has_value 'run_parameters' ; then
-    bashio::log.trace "bashio::config.has_value 'run_parameters'"
-    for run_parameter in $(bashio::config 'run_parameters'); do
-        bashio::log.trace "Checking run_parameter: ${run_parameter}"
-        if [[ $run_parameter == --loglevel=* ]]; then
-            CLOUDFLARED_LOG=${run_parameter#*=}
-            bashio::log.trace "Setting CLOUDFLARED_LOG to: ${run_parameter#*=}"
-        fi
-    done
-fi
+    # Check if user wishes to change log severity
+    if bashio::config.has_value 'run_parameters'; then
+        bashio::log.trace "bashio::config.has_value 'run_parameters'"
+        for run_parameter in $(bashio::config 'run_parameters'); do
+            bashio::log.trace "Checking run_parameter: ${run_parameter}"
+            if [[ $run_parameter == --loglevel=* ]]; then
+                CLOUDFLARED_LOG=${run_parameter#*=}
+                bashio::log.trace "Setting CLOUDFLARED_LOG to: ${run_parameter#*=}"
+            fi
+        done
+    fi
 
-bashio::log.debug "Cloudflared log level set to \"${CLOUDFLARED_LOG}\""
+    bashio::log.debug "Cloudflared log level set to \"${CLOUDFLARED_LOG}\""
 
 }
 
@@ -349,7 +357,7 @@ main() {
     setCloudflaredLogLevel
 
     # Run connectivity checks if debug mode activated
-    if bashio::debug ; then
+    if bashio::debug; then
         bashio::log.debug "Checking connectivity to Cloudflare"
         checkConnectivity
     fi
@@ -363,23 +371,46 @@ main() {
 
     checkConfig
 
-    if bashio::config.has_value 'tunnel_name' ; then
+    if bashio::config.has_value 'tunnel_name'; then
         tunnel_name="$(bashio::config 'tunnel_name')"
     fi
 
     external_hostname="$(bashio::config 'external_hostname')"
 
-    if ! hasCertificate ; then
+    if ! hasCertificate; then
         createCertificate
     fi
 
-    if ! hasTunnel ; then
+    if ! hasTunnel; then
         createTunnel
     fi
 
     createConfig
 
     createDNS
+
+    bashio::log.info "Configuring Caddy..."
+    bashio::log.debug "Generating Caddyfile from template in /etc/caddy/Caddyfile"
+    json=$(
+        jq -n \
+            --arg ha_external_hostname "${external_hostname}" \
+            --arg ha_port "$(bashio::core.port)" \
+            --argjson ha_ssl "$(bashio::core.ssl)" \
+            --argjson additional_hosts "$(jq -c '.additional_hosts' /data/options.json)" \
+            '{ha_external_hostname: $ha_external_hostname, ha_port: $ha_port, ha_ssl: $ha_ssl, additional_hosts: $additional_hosts}'
+    )
+    bashio::log.debug "JSON: ${json}"
+    echo "${json}" | tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile
+    bashio::log.debug "Generated Caddyfile:"
+    bashio::log.debug "$(cat /etc/caddy/Caddyfile)"
+
+    # add entries to /etc/hosts
+    echo "127.0.0.1 ${external_hostname}.internal" >>/etc/hosts
+    if bashio::config.has_value 'additional_hosts'; then
+        for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
+            echo "127.0.0.1 ${host}.internal" >>/etc/hosts
+        done
+    fi
 
     bashio::log.info "Finished setting up the Cloudflare Tunnel"
 }
