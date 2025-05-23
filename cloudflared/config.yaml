@@ -15,7 +15,6 @@ arch:
   - armv7
 map:
   - addon_config:rw
-  - ssl:rw
 options:
   external_hostname: ""
   additional_hosts: []
@@ -25,6 +24,7 @@ ports:
   443/tcp: null
   443/udp: null
 privileged:
+  # https://hub.docker.com/_/caddy#linux-capabilities:~:text=caddy_container_id%20caddy%20reload-,Linux%20capabilities,-Caddy%20ships%20with
   - NET_ADMIN
 schema:
   external_hostname: str?

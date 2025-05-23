@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
-# Take down the S6 supervision tree when the Caddy fails
+# Take down the S6 supervision tree when Caddy fails
 # ==============================================================================
 readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
