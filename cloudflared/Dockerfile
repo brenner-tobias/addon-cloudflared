@@ -17,6 +17,8 @@ COPY rootfs /
 # Run the script that installs caddy and cloudflared
 RUN ["/build.sh"]
 
+CMD ["/run.sh"]
+
 # Build arguments
 ARG BUILD_DATE
 ARG BUILD_DESCRIPTION
