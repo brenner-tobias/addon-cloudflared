@@ -232,7 +232,7 @@ createConfig() {
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
         if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://${external_hostname}.internal\"}]")
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://${external_hostname}\"}]")
         else
             config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
         fi
@@ -250,8 +250,10 @@ createConfig() {
             fi
 
             if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
-                additional_host=$(bashio::jq "${additional_host}" '.service = "https://\(.hostname).internal"')
+                additional_host=$(bashio::jq "${additional_host}" '.service = "https://\(.hostname)"')
             fi
+
+            additional_host=$(bashio::jq "${additional_host}" "del(.internalOnly)")
 
             # Add additional_host config to ingress config
             config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
@@ -405,10 +407,10 @@ main() {
     bashio::log.debug "$(cat /etc/caddy/Caddyfile)"
 
     # add entries to /etc/hosts
-    echo "127.0.0.1 ${external_hostname}.internal" >>/etc/hosts
+    echo "127.0.0.1 ${external_hostname}" | tee -a /etc/hosts
     if bashio::config.has_value 'additional_hosts'; then
         for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            echo "127.0.0.1 ${host}.internal" >>/etc/hosts
+            echo "127.0.0.1 ${host}" | tee -a /etc/hosts
         done
     fi
 

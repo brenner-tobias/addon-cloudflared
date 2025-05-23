@@ -23,12 +23,16 @@ ports:
   36500/tcp: null
   80/tcp: null
   443/tcp: null
+  443/udp: null
+privileged:
+  - NET_ADMIN
 schema:
   external_hostname: str?
   additional_hosts:
     - hostname: str
       service: str
       disableChunkedEncoding: bool?
+      internalOnly: bool?
   tunnel_name: str?
   catch_all_service: str?
   nginx_proxy_manager: bool?
