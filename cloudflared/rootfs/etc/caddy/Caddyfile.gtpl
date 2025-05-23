@@ -6,6 +6,10 @@
 {{ .ha_external_hostname }} {
 	reverse_proxy http://homeassistant:{{ .ha_port }}
 }
+https://{{ .ha_external_hostname }}.localhost {
+    tls internal
+	respond 407
+}
 {{ range $i, $e := .additional_hosts -}}
 {{ $e.hostname }} {
 	{{ if $e.internalOnly -}}
@@ -15,5 +19,9 @@
 	}
 	{{ end -}}
 	reverse_proxy {{ $e.service }}
+}
+https://{{ $e.hostname }}.localhost {
+    tls internal
+    respond 407
 }
 {{ end -}}
