@@ -392,25 +392,40 @@ main() {
     createDNS
 
     bashio::log.info "Configuring Caddy..."
-    bashio::log.debug "Generating Caddyfile from template in /etc/caddy/Caddyfile"
-    json=$(
+
+    if 
+        curl -fsSL \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+            -H "Content-Type: application/json" \
+            http://supervisor/addons/self/info |
+            jq --exit-status --raw-output '.data.network["443/tcp"]' |
+            grep -q '^443$'
+    then
+        bashio::log.info "Internal port 443/tcp is exposed to host port 443, enabling automatic HTTPS"
+        auto_https=true
+    else
+        bashio::log.info "Internal port 443/tcp is not exposed to host port 443, not enabling automatic HTTPS"
+        auto_https=false
+    fi
+
+    tempio_input=$(
         jq -n \
             --arg ha_external_hostname "${external_hostname}" \
             --arg ha_port "$(bashio::core.port)" \
             --argjson ha_ssl "$(bashio::core.ssl)" \
             --argjson additional_hosts "$(jq -c '.additional_hosts' /data/options.json)" \
-            '{ha_external_hostname: $ha_external_hostname, ha_port: $ha_port, ha_ssl: $ha_ssl, additional_hosts: $additional_hosts}'
+            --argjson auto_https "${auto_https}" \
+            '{ha_external_hostname: $ha_external_hostname, ha_port: $ha_port, ha_ssl: $ha_ssl, additional_hosts: $additional_hosts, auto_https: $auto_https}' \
     )
-    bashio::log.debug "JSON: ${json}"
-    echo "${json}" | tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile
-    bashio::log.debug "Generated Caddyfile:"
-    bashio::log.debug "$(cat /etc/caddy/Caddyfile)"
+    bashio::log.debug "Tempio input:\n${tempio_input}"
+    tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile <<<"${tempio_input}"
+    bashio::log.debug "Generated Caddyfile:\n$(cat /etc/caddy/Caddyfile)"
 
-    # add entries to /etc/hosts
+    bashio::log.info "Adding entries to /etc/hosts..."
     echo "127.0.0.1 ${external_hostname}" | tee -a /etc/hosts
     if bashio::config.has_value 'additional_hosts'; then
-        for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            echo "127.0.0.1 ${host}" | tee -a /etc/hosts
+        for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
+            echo "127.0.0.1 ${hostname}" | tee -a /etc/hosts
         done
     fi
 

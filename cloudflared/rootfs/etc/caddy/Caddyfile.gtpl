@@ -1,3 +1,8 @@
+{{ if not .auto_https -}}
+{
+	local_certs
+}
+{{ end -}}
 {{ .ha_external_hostname }} {
   reverse_proxy http://homeassistant:{{ .ha_port }}
 }
@@ -6,9 +11,9 @@
   {{ if $e.internalOnly -}}
   @localhost remote_ip 127.0.0.1
   handle @localhost {
-    respond "This service can only be accessed from the local network." 403
+    respond "This service can only be accessed from local network." 403
   }
-  {{- end }}
+  {{ end -}}
   reverse_proxy {{ $e.service }}
 }
-{{ end }}
+{{ end -}}
