@@ -86,8 +86,6 @@ jobs:
         id: flags
         run: |
           echo "date=$(date +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
-          from=$(yq --no-colors eval ".build_from.${{ matrix.architecture }}" "${{ needs.information.outputs.build }}")
-          echo "from=$from" >> $GITHUB_OUTPUT
           if [[ "${{ matrix.architecture}}" = "amd64" ]]; then
             echo "platform=linux/amd64" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.architecture }}" = "armv7" ]]; then
@@ -104,8 +102,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: ⤵️ Download base image
-        run: docker pull "${{ steps.flags.outputs.from }}"
       - name: 🚀 Build
         uses: docker/build-push-action@v6.17.0
         with:
@@ -124,7 +120,6 @@ jobs:
             BUILD_ARCH=${{ matrix.architecture }}
             BUILD_DATE=${{ steps.flags.outputs.date }}
             BUILD_DESCRIPTION=${{ needs.information.outputs.description }}
-            BUILD_FROM=${{ steps.flags.outputs.from }}
             BUILD_NAME=${{ needs.information.outputs.name }}
             BUILD_REF=${{ github.sha }}
             BUILD_REPOSITORY=${{ github.repository }}
