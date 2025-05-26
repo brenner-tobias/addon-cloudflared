@@ -4,14 +4,14 @@
 }
 {{ end }}
 {{ .ha_external_hostname }} {
-	{{ if .ha_ssl }}
-	reverse_proxy https://homeassistant:{{ .ha_port }} {
+	{{ if hasPrefix "https://" .ha_service_url }}
+	reverse_proxy {{ .ha_service_url }} {
 		transport http {
 			tls_insecure_skip_verify
 		}
 	}
 	{{ else }}
-	reverse_proxy http://homeassistant:{{ .ha_port }}
+	reverse_proxy {{ .ha_service_url }}
 	{{ end }}
 }
 https://{{ .ha_external_hostname }}.localhost {

@@ -220,11 +220,44 @@ them to wherever you like.
 
 ### Option: `use_builtin_proxy`
 
-If enabled, the connection to Home Assistant will be made through the built-in
-Nginx proxy. Nginx was implemented as a workaround for issues with live logs.
-For reference, see discussion [#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744)
+If enabled, the connection to Home Assistant and additional hosts will be made
+through the built-in Caddy proxy. This works around issues with live logs ([#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744))
+and allows an unified access to Home Assistant and additional hosts even within
+your local network.
 
 **Note**: _This option is enabled by default._
+
+Here is how you can leverage the built-in proxy for local access:
+
+1. Expose these additional add-on ports:
+   - `80/tcp` for HTTP access
+   - `443/tcp` for HTTPS access (this will also enable automatic HTTPS certificates and HTTP to HTTPS redirection)
+   - `443/udp` for HTTP/3 QUIC access
+2. Set your local DNS server to resolve the `external_hostname` and
+   `additional_hosts` to the local IP of your Home Assistant instance.
+   
+   Example: set `ha.example.com` and `router.example.com` to  resolve to
+   `192.168.1.10`.
+
+   If you are using OpenWRT, you can do it from _Network_ > _DHCP and DNS_ > _DNS Records_ > _Hostnames_.
+3. Confirm that the `external_hostname` and `additional_hosts` are
+   resolving to the local IP of your Home Assistant.
+   
+   Example: run `nslookup ha.example.com` in your terminal and check that the
+   output shows the local IP of your Home Assistant instance, and not
+   Cloudflare's IP addresses.
+4. Access your Home Assistant instance via the `external_hostname` or
+   `additional_hosts` in your browser.
+   
+   Example: `https://ha.example.com/` or `https://router.example.com/`.
+
+   And confirm everything works as expected.
+
+Congratulations! You are now using the built-in proxy to access your Home
+Assistant instance and additional hosts locally, through an unified URL without
+having to go swap between internal and external URLs. Also, you saved a lot of
+time by not having to set up a reverse proxy like Nginx Proxy Manager yourself,
+including handling the HTTPS certificates and HTTP to HTTPS redirection.
 
 ### Option: `post_quantum`
 

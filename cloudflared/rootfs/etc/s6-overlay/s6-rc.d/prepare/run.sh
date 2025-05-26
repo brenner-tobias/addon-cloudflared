@@ -229,12 +229,14 @@ createConfig() {
         bashio::exit.nok "Error checking if SSL is enabled"
     fi
 
+    ha_service_url="${ha_service_protocol}://homeassistant:$(bashio::core.port)"
+
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
-        if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
+        if bashio::var.true "${use_builtin_proxy}"; then
             config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://${external_hostname}.localhost\"}]")
         else
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_url}\"}]")
         fi
     fi
 
@@ -249,10 +251,14 @@ createConfig() {
                 additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
             fi
 
-            if ! bashio::config.has_value 'use_builtin_proxy' || bashio::config.true 'use_builtin_proxy'; then
+            # Make Cloudflared always reach the Caddy proxy if enabled
+            if bashio::var.true "${use_builtin_proxy}"; then
                 additional_host=$(bashio::jq "${additional_host}" '.service = "https://\(.hostname).localhost"')
+            elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
+                bashio::exit.nok "'additional_hosts.internalOnly' is only supported when using the built-in Caddy proxy. Please set 'use_builtin_proxy' to true or remove 'internalOnly' from the additional host configuration."
             fi
 
+            # internalOnly is only for Caddy, not for Cloudflared
             additional_host=$(bashio::jq "${additional_host}" "del(.internalOnly)")
 
             # Add additional_host config to ingress config
@@ -344,6 +350,50 @@ setCloudflaredLogLevel() {
 
 }
 
+configureCaddy() {
+    bashio::log.info "Configuring built-in Caddy proxy..."
+
+    if
+        curl -fsSL \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+            -H "Content-Type: application/json" \
+            http://supervisor/addons/self/info |
+            jq --exit-status --raw-output '.data.network["443/tcp"]' |
+            grep -q '^443$'
+    then
+        bashio::log.info "Internal port 443/tcp is exposed to host port 443, enabling automatic HTTPS"
+        auto_https=true
+    else
+        bashio::log.info "Internal port 443/tcp is not exposed to host port 443, not enabling automatic HTTPS"
+        auto_https=false
+    fi
+
+    bashio::log.info "Generating Caddyfile..."
+    tempio_input=$(
+        jq -n \
+            --arg ha_external_hostname "${external_hostname}" \
+            --arg ha_service_url "${ha_service_url}" \
+            --argjson additional_hosts "$(jq -c '.additional_hosts' /data/options.json)" \
+            --argjson auto_https "${auto_https}" \
+            '{ha_external_hostname: $ha_external_hostname, ha_service_url: $ha_service_url, additional_hosts: $additional_hosts, auto_https: $auto_https}'
+    )
+    bashio::log.debug "Tempio input:\n${tempio_input}"
+    tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile <<<"${tempio_input}"
+    bashio::log.debug "Generated Caddyfile:\n$(cat /etc/caddy/Caddyfile)"
+
+    bashio::log.info "Validating Caddyfile..."
+    caddy fmt --overwrite --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile formatting failed, please check the logs above."
+    caddy validate --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile validation failed, please check the logs above."
+
+    bashio::log.info "Adding host entries for Cloudflared to communicate with Caddy..."
+    echo "127.0.0.1 ${external_hostname}.localhost" | tee -a /etc/hosts
+    if bashio::config.has_value 'additional_hosts'; then
+        for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
+            echo "127.0.0.1 ${hostname}.localhost" | tee -a /etc/hosts
+        done
+    fi
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -379,6 +429,12 @@ main() {
 
     external_hostname="$(bashio::config 'external_hostname')"
 
+    if bashio::config.true 'use_builtin_proxy'; then
+        use_builtin_proxy=true
+    else
+        use_builtin_proxy=false
+    fi
+
     if ! hasCertificate; then
         createCertificate
     fi
@@ -391,42 +447,11 @@ main() {
 
     createDNS
 
-    bashio::log.info "Configuring Caddy..."
-
-    if 
-        curl -fsSL \
-            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
-            -H "Content-Type: application/json" \
-            http://supervisor/addons/self/info |
-            jq --exit-status --raw-output '.data.network["443/tcp"]' |
-            grep -q '^443$'
-    then
-        bashio::log.info "Internal port 443/tcp is exposed to host port 443, enabling automatic HTTPS"
-        auto_https=true
+    if bashio::var.true "${use_builtin_proxy}"; then
+        configureCaddy
     else
-        bashio::log.info "Internal port 443/tcp is not exposed to host port 443, not enabling automatic HTTPS"
-        auto_https=false
-    fi
-
-    tempio_input=$(
-        jq -n \
-            --arg ha_external_hostname "${external_hostname}" \
-            --arg ha_port "$(bashio::core.port)" \
-            --argjson ha_ssl "$(bashio::core.ssl)" \
-            --argjson additional_hosts "$(jq -c '.additional_hosts' /data/options.json)" \
-            --argjson auto_https "${auto_https}" \
-            '{ha_external_hostname: $ha_external_hostname, ha_port: $ha_port, ha_ssl: $ha_ssl, additional_hosts: $additional_hosts, auto_https: $auto_https}' \
-    )
-    bashio::log.debug "Tempio input:\n${tempio_input}"
-    tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile <<<"${tempio_input}"
-    bashio::log.debug "Generated Caddyfile:\n$(cat /etc/caddy/Caddyfile)"
-
-    bashio::log.info "Adding entries to /etc/hosts..."
-    echo "127.0.0.1 ${external_hostname}.localhost" | tee -a /etc/hosts
-    if bashio::config.has_value 'additional_hosts'; then
-        for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            echo "127.0.0.1 ${hostname}.localhost" | tee -a /etc/hosts
-        done
+        bashio::log.info "Using Cloudflared without built-in Caddy proxy"
+        touch /dev/shm/no_built_in_proxy
     fi
 
     bashio::log.info "Finished setting up the Cloudflare Tunnel"

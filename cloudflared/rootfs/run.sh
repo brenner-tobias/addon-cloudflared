@@ -40,5 +40,4 @@ fi
 
 bashio::log.info "Connecting Cloudflare Tunnel..."
 bashio::log.debug "cloudflared tunnel ${options[*]}"
-exec cloudflared \
-    tunnel "${options[@]}"
+exec cloudflared tunnel "${options[@]}"

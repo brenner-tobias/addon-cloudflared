@@ -1,5 +1,11 @@
 #!/command/with-contenv bashio
 # shellcheck shell=bash
 
+if [[ -f /dev/shm/no_built_in_proxy ]]; then
+    # Tell S6-Overlay not to restart this service
+    s6-svc -O .
+    exit 0
+fi
+
 bashio::log.info "Starting Caddy..."
 exec env XDG_DATA_HOME=/data caddy run --config /etc/caddy/Caddyfile

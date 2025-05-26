@@ -4,6 +4,11 @@
 # Home Assistant Add-on: Cloudflared
 # Take down the S6 supervision tree when Caddy fails
 # ==============================================================================
+
+if [[ -f /dev/shm/no_built_in_proxy ]]; then
+    exit 0
+fi
+
 readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
 exit_code_container=$(cat /run/s6-linux-init-container-results/exitcode)
