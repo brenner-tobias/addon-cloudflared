@@ -234,16 +234,20 @@ your local network.
 Here is how you can leverage the built-in proxy for local access:
 
 1. Expose these additional add-on ports:
+
    - `80/tcp` for HTTP access
-   - `443/tcp` for HTTPS access (this will also enable automatic HTTPS certificates and HTTP to HTTPS redirection)
+   - `443/tcp` for HTTPS access (this will also enable automatic HTTPS
+     certificates and HTTP to HTTPS redirection)
    - `443/udp` for HTTP/3 QUIC access
+
 2. Set your local DNS server to resolve the `external_hostname` and
    `additional_hosts` to the local IP of your Home Assistant instance.
 
    Example: set `ha.example.com` and `router.example.com` to resolve to
    `192.168.1.10`.
 
-   If you are using OpenWRT, you can do it from _Network_ > _DHCP and DNS_ > _DNS Records_ > _Hostnames_.
+   If you are using OpenWRT, you can do it from _Network_ > _DHCP and DNS_ >
+   _DNS Records_ > _Hostnames_.
 
 3. Confirm that the `external_hostname` and `additional_hosts` are
    resolving to the local IP of your Home Assistant.
