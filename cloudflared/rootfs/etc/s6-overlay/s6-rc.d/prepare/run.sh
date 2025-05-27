@@ -266,23 +266,19 @@ createConfig() {
         done <<<"$(jq -c '.additional_hosts[]' /data/options.json)"
     fi
 
-    # Check if NGINX Proxy Manager is used to finalize configuration
-    if bashio::config.true 'nginx_proxy_manager'; then
-
+    if bashio::var.true "${use_builtin_proxy}"; then
+        bashio::log.info "Setting catch all service in Cloudflared to Caddy proxy"
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://127.0.0.1:80\"}]")
+    elif bashio::config.true 'nginx_proxy_manager'; then
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
+    elif bashio::config.has_value 'catch_all_service'; then
+        bashio::log.info "Runing with Catch all Service"
+        # Setting catch all service to defined URL
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"$(bashio::config 'catch_all_service')\"}]")
     else
-
-        # Check if catch all service is defined
-        if bashio::config.has_value 'catch_all_service'; then
-
-            bashio::log.info "Runing with Catch all Service"
-            # Setting catch all service to defined URL
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"$(bashio::config 'catch_all_service')\"}]")
-        else
-            # Finalize config without NPM support and catch all service, sending all other requests to HTTP:404
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
-        fi
+        # Finalize config without NPM support and catch all service, sending all other requests to HTTP:404
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
     fi
 
     # Deactivate TLS verification for all services
@@ -368,14 +364,25 @@ configureCaddy() {
         auto_https=false
     fi
 
+    if bashio::config.true 'nginx_proxy_manager'; then
+        bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
+        catch_all_service="http://a0d7b954-nginxproxymanager:80"
+    elif bashio::config.has_value 'catch_all_service'; then
+        bashio::log.info "Runing with Catch all Service"
+        catch_all_service="$(bashio::config 'catch_all_service')"
+    else
+        catch_all_service=""
+    fi
+
     bashio::log.info "Generating Caddyfile..."
     tempio_input=$(
         jq -n \
             --arg ha_external_hostname "${external_hostname}" \
             --arg ha_service_url "${ha_service_url}" \
+            --arg catch_all_service "${catch_all_service}" \
             --argjson additional_hosts "$(jq -c '.additional_hosts' /data/options.json)" \
             --argjson auto_https "${auto_https}" \
-            '{ha_external_hostname: $ha_external_hostname, ha_service_url: $ha_service_url, additional_hosts: $additional_hosts, auto_https: $auto_https}'
+            '{ha_external_hostname: $ha_external_hostname, ha_service_url: $ha_service_url, catch_all_service: $catch_all_service, additional_hosts: $additional_hosts, auto_https: $auto_https}'
     )
     bashio::log.debug "Tempio input:\n${tempio_input}"
     tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile <<<"${tempio_input}"

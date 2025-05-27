@@ -41,3 +41,10 @@ https://{{ $e.hostname }}.localhost {
     respond 407
 }
 {{ end }}
+:80 {
+	{{ if .catch_all_service }}
+	reverse_proxy {{ .catch_all_service }}
+	{{ else }}
+	respond "This service was not found." 404
+	{{ end }}
+}

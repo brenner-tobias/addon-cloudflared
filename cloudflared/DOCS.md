@@ -129,6 +129,10 @@ chunked transfer encoding. This is useful if you are running a WSGI server,
 like Proxmox for example. Visit [Cloudflare Docs][disablechunkedencoding] for
 further information.
 
+When `use_builtin_proxy` is enabled, you can also add `internalOnly: true` to a
+hostname to only allow access to it from within your local network. When this
+service is accessed from Cloudflare, it will return a 403 Forbidden.
+
 Please find below an example entry for three additional hosts:
 
 ```yaml
