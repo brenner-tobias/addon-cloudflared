@@ -263,6 +263,11 @@ Here is how you can leverage the built-in proxy for local access:
 
    And confirm everything works as expected.
 
+1. Optionally, you can set `additional_hosts` entries with `internalOnly: true`
+   to only allow access to them from within your local network. When such
+   service is accessed from Cloudflare, it will return a 403 Forbidden. Don't
+   forget to set the DNS entries for these hosts too.
+
 Congratulations! You are now using the built-in proxy to access your Home
 Assistant instance and additional hosts locally, through an unified URL without
 having to go swap between internal and external URLs. Also, you saved a lot of
