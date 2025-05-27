@@ -21,6 +21,7 @@ https://{{ .ha_external_hostname }}.localhost {
 {{ range $i, $e := .additional_hosts }}
 {{ $e.hostname }} {
 	{{ if $e.internalOnly }}
+	# Block connections from Cloudflared as service is internal only
 	@localhost remote_ip 127.0.0.1
 	handle @localhost {
 		respond "This service can only be accessed from local network." 403

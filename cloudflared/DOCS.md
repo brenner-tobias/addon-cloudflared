@@ -226,7 +226,7 @@ them to wherever you like.
 
 If enabled, the connection to Home Assistant and additional hosts will be made
 through the built-in Caddy proxy. This works around issues with live logs ([#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744))
-and allows an unified access to Home Assistant and additional hosts even within
+and allows a unified access to Home Assistant and additional hosts even within
 your local network.
 
 **Note**: _This option is enabled by default._
@@ -269,8 +269,8 @@ Here is how you can leverage the built-in proxy for local access:
    forget to set the DNS entries for these hosts too.
 
 Congratulations! You are now using the built-in proxy to access your Home
-Assistant instance and additional hosts locally, through an unified URL without
-having to go swap between internal and external URLs. Also, you saved a lot of
+Assistant instance and additional hosts locally, through a unified URL without
+having to swap between internal and external URLs. Also, you saved a lot of
 time by not having to set up a reverse proxy like Nginx Proxy Manager yourself,
 including handling the HTTPS certificates and HTTP to HTTPS redirection.
 
