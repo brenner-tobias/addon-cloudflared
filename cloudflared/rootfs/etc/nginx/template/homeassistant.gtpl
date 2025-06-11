@@ -2,6 +2,10 @@ server {
 
     listen 8321;
 
+    # https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#nginx-1
+    set_real_ip_from 127.0.0.1;
+    real_ip_header CF-Connecting-IP;
+
     include /etc/nginx/includes/server_params.conf;
     include /etc/nginx/includes/proxy_params.conf;
 
