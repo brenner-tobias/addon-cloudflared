@@ -21,11 +21,12 @@
 {{ $e.hostname }} {
 	{{ if $e.internalOnly }}
 	# Block connections from Cloudflared as service is internal only
-	@localhost remote_ip 127.0.0.1
-	handle @localhost {
+	@cloudflared remote_ip 127.0.0.1
+	handle @cloudflared {
 		respond "This service can only be accessed from local network." 403
 	}
 	{{ end }}
+
 	{{ if hasPrefix "https://" $e.service }}
 	reverse_proxy {{ $e.service }} {
 		transport http {
