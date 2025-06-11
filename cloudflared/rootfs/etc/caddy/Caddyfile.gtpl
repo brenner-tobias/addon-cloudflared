@@ -42,7 +42,15 @@
 # Catch-all service for any unmatched requests
 :80 {
 	{{ if .catch_all_service }}
+	{{ if hasPrefix "https://" .catch_all_service }}
+	reverse_proxy {{ .catch_all_service }} {
+		transport http {
+			tls_insecure_skip_verify
+		}
+	}
+	{{ else }}
 	reverse_proxy {{ .catch_all_service }}
+	{{ end }}
 	{{ else }}
 	respond "This service was not found." 404
 	{{ end }}
