@@ -9,7 +9,7 @@ ARG BUILD_ARCH="amd64"
 # renovate: datasource=github-releases depName=caddy packageName=caddyserver/caddy
 ARG CADDY_VERSION="2.10.0"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflared/cloudflare versioning=loose
-ARG CLOUDFLARED_VERSION="2025.5.0"
+ARG CLOUDFLARED_VERSION="2025.6.0"
 
 # Copy root filesystem
 COPY rootfs /
