@@ -233,15 +233,24 @@ your local network.
 
 Here is how you can leverage the built-in proxy for local access:
 
-1. Expose these additional add-on ports:
+1. These additional add-on ports needs to be exposed through the add-on
+   _Configuration_ page > _Network_:
 
    - `80/tcp` for HTTP access
    - `443/tcp` for HTTPS access (this will also enable automatic HTTPS
      certificates and HTTP to HTTPS redirection)
    - `443/udp` for HTTP/3 QUIC access
 
-1. Set your local DNS server to resolve the `external_hostname` and
-   `additional_hosts` to the local IP of your Home Assistant instance.
+   To expose them, click _Show disabled ports_ and repeat their port numbers in
+   each of them:
+
+   - `80` for the `80/tcp` port
+   - `443` for the `443/tcp` port
+   - `443` for the `443/udp` port
+
+1. Set your local DNS server to resolve the `external_hostname` and any
+   `hostname` of `additional_hosts` to the local IP of your Home Assistant
+   instance.
 
    Example: set `ha.example.com` and `router.example.com` to resolve to
    `192.168.1.10`.
@@ -249,15 +258,20 @@ Here is how you can leverage the built-in proxy for local access:
    If you are using OpenWRT, you can do it from _Network_ > _DHCP and DNS_ >
    _DNS Records_ > _Hostnames_.
 
-1. Confirm that the `external_hostname` and `additional_hosts` are
-   resolving to the local IP of your Home Assistant.
+   If you are using AdGuard Home, you can do it from _Filters_ > _DNS rewrites_.
 
-   Example: run `nslookup ha.example.com` in your terminal and check that the
-   output shows the local IP of your Home Assistant instance, and not
-   Cloudflare's IP addresses.
+   If you are using some other DNS server, please refer to its documentation.
 
-1. Access your Home Assistant instance via the `external_hostname` or
-   `additional_hosts` in your browser.
+1. Confirm that the `external_hostname` and any `hostname` of `additional_hosts`
+   are resolving to the local IP of your Home Assistant.
+
+   Example: run `nslookup ha.example.com` and `nslookup router.example.com` in
+   your terminal and check that the output shows the local IP of your Home
+   Assistant instance, and not Cloudflare's IP addresses.
+
+1. Access your Home Assistant instance via the `external_hostname` or access
+   your additional hosts via their `hostname`s defined in `additional_hosts` in
+   your browser.
 
    Example: `https://ha.example.com/` or `https://router.example.com/`.
 
@@ -265,7 +279,7 @@ Here is how you can leverage the built-in proxy for local access:
 
 1. Optionally, you can set `additional_hosts` entries with `internalOnly: true`
    to only allow access to them from within your local network. When such
-   service is accessed from Cloudflare, it will return a 403 Forbidden. Don't
+   service is accessed from Cloudflare, it will return a _403 Forbidden_. Don't
    forget to set the DNS entries for these hosts too.
 
 Congratulations! You are now using the built-in proxy to access your Home
