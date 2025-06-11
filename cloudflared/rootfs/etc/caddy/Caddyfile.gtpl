@@ -1,8 +1,10 @@
 {{ if not .auto_https }}
 {
+	# Disable automatic generation of Let's Encrypt certificates
 	local_certs
 }
 {{ end }}
+
 {{ .ha_external_hostname }} {
 	{{ if hasPrefix "https://" .ha_service_url }}
 	reverse_proxy {{ .ha_service_url }} {
@@ -14,10 +16,7 @@
 	reverse_proxy {{ .ha_service_url }}
 	{{ end }}
 }
-https://{{ .ha_external_hostname }}.localhost {
-    tls internal
-	respond 407
-}
+
 {{ range $i, $e := .additional_hosts }}
 {{ $e.hostname }} {
 	{{ if $e.internalOnly }}
@@ -37,11 +36,9 @@ https://{{ .ha_external_hostname }}.localhost {
 	reverse_proxy {{ $e.service }}
 	{{ end }}
 }
-https://{{ $e.hostname }}.localhost {
-    tls internal
-    respond 407
-}
 {{ end }}
+
+# Catch-all service for any unmatched requests
 :80 {
 	{{ if .catch_all_service }}
 	reverse_proxy {{ .catch_all_service }}
@@ -49,3 +46,11 @@ https://{{ $e.hostname }}.localhost {
 	respond "This service was not found." 404
 	{{ end }}
 }
+
+{{ if .auto_https }}
+# Only used during automatic Let's Encrypt certificate generation
+https://{{ .ha_external_hostname }}.localhost {{ range $i, $e := .additional_hosts }}https://{{ $e.hostname }}.localhost {{ end }} {
+    tls internal
+    respond 407
+}
+{{ end }}
