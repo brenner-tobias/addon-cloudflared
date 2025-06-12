@@ -6,6 +6,16 @@
 {{ end }}
 
 {{ .ha_external_hostname }} {
+	@cloudflared remote_ip 127.0.0.1
+	# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
+	reverse_proxy @cloudflared {{ .ha_service_url }} {
+		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+		{{ if hasPrefix "https://" .ha_service_url }}
+		transport http {
+			tls_insecure_skip_verify
+		}
+		{{ end }}
+	}
 	{{ if hasPrefix "https://" .ha_service_url }}
 	reverse_proxy {{ .ha_service_url }} {
 		transport http {
@@ -19,14 +29,23 @@
 
 {{ range $i, $e := .additional_hosts }}
 {{ $e.hostname }} {
+	@cloudflared remote_ip 127.0.0.1
 	{{ if $e.internalOnly }}
 	# Block connections from Cloudflared as service is internal only
-	@cloudflared remote_ip 127.0.0.1
 	handle @cloudflared {
 		respond "This service can only be accessed from local network." 403
 	}
+	{{ else }}
+	# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
+	reverse_proxy @cloudflared {{ $e.service }} {
+		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+		{{ if hasPrefix "https://" $e.service }}
+		transport http {
+			tls_insecure_skip_verify
+		}
+		{{ end }}
+	}
 	{{ end }}
-
 	{{ if hasPrefix "https://" $e.service }}
 	reverse_proxy {{ $e.service }} {
 		transport http {
@@ -41,7 +60,17 @@
 
 # Catch-all service for any unmatched requests
 :80 {
+	@cloudflared remote_ip 127.0.0.1
 	{{ if .catch_all_service }}
+	# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
+	reverse_proxy @cloudflared {{ .catch_all_service }} {
+		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+		{{ if hasPrefix "https://" .catch_all_service }}
+		transport http {
+			tls_insecure_skip_verify
+		}
+		{{ end }}
+	}
 	{{ if hasPrefix "https://" .catch_all_service }}
 	reverse_proxy {{ .catch_all_service }} {
 		transport http {
