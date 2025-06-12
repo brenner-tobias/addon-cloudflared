@@ -75,7 +75,11 @@ https://healthcheck.localhost {
 {{ end }}
 
 # Catch-all service for any unmatched requests
-:80 {
+https:// {
+	tls internal {
+		# Generate a self-signed certificate for any unmatched hostname
+		on_demand
+	}
 	@cloudflared remote_ip 127.0.0.1
 	{{ if .catch_all_service }}
 	# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
@@ -103,7 +107,7 @@ https://healthcheck.localhost {
 
 {{ if .auto_https }}
 # Only used during automatic Let's Encrypt certificate generation
-https://{{ .ha_external_hostname }}.localhost {{ range $i, $e := .additional_hosts }}https://{{ $e.hostname }}.localhost {{ end }} {
+https://{{ .ha_external_hostname }}.localhost {{ range $i, $e := .additional_hosts }}https://{{ $e.hostname }}.localhost {{ end }} https://catchall.localhost {
     tls internal
     respond 407
 }

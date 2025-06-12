@@ -268,7 +268,7 @@ createConfig() {
 
     if bashio::var.true "${use_builtin_proxy}"; then
         bashio::log.info "Setting catch all service in Cloudflared to Caddy proxy"
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://127.0.0.1:80\"}]")
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"https://catchall.localhost\"}]")
     elif bashio::config.true 'nginx_proxy_manager'; then
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
@@ -401,6 +401,7 @@ configureCaddy() {
 
     bashio::log.info "Adding host entries for Cloudflared to communicate with Caddy..."
     echo "127.0.0.1 healthcheck.localhost" | tee -a /etc/hosts
+    echo "127.0.0.1 catchall.localhost" | tee -a /etc/hosts
     echo "127.0.0.1 ${external_hostname}.localhost" | tee -a /etc/hosts
     if bashio::config.has_value 'additional_hosts'; then
         for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
