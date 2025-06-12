@@ -9,6 +9,10 @@
 	# Disable automatic generation of Let's Encrypt certificates
 	local_certs
 	{{ end }}
+	log {
+		# More friendly logging format than the default json
+		format console
+	}
 }
 
 # Allows to wait for Caddy to be ready before starting Cloudflared
