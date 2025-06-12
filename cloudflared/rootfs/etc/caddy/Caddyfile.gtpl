@@ -1,9 +1,11 @@
-{{ if not .auto_https }}
 {
+	# There is no need to attempt installing the root CA
+	skip_install_trust
+	{{ if not .auto_https }}
 	# Disable automatic generation of Let's Encrypt certificates
 	local_certs
+	{{ end }}
 }
-{{ end }}
 
 # Allows to wait for Caddy to be ready before starting Cloudflared
 https://healthcheck.localhost {
