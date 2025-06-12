@@ -38,9 +38,33 @@ else
     options+=(run "$(bashio::config 'tunnel_name')")
 fi
 
+function wait_for_file() {
+    local file="$1"
+    local timeout="$2"
+    local interval=1
+    local elapsed=0
+
+    while [[ ! -f "${file}" && ${elapsed} -lt ${timeout} ]]; do
+        sleep "${interval}"
+        elapsed=$((elapsed + interval))
+    done
+
+    if [[ ! -f "${file}" ]]; then
+        bashio::exit.nok "Timed out waiting for ${file} to be created."
+    fi
+}
+
 if [[ ! -f /dev/shm/no_built_in_proxy ]]; then
     bashio::log.info "Waiting for Caddy to be ready..."
-    if ! curl --fail --silent --show-error --max-time 1 --retry 15 --retry-delay 1 --retry-connrefused --insecure https://healthcheck.localhost; then
+    wait_for_file /data/caddy/pki/authorities/local/root.crt 15
+    if
+        curl --fail --silent --show-error --output /dev/null \
+            --max-time 1 --retry 15 --retry-delay 1 --retry-connrefused \
+            --cacert /data/caddy/pki/authorities/local/root.crt \
+            https://healthcheck.localhost
+    then
+        bashio::log.info "Caddy is ready."
+    else
         bashio::exit.nok "Caddy did not become ready in time, aborting."
     fi
 fi

@@ -281,12 +281,14 @@ createConfig() {
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http_status:404\"}]")
     fi
 
-    # Deactivate TLS verification for all services
-    config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
-
     if bashio::var.true "${use_builtin_proxy}"; then
+        # Caddy will generate a self-signed certificate, we can avoid noTLSVerify
+        config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"caPool\": \"/data/caddy/pki/authorities/local/root.crt\"}")
         # Caddy allows HTTP/2 to work, so we set enable it for all services
         config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"http2Origin\": true}")
+    else
+        # Deactivate TLS verification for all services
+        config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
     fi
 
     # Write content of config variable to config file for cloudflared
