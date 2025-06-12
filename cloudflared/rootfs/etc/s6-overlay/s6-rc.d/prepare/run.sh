@@ -285,6 +285,8 @@ createConfig() {
         # Caddy will generate a self-signed certificate, we can avoid noTLSVerify
         config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"caPool\": \"/data/caddy/pki/authorities/local/root.crt\"}")
         # Caddy allows HTTP/2 to work, so we set enable it for all services
+        # Even HTTP/3 is possible, but Cloudflared does not support it yet:
+        # https://developers.cloudflare.com/speed/optimization/protocol/http3/
         config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"http2Origin\": true}")
     else
         # Deactivate TLS verification for all services
