@@ -38,6 +38,13 @@ else
     options+=(run "$(bashio::config 'tunnel_name')")
 fi
 
+if [[ ! -f /dev/shm/no_built_in_proxy ]]; then
+    bashio::log.info "Waiting for Caddy to be ready..."
+    if ! curl --fail --silent --show-error --max-time 1 --retry 15 --retry-delay 1 --retry-connrefused --insecure https://healthcheck.localhost; then
+        bashio::exit.nok "Caddy did not become ready in time, aborting."
+    fi
+fi
+
 bashio::log.info "Connecting Cloudflare Tunnel..."
 bashio::log.debug "cloudflared tunnel ${options[*]}"
 exec cloudflared tunnel "${options[@]}"

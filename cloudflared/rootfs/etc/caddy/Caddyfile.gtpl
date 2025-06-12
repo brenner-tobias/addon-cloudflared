@@ -5,6 +5,12 @@
 }
 {{ end }}
 
+# Allows to wait for Caddy to be ready before starting Cloudflared
+https://healthcheck.localhost {
+    tls internal
+    respond "OK" 200
+}
+
 {{ .ha_external_hostname }} {
 	@cloudflared remote_ip 127.0.0.1
 	# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy

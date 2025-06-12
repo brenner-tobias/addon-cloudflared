@@ -393,6 +393,7 @@ configureCaddy() {
     caddy validate --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile validation failed, please check the logs above."
 
     bashio::log.info "Adding host entries for Cloudflared to communicate with Caddy..."
+    echo "127.0.0.1 healthcheck.localhost" | tee -a /etc/hosts
     echo "127.0.0.1 ${external_hostname}.localhost" | tee -a /etc/hosts
     if bashio::config.has_value 'additional_hosts'; then
         for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
