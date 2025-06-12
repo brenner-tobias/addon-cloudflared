@@ -1,4 +1,6 @@
 {
+	# There is no need to persist the generate json configuration
+	persist_config off
 	# There is no need to attempt installing the root CA
 	skip_install_trust
 	{{ if not .auto_https }}
