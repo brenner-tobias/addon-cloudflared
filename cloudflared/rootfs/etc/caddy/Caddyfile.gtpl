@@ -1,4 +1,6 @@
 {
+	# We don't use the admin API
+	admin off
 	# There is no need to persist the generate json configuration
 	persist_config off
 	# There is no need to attempt installing the root CA
