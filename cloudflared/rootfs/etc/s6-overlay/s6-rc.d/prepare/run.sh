@@ -234,7 +234,7 @@ createConfig() {
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
         if bashio::var.true "${use_builtin_proxy}"; then
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://${external_hostname}.localhost\"}]")
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://caddy.localhost\"}]")
         else
             config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_url}\"}]")
         fi
@@ -253,7 +253,7 @@ createConfig() {
 
             # Make Cloudflared always reach the Caddy proxy if enabled
             if bashio::var.true "${use_builtin_proxy}"; then
-                additional_host=$(bashio::jq "${additional_host}" '.service = "https://\(.hostname).localhost"')
+                additional_host=$(bashio::jq "${additional_host}" '.service = "https://caddy.localhost"')
             elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
                 bashio::exit.nok "'additional_hosts.internalOnly' is only supported when using the built-in Caddy proxy. Please set 'use_builtin_proxy' to true or remove 'internalOnly' from the additional host configuration."
             fi
@@ -268,7 +268,7 @@ createConfig() {
 
     if bashio::var.true "${use_builtin_proxy}"; then
         bashio::log.info "Setting catch all service in Cloudflared to Caddy proxy"
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"https://catchall.localhost\"}]")
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"https://caddy.localhost\"}]")
     elif bashio::config.true 'nginx_proxy_manager'; then
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
@@ -402,14 +402,8 @@ configureCaddy() {
     caddy validate --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile validation failed, please check the logs above."
 
     bashio::log.info "Adding host entries for Cloudflared to communicate with Caddy..."
-    echo "127.0.0.1 healthcheck.localhost" | tee -a /etc/hosts
-    echo "127.0.0.1 catchall.localhost" | tee -a /etc/hosts
-    echo "127.0.0.1 ${external_hostname}.localhost" | tee -a /etc/hosts
-    if bashio::config.has_value 'additional_hosts'; then
-        for hostname in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            echo "127.0.0.1 ${hostname}.localhost" | tee -a /etc/hosts
-        done
-    fi
+    echo "127.0.0.1 caddy.localhost" | tee -a /etc/hosts
+    echo "127.0.0.1 healthcheck.caddy.localhost" | tee -a /etc/hosts
 }
 
 # ==============================================================================

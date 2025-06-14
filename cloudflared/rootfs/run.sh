@@ -61,7 +61,7 @@ if [[ ! -f /dev/shm/no_built_in_proxy ]]; then
         curl --fail --silent --show-error --output /dev/null \
             --max-time 1 --retry 15 --retry-delay 1 --retry-connrefused \
             --cacert /data/caddy/pki/authorities/local/root.crt \
-            https://healthcheck.localhost
+            https://healthcheck.caddy.localhost
     then
         bashio::log.info "Caddy is ready."
     else
