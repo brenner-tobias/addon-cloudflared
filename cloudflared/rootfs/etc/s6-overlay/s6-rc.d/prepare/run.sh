@@ -401,9 +401,8 @@ configureCaddy() {
     caddy fmt --overwrite --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile formatting failed, please check the logs above."
     caddy validate --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile validation failed, please check the logs above."
 
-    bashio::log.info "Adding host entries for Cloudflared to communicate with Caddy..."
+    bashio::log.info "Adding host entry for communication between Cloudflared and Caddy..."
     echo "127.0.0.1 caddy.localhost" | tee -a /etc/hosts
-    echo "127.0.0.1 healthcheck.caddy.localhost" | tee -a /etc/hosts
 }
 
 # ==============================================================================

@@ -18,13 +18,11 @@
 # Used for communication between Cloudflared and Caddy
 https://caddy.localhost {
     tls internal
-	respond 403
-}
 
-# Used for healthcheck to ensure Caddy is ready before starting Cloudflared
-https://healthcheck.caddy.localhost {
-	tls internal
-	respond 200
+	# Used to ensure Caddy is ready before starting Cloudflared
+	respond /healthz 200
+
+	respond 403
 }
 
 {{ .ha_external_hostname }} {
