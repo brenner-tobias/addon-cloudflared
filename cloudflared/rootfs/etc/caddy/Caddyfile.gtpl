@@ -70,30 +70,3 @@ https://caddy.localhost {
 	}{{ end }}
 }
 {{ end }}
-
-# Catch-all service for any unmatched requests within the same base domain coming from Cloudflared
-{{ $baseDomain := splitList "." .ha_external_hostname }}
-{{ $baseDomain = slice $baseDomain (sub (len $baseDomain) 2) | join "." }}
-https://*.{{ $baseDomain }} {
-	tls internal
-
-	@cloudflared remote_ip 127.0.0.1
-	handle @cloudflared {
-		{{ if .catch_all_service }}
-		reverse_proxy {{ .catch_all_service }} {
-			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-			{{ if hasPrefix "https://" .catch_all_service }}
-			transport http {
-				tls_insecure_skip_verify
-			}
-			{{ end }}
-		}
-		{{ else }}
-		respond 404
-		{{ end }}
-	}
-
-	handle {
-    	abort
-	}
-}

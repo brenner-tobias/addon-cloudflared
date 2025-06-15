@@ -266,12 +266,9 @@ createConfig() {
         done <<<"$(jq -c '.additional_hosts[]' /data/options.json)"
     fi
 
-    if bashio::var.true "${use_builtin_proxy}"; then
-        bashio::log.info "Setting catch all service in Cloudflared to Caddy proxy"
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"https://caddy.localhost\"}]")
-    elif bashio::config.true 'nginx_proxy_manager'; then
+    if bashio::config.true 'nginx_proxy_manager'; then
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager\"}]")
     elif bashio::config.has_value 'catch_all_service'; then
         bashio::log.info "Runing with Catch all Service"
         # Setting catch all service to defined URL
@@ -282,12 +279,10 @@ createConfig() {
     fi
 
     if bashio::var.true "${use_builtin_proxy}"; then
-        # Caddy will generate a self-signed certificate, we can avoid noTLSVerify
-        config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"caPool\": \"/data/caddy/pki/authorities/local/root.crt\"}")
-        # Caddy allows HTTP/2 to work, so we set enable it for all services
+        # With Caddy we can avoid noTLSVerify and also can use HTTP/2
         # Even HTTP/3 is possible, but Cloudflared does not support it yet:
         # https://developers.cloudflare.com/speed/optimization/protocol/http3/
-        config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"http2Origin\": true}")
+        config=$(bashio::jq "${config}" '(.ingress[] | select(.service == "https://caddy.localhost") | .originRequest) += {"caPool": "/data/caddy/pki/authorities/local/root.crt", "http2Origin": true}')
     else
         # Deactivate TLS verification for all services
         config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
