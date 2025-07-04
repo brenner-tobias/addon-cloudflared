@@ -235,7 +235,6 @@ Here is how you can leverage the built-in proxy for local access:
 
 1. These additional add-on ports needs to be exposed through the add-on
    _Configuration_ page > _Network_:
-
    - `80/tcp` for HTTP access
    - `443/tcp` for HTTPS access (this will also enable automatic HTTPS
      certificates and HTTP to HTTPS redirection)
@@ -243,7 +242,6 @@ Here is how you can leverage the built-in proxy for local access:
 
    To expose them, click _Show disabled ports_ and repeat their port numbers in
    each of them:
-
    - `80` for the `80/tcp` port
    - `443` for the `443/tcp` port
    - `443` for the `443/udp` port
