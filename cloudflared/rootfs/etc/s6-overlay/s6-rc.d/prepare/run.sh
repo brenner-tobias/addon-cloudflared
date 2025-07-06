@@ -86,7 +86,7 @@ setGlobalVars() {
         ha_protocol="http"
     fi
     bashio::log.debug "ha_protocol: ${ha_protocol}"
-    
+
     bashio::log.debug "Checking port used for Home Assistant..."
     local ha_port
     ha_port="$(bashio::core.port)"
@@ -408,14 +408,7 @@ configureCaddy() {
 
     bashio::log.info "Configuring built-in Caddy proxy..."
 
-    if
-        curl -fsSL \
-            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
-            -H "Content-Type: application/json" \
-            http://supervisor/addons/self/info |
-            jq --exit-status --raw-output '.data.network["443/tcp"]' |
-            grep -q '^443$'
-    then
+    if [[ "$(bashio::addon.port "443/tcp")" == "443" ]]; then
         bashio::log.info "Internal port 443/tcp is exposed to host port 443, enabling automatic HTTPS for local proxy"
         local auto_https=true
     else
