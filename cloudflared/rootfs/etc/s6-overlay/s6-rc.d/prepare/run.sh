@@ -220,11 +220,11 @@ createConfig() {
     bashio::log.debug "Checking if SSL is used in Home Assistant..."
     local ha_config_file="/homeassistant/configuration.yaml"
     local ha_ssl="false"
-    if bashio::fs.file_exists "${ha_config_file}"; then
+    if bashio::fs.file_exists "${ha_config_file}" && yq "${ha_config_file}" >/dev/null; then
         # https://www.home-assistant.io/integrations/http/#http-configuration-variables
         ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
     else
-        bashio::log.warning "No Home Assistant configuration file found, assuming SSL ${ha_ssl}"
+        bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
     fi
     bashio::log.debug "ha_ssl: ${ha_ssl}"
     if bashio::var.true "${ha_ssl}"; then

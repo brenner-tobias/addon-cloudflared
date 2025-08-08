@@ -22,7 +22,7 @@ bashio::log.debug "Merging options & variables for template"
 ha_config_file="/homeassistant/configuration.yaml"
 ha_port="8123"
 ha_ssl="false"
-if bashio::fs.file_exists "${ha_config_file}"; then
+if bashio::fs.file_exists "${ha_config_file}" && yq "${ha_config_file}" >/dev/null; then
     # https://www.home-assistant.io/integrations/http/#http-configuration-variables
     ha_port=$(yq '.http.server_port // 8123' "${ha_config_file}")
     ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
