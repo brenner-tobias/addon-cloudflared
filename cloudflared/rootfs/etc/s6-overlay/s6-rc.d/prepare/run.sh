@@ -218,7 +218,9 @@ createConfig() {
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
     bashio::log.debug "Checking if SSL is used..."
-    if bashio::var.true "$(bashio::core.ssl)"; then
+    local ha_ssl
+    ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' /homeassistant/configuration.yaml)
+    if bashio::var.true "${ha_ssl}"; then
         ha_service_protocol="https"
     else
         ha_service_protocol="http"

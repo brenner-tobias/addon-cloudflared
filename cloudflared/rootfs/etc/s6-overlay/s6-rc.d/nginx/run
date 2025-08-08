@@ -19,9 +19,13 @@ if bashio::config.false 'use_builtin_proxy'; then
 fi
 
 bashio::log.debug "Merging options & variables for template"
+ha_port=$(yq '.http.server_port // 8123' /homeassistant/configuration.yaml)
+ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' /homeassistant/configuration.yaml)
+bashio::log.debug "ha_port: ${ha_port}"
+bashio::log.debug "ha_ssl: ${ha_ssl}"
 JSON_CONF=$(jq -n \
-    --arg port "$(bashio::core.port)" \
-    --arg ssl "$(bashio::core.ssl)" \
+    --arg port "${ha_port}" \
+    --arg ssl "${ha_ssl}" \
     '{port: $port, ssl: ($ssl | fromjson)}')
 bashio::log.debug "Generating nginx.conf from template in /etc/nginx/servers/homeassistant.conf"
 bashio::log.debug "JSON_CONF: ${JSON_CONF}"
