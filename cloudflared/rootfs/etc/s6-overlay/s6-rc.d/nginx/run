@@ -15,7 +15,7 @@ if bashio::config.false 'use_builtin_proxy'; then
     touch /dev/shm/no_built_in_proxy
     # Tell S6-Overlay not to restart this service
     s6-svc -O .
-    return "${__BASHIO_EXIT_OK}"
+    exit "${__BASHIO_EXIT_OK}"
 fi
 
 bashio::log.debug "Merging options & variables for template"
