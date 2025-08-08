@@ -9,7 +9,14 @@
 # set up and run nginx
 # ==============================================================================
 
-set -e
+if bashio::config.false 'use_builtin_proxy'; then
+    bashio::log.info "Using Cloudflared without the built-in NGINX proxy"
+    # Send a signal to finish script to avoid halting container if the built-in proxy was disabled
+    touch /dev/shm/no_built_in_proxy
+    # Tell S6-Overlay not to restart this service
+    s6-svc -O .
+    exit "${__BASHIO_EXIT_OK}"
+fi
 
 bashio::log.debug "Merging options & variables for template"
 JSON_CONF=$(jq -n \
