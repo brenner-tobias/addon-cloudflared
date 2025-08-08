@@ -19,8 +19,14 @@ if bashio::config.false 'use_builtin_proxy'; then
 fi
 
 bashio::log.debug "Merging options & variables for template"
-ha_port=$(yq '.http.server_port // 8123' /homeassistant/configuration.yaml)
-ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' /homeassistant/configuration.yaml)
+ha_config_file="/homeassistant/configuration.yaml"
+ha_port="8123"
+ha_ssl="false"
+if bashio::fs.file_exists "${ha_config_file}"; then
+    # https://www.home-assistant.io/integrations/http/#http-configuration-variables
+    ha_port=$(yq '.http.server_port // 8123' "${ha_config_file}")
+    ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
+fi
 bashio::log.debug "ha_port: ${ha_port}"
 bashio::log.debug "ha_ssl: ${ha_ssl}"
 JSON_CONF=$(jq -n \

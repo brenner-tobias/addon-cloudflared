@@ -217,9 +217,16 @@ createConfig() {
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
-    bashio::log.debug "Checking if SSL is used..."
-    local ha_ssl
-    ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' /homeassistant/configuration.yaml)
+    bashio::log.debug "Checking if SSL is used in Home Assistant..."
+    local ha_config_file="/homeassistant/configuration.yaml"
+    local ha_ssl="false"
+    if bashio::fs.file_exists "${ha_config_file}"; then
+        # https://www.home-assistant.io/integrations/http/#http-configuration-variables
+        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
+    else
+        bashio::log.warning "No Home Assistant configuration file found, assuming SSL ${ha_ssl}"
+    fi
+    bashio::log.debug "ha_ssl: ${ha_ssl}"
     if bashio::var.true "${ha_ssl}"; then
         ha_service_protocol="https"
     else
