@@ -2,40 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "rebaseWhen": "behind-base-branch",
   "dependencyDashboard": true,
-  "dependencyDashboardAutoclose": true,
   "labels": ["dependencies", "no-stale"],
   "commitMessagePrefix": "⬆️",
   "commitMessageTopic": "{{depName}}",
-  "customManagers": [
-    {
-      "customType": "regex",
-      "fileMatch": ["/Dockerfile$", "/build.yaml$"],
-      "matchStringsStrategy": "any",
-      "matchStrings": [
-        "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
-        "(aarch64|amd64|armv7):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
-      ],
-      "datasourceTemplate": "docker"
-    },
-    {
-      "customType": "regex",
-      "fileMatch": ["/Dockerfile$"],
-      "matchStrings": [
-        "ARG CLOUDFLARED_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "cloudflare/cloudflared",
-      "versioningTemplate": "loose"
-    },
-    {
-      "customType": "regex",
-      "fileMatch": ["/rootfs/build.sh$"],
-      "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sARG .*?_version=\"(?<currentValue>.*)\"\\s"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-    }
-  ],
+  "extends": ["customManagers:dockerfileVersions"],
   "packageRules": [
     {
       "groupName": "Add-on base image",

@@ -18,6 +18,7 @@ map:
 options:
   external_hostname: ""
   additional_hosts: []
+  use_builtin_proxy: true
 ports:
   36500/tcp: null
 schema:
