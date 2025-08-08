@@ -1,25 +1,25 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:18.1.0
-# hadolint ignore=DL3006
-FROM ${BUILD_FROM}
-
-# Set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+FROM ghcr.io/hassio-addons/base:18.1.0
 
 # Set S6 verbosity level
-ENV S6_VERBOSITY=1
+ENV S6_VERBOSITY="1"
 
 # Setup base
-ARG BUILD_ARCH=amd64
+ARG BUILD_ARCH="amd64"
+
+# renovate: datasource=repology depName=nginx packageName=alpine_3_22/nginx versioning=loose
+ARG NGINX_VERSION="1.28.0-r3"
+# renovate: datasource=github-releases depName=cloudflared packageName=cloudflared/cloudflare versioning=loose
 ARG CLOUDFLARED_VERSION="2025.7.0"
 
 # Copy root filesystem
 COPY rootfs /
 
-# Run the script that installes cloudflared
-RUN chmod a+x /build.sh && /build.sh "${BUILD_ARCH}" "${CLOUDFLARED_VERSION}"
+# Run the script that installs caddy and cloudflared
+RUN ["/build.sh"]
+
+CMD ["/run.sh"]
 
 # Build arguments
-ARG BUILD_ARCH
 ARG BUILD_DATE
 ARG BUILD_DESCRIPTION
 ARG BUILD_NAME
@@ -33,7 +33,7 @@ LABEL \
     io.hass.description="${BUILD_DESCRIPTION}" \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
-    io.hass.version=${BUILD_VERSION} \
+    io.hass.version="${BUILD_VERSION}" \
     maintainer="Tobias Brenner <https://github.com/brenner-tobias/>" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
@@ -43,6 +43,6 @@ LABEL \
     org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.revision=${BUILD_REF} \
-    org.opencontainers.image.version=${BUILD_VERSION}
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.revision="${BUILD_REF}" \
+    org.opencontainers.image.version="${BUILD_VERSION}"
