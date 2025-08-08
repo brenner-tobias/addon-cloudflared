@@ -9,7 +9,6 @@ codenotary: dev@brenner.tech
 startup: services
 init: false
 hassio_api: true
-hassio_role: homeassistant
 arch:
   - aarch64
   - amd64
