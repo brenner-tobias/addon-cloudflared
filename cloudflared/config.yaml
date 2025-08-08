@@ -15,7 +15,7 @@ arch:
   - armv7
 map:
   - addon_config:rw
-  - homeassistant
+  - homeassistant_config
 options:
   external_hostname: ""
   additional_hosts: []
