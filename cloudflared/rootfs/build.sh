@@ -7,9 +7,10 @@
 
 set -eux
 
-# Workaround for live log streaming issue
+# yq is to avoid depending on Home Assistant API on startup
+# NGINX is to work around live log streaming issue
 # see https://github.com/brenner-tobias/addon-cloudflared/discussions/744
-apk add --no-cache nginx="${NGINX_VERSION}"
+apk add --no-cache yq-go="${YQ_VERSION}" nginx="${NGINX_VERSION}"
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list

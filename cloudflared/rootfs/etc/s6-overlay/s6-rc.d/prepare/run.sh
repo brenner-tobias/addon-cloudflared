@@ -205,6 +205,14 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
+# Read Home Assistant configuration
+# ------------------------------------------------------------------------------
+readHomeAssistantConfig() {
+    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
+    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
+}
+
+# ------------------------------------------------------------------------------
 # Create Cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
@@ -217,17 +225,25 @@ createConfig() {
     config=$(bashio::jq "{\"tunnel\":\"${tunnel_uuid}\"}" ".")
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
-    bashio::log.debug "Checking if SSL is used..."
-    if bashio::var.true "$(bashio::core.ssl)"; then
+    bashio::log.debug "Checking if SSL is used in Home Assistant..."
+    local ha_config_file="/homeassistant/configuration.yaml"
+    local ha_config
+    local ha_ssl="false"
+    if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
+        # https://www.home-assistant.io/integrations/http/#http-configuration-variables
+        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<<"${ha_config}")
+    else
+        bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
+    fi
+    unset ha_config
+    bashio::log.debug "ha_ssl: ${ha_ssl}"
+
+    if bashio::var.true "${ha_ssl}"; then
         ha_service_protocol="https"
     else
         ha_service_protocol="http"
     fi
     bashio::log.debug "ha_service_protocol: ${ha_service_protocol}"
-
-    if bashio::var.is_empty "${ha_service_protocol}"; then
-        bashio::exit.nok "Error checking if SSL is enabled"
-    fi
 
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
