@@ -205,6 +205,18 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
+# Read Home Assistant configuration
+# ------------------------------------------------------------------------------
+readHomeAssistantConfig() {
+    if bashio::fs.file_exists "${1}"; then
+        # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
+        yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
+    else
+        return 1
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Create Cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
@@ -219,24 +231,23 @@ createConfig() {
 
     bashio::log.debug "Checking if SSL is used in Home Assistant..."
     local ha_config_file="/homeassistant/configuration.yaml"
+    local ha_config
     local ha_ssl="false"
-    if bashio::fs.file_exists "${ha_config_file}" && yq "${ha_config_file}" >/dev/null; then
+    if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
         # https://www.home-assistant.io/integrations/http/#http-configuration-variables
-        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
+        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<<"${ha_config}")
     else
         bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
     fi
+    unset ha_config
     bashio::log.debug "ha_ssl: ${ha_ssl}"
+
     if bashio::var.true "${ha_ssl}"; then
         ha_service_protocol="https"
     else
         ha_service_protocol="http"
     fi
     bashio::log.debug "ha_service_protocol: ${ha_service_protocol}"
-
-    if bashio::var.is_empty "${ha_service_protocol}"; then
-        bashio::exit.nok "Error checking if SSL is enabled"
-    fi
 
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
