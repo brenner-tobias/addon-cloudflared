@@ -7,6 +7,9 @@
 
 set -eux
 
+# yq is to avoid depending on Home Assistant API on startup
+apk add --no-cache yq-go="${YQ_VERSION}"
+
 # Adapt the architecture to the caddy specific names if needed
 # see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
 # see Caddy archs: https://github.com/caddyserver/caddy/releases

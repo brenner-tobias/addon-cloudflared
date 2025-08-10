@@ -69,6 +69,14 @@ checkConfig() {
 }
 
 # ------------------------------------------------------------------------------
+# Read Home Assistant configuration
+# ------------------------------------------------------------------------------
+readHomeAssistantConfig() {
+    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
+    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
+}
+
+# ------------------------------------------------------------------------------
 # Sets global variables used in the script
 # ------------------------------------------------------------------------------
 setGlobalVars() {
@@ -78,19 +86,29 @@ setGlobalVars() {
     tunnel_uuid=""
     data_path="/data"
 
-    bashio::log.debug "Checking if SSL is used for Home Assistant..."
+    bashio::log.debug "Checking Home Assistant port and if SSL is used..."
+    local ha_config_file="/homeassistant/configuration.yaml"
+    local ha_config
+    local ha_port="8123"
+    local ha_ssl="false"
+    if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
+      # https://www.home-assistant.io/integrations/http/#http-configuration-variables
+      ha_port=$(yq '.http.server_port // 8123' <<< "${ha_config}")
+      ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<< "${ha_config}")
+    else
+      bashio::log.warning "Unable to parse Home Assistant configuration file at ${ha_config_file}, assuming port ${ha_port} and no SSL"
+    fi
+    unset ha_config
+    bashio::log.debug "ha_port: ${ha_port}"
+    bashio::log.debug "ha_ssl: ${ha_ssl}"
+
     local ha_protocol
-    if bashio::var.true "$(bashio::core.ssl)"; then
+    if bashio::var.true "${ha_ssl}"; then
         ha_protocol="https"
     else
         ha_protocol="http"
     fi
     bashio::log.debug "ha_protocol: ${ha_protocol}"
-
-    bashio::log.debug "Checking port used for Home Assistant..."
-    local ha_port
-    ha_port="$(bashio::core.port)"
-    bashio::log.debug "ha_port: ${ha_port}"
 
     ha_url="${ha_protocol}://homeassistant:${ha_port}"
     bashio::log.debug "ha_url: ${ha_url}"
