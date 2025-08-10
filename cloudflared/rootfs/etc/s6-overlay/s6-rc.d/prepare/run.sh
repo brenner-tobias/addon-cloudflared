@@ -208,12 +208,8 @@ createTunnel() {
 # Read Home Assistant configuration
 # ------------------------------------------------------------------------------
 readHomeAssistantConfig() {
-    if bashio::fs.file_exists "${1}"; then
-        # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
-        yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
-    else
-        return 1
-    fi
+    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
+    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
 }
 
 # ------------------------------------------------------------------------------
