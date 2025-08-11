@@ -205,14 +205,6 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
-# Read Home Assistant configuration
-# ------------------------------------------------------------------------------
-readHomeAssistantConfig() {
-    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
-    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
-}
-
-# ------------------------------------------------------------------------------
 # Create Cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
@@ -227,15 +219,13 @@ createConfig() {
 
     bashio::log.debug "Checking if SSL is used in Home Assistant..."
     local ha_config_file="/homeassistant/configuration.yaml"
-    local ha_config
     local ha_ssl="false"
-    if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
+    if yq . "${ha_config_file}" >/dev/null; then
         # https://www.home-assistant.io/integrations/http/#http-configuration-variables
-        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<<"${ha_config}")
+        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
     else
         bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
     fi
-    unset ha_config
     bashio::log.debug "ha_ssl: ${ha_ssl}"
 
     if bashio::var.true "${ha_ssl}"; then

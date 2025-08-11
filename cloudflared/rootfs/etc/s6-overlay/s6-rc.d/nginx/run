@@ -9,14 +9,6 @@
 # set up and run nginx
 # ==============================================================================
 
-# ------------------------------------------------------------------------------
-# Read Home Assistant configuration
-# ------------------------------------------------------------------------------
-readHomeAssistantConfig() {
-    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
-    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
-}
-
 if bashio::config.false 'use_builtin_proxy'; then
     bashio::log.info "Using Cloudflared without the built-in NGINX proxy"
     # Send a signal to finish script to avoid halting container if the built-in proxy was disabled
@@ -30,12 +22,11 @@ bashio::log.debug "Merging options & variables for template"
 ha_config_file="/homeassistant/configuration.yaml"
 ha_port="8123"
 ha_ssl="false"
-if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
+if yq . "${ha_config_file}" >/dev/null; then
     # https://www.home-assistant.io/integrations/http/#http-configuration-variables
-    ha_port=$(yq '.http.server_port // 8123' <<<"${ha_config}")
-    ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<<"${ha_config}")
+    ha_port=$(yq '.http.server_port // 8123' "${ha_config_file}")
+    ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
 fi
-unset ha_config
 bashio::log.debug "ha_port: ${ha_port}"
 bashio::log.debug "ha_ssl: ${ha_ssl}"
 JSON_CONF=$(jq -n \
