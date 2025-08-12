@@ -395,6 +395,13 @@ http:
 might have to add another IP(range) here. Check your HA logs
 after attempting to connect to find the correct IP.**
 
+If you changed your Home Assistant port or enabled SSL in the [HTTP
+integration][http-integration] configuration, please make sure to keep such
+configuration directly in your Home Assistant's `configuration.yaml`. Using
+`!include` or [packages][homeassistant-packages] will prevent the add-on from
+being able to read your Home Assistant configuration and determining the proper
+Home Assistant URL for internal communication.
+
 Remember to restart Home Assistant when the configuration is changed.
 
 If you need assistance changing the config, please follow the
@@ -441,6 +448,8 @@ SOFTWARE.
 [addon-remote-or-local]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos#local-vs-remote-managed-tunnels
 [addon-wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
+[http-integration]: https://www.home-assistant.io/getting-started/configuration/
+[homeassistant-packages]: https://www.home-assistant.io/getting-started/configuration/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
 [cloudflare-run_parameter]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/
 [cloudflare-websockets]: https://developers.cloudflare.com/network/websockets/

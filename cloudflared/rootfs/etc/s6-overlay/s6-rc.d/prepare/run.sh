@@ -69,14 +69,6 @@ checkConfig() {
 }
 
 # ------------------------------------------------------------------------------
-# Read Home Assistant configuration
-# ------------------------------------------------------------------------------
-readHomeAssistantConfig() {
-    # https://github.com/mikefarah/yq/discussions/1906#discussioncomment-14065554
-    yq '(.. | select(tag == "!include")) |= load((filename | sub("/[^/]*$"; "/")) + .)' "${1}"
-}
-
-# ------------------------------------------------------------------------------
 # Sets global variables used in the script
 # ------------------------------------------------------------------------------
 setGlobalVars() {
@@ -88,17 +80,15 @@ setGlobalVars() {
 
     bashio::log.debug "Checking Home Assistant port and if SSL is used..."
     local ha_config_file="/homeassistant/configuration.yaml"
-    local ha_config
     local ha_port="8123"
     local ha_ssl="false"
-    if ha_config=$(readHomeAssistantConfig "${ha_config_file}"); then
+    if yq . "${ha_config_file}" >/dev/null; then
       # https://www.home-assistant.io/integrations/http/#http-configuration-variables
-      ha_port=$(yq '.http.server_port // 8123' <<< "${ha_config}")
-      ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' <<< "${ha_config}")
+      ha_port=$(yq '.http.server_port // 8123' "${ha_config_file}")
+      ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
     else
       bashio::log.warning "Unable to parse Home Assistant configuration file at ${ha_config_file}, assuming port ${ha_port} and no SSL"
     fi
-    unset ha_config
     bashio::log.debug "ha_port: ${ha_port}"
     bashio::log.debug "ha_ssl: ${ha_ssl}"
 
@@ -264,7 +254,7 @@ createTunnel() {
     cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}" ||
         bashio::exit.nok "Failed to create tunnel.
     Please check the Cloudflare Zero Trust Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
-    Visit https://one.dash.cloudflare.com, then click on Access / Tunnels"
+    Visit https://one.dash.cloudflare.com, then click on Networks -> Tunnels"
 
     bashio::log.debug "Created new tunnel: $(cat "${data_path}"/tunnel.json)"
 
