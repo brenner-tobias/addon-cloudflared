@@ -8,9 +8,23 @@
 set -eux
 
 # yq is to avoid depending on Home Assistant API on startup
-# NGINX is to work around live log streaming issue
-# see https://github.com/brenner-tobias/addon-cloudflared/discussions/744
-apk add --no-cache yq-go="${YQ_VERSION}" nginx="${NGINX_VERSION}"
+apk add --no-cache yq-go="${YQ_VERSION}"
+
+# Adapt the architecture to the caddy specific names if needed
+# see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
+# see Caddy archs: https://github.com/caddyserver/caddy/releases
+case "${BUILD_ARCH}" in
+"aarch64")
+    caddy_arch="arm64"
+    ;;
+*)
+    caddy_arch="${BUILD_ARCH}"
+    ;;
+esac
+
+# Download the caddy bin
+wget -q -O- "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${caddy_arch}.tar.gz" |
+    tar -xzf- -C /usr/bin caddy
 
 # Adapt the architecture to the cloudflared specific names if needed
 # see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
