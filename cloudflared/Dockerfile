@@ -11,7 +11,7 @@ ARG YQ_VERSION="4.46.1-r1"
 # renovate: datasource=github-releases depName=caddy packageName=caddyserver/caddy
 ARG CADDY_VERSION="2.10.0"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflare/cloudflared versioning=loose
-ARG CLOUDFLARED_VERSION="2025.8.0"
+ARG CLOUDFLARED_VERSION="2025.8.1"
 
 # Copy root filesystem
 COPY rootfs /
