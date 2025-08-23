@@ -222,7 +222,7 @@ createConfig() {
     local ha_ssl="false"
     if yq . "${ha_config_file}" >/dev/null; then
         # https://www.home-assistant.io/integrations/http/#http-configuration-variables
-        ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
+        ha_ssl=$(yq '.http | (has("ssl_certificate") and has("ssl_key"))' "${ha_config_file}")
     else
         bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
     fi
