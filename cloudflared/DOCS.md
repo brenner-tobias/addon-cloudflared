@@ -331,7 +331,7 @@ If you changed your Home Assistant port or enabled SSL in the [HTTP
 integration][http-integration] configuration, please make sure to keep such
 configuration directly in your Home Assistant's `configuration.yaml`. Using
 `!include` or [packages][homeassistant-packages] for the `http` block will
-prevent the add-on from being able to read your Home Assistant configuration
+prevent the add-on from reading your Home Assistant configuration
 and determining the proper Home Assistant URL for internal communication.
 
 Remember to restart Home Assistant when the configuration is changed.
