@@ -85,7 +85,7 @@ setGlobalVars() {
     if yq . "${ha_config_file}" >/dev/null; then
       # https://www.home-assistant.io/integrations/http/#http-configuration-variables
       ha_port=$(yq '.http.server_port // 8123' "${ha_config_file}")
-      ha_ssl=$(yq '.http | has("ssl_certificate") and has("ssl_key")' "${ha_config_file}")
+      ha_ssl=$(yq '.http | (has("ssl_certificate") and has("ssl_key"))' "${ha_config_file}")
     else
       bashio::log.warning "Unable to parse Home Assistant configuration file at ${ha_config_file}, assuming port ${ha_port} and no SSL"
     fi

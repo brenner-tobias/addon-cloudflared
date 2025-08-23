@@ -310,7 +310,7 @@ post_quantum: true
 
 ### Option: `run_parameters`
 
-You can add additional run parameters to the cloudflared demon using this
+You can add additional run parameters to the cloudflared daemon using this
 parameter. Check the [Cloudflare documentation][cloudflare-run_parameter]
 for all available parameters and their explanation.
 
@@ -395,12 +395,13 @@ http:
 might have to add another IP(range) here. Check your HA logs
 after attempting to connect to find the correct IP.**
 
-If you changed your Home Assistant port or enabled SSL in the [HTTP
-integration][http-integration] configuration, please make sure to keep such
-configuration directly in your Home Assistant's `configuration.yaml`. Using
-`!include` or [packages][homeassistant-packages] will prevent the add-on from
-being able to read your Home Assistant configuration and determining the proper
-Home Assistant URL for internal communication.
+**Important**: The add-on reads your `configuration.yaml` to detect your Home
+Assistant port and if SSL is used. **If you have changed the default port or
+enabled SSL in the [HTTP integration][http-integration]**, you must keep the
+entire `http:` block directly in `configuration.yaml`. Do **not** move it to a
+[`!include`][homeassistant-config-splitting] file or a
+[`!include_dir_*`][homeassistant-config-packages] directory, as the add-on does
+not follow additional YAML files.
 
 Remember to restart Home Assistant when the configuration is changed.
 
@@ -449,7 +450,8 @@ SOFTWARE.
 [addon-wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki
 [advancedconfiguration]: https://www.home-assistant.io/getting-started/configuration/
 [http-integration]: https://www.home-assistant.io/getting-started/configuration/
-[homeassistant-packages]: https://www.home-assistant.io/getting-started/configuration/
+[homeassistant-config-splitting]: https://www.home-assistant.io/docs/configuration/splitting_configuration/
+[homeassistant-config-packages]: https://www.home-assistant.io/docs/configuration/packages/
 [cloudflare-sssa]: https://www.cloudflare.com/en-gb/terms/
 [cloudflare-run_parameter]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/
 [cloudflare-websockets]: https://developers.cloudflare.com/network/websockets/
