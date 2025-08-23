@@ -242,7 +242,7 @@ post_quantum: true
 
 ### Option: `run_parameters`
 
-You can add additional run parameters to the cloudflared demon using this
+You can add additional run parameters to the cloudflared daemon using this
 parameter. Check the [Cloudflare documentation][cloudflare-run_parameter]
 for all available parameters and their explanation.
 
