@@ -54,21 +54,6 @@ function wait_for_file() {
     fi
 }
 
-if [[ ! -f /dev/shm/no_built_in_proxy ]]; then
-    bashio::log.info "Waiting for Caddy to be ready..."
-    wait_for_file /data/caddy/pki/authorities/local/root.crt 15
-    if
-        curl --fail --silent --show-error --output /dev/null \
-            --max-time 1 --retry 15 --retry-delay 1 --retry-connrefused \
-            --cacert /data/caddy/pki/authorities/local/root.crt \
-            https://caddy.localhost/healthz
-    then
-        bashio::log.info "Caddy is ready."
-    else
-        bashio::exit.nok "Caddy did not become ready in time, aborting."
-    fi
-fi
-
 bashio::log.info "Connecting Cloudflare Tunnel..."
 bashio::log.debug "cloudflared tunnel ${options[*]}"
 exec cloudflared tunnel "${options[@]}"

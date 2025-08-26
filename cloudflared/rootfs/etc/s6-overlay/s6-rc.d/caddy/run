@@ -8,4 +8,5 @@ if [[ -f /dev/shm/no_built_in_proxy ]]; then
 fi
 
 bashio::log.info "Starting Caddy..."
-exec env XDG_DATA_HOME=/data caddy run --config /etc/caddy/Caddyfile
+exec s6-notifyoncheck -c /etc/s6-overlay/s6-rc.d/caddy/check_readiness.sh \
+    env XDG_DATA_HOME=/data caddy run --config /etc/caddy/Caddyfile
