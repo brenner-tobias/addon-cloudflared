@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: Cloudflared
-# Take down the S6 supervision tree when NGINX fails
+# Take down the S6 supervision tree when Caddy fails
 # ==============================================================================
 
 # Avoid halting container if the built-in proxy was signaled as disabled
@@ -14,7 +14,7 @@ readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
 exit_code_container=$(cat /run/s6-linux-init-container-results/exitcode)
 readonly exit_code_container
-readonly service="nginx"
+readonly service="caddy"
 
 bashio::log.info \
     "Service ${service} exited with code ${exit_code_service}" \
