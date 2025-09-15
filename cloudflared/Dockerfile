@@ -7,7 +7,7 @@ ENV S6_VERBOSITY="1"
 ARG BUILD_ARCH="amd64"
 
 # renovate: datasource=repology depName=yq packageName=alpine_3_22/yq-go versioning=loose
-ARG YQ_VERSION="4.46.1-r1"
+ARG YQ_VERSION="4.46.1-r2"
 # renovate: datasource=repology depName=nginx packageName=alpine_3_22/nginx versioning=loose
 ARG NGINX_VERSION="1.28.0-r3"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflare/cloudflared versioning=loose
