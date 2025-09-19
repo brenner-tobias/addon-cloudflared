@@ -11,7 +11,7 @@ ARG YQ_VERSION="4.46.1-r2"
 # renovate: datasource=repology depName=nginx packageName=alpine_3_22/nginx versioning=loose
 ARG NGINX_VERSION="1.28.0-r3"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflare/cloudflared versioning=loose
-ARG CLOUDFLARED_VERSION="2025.8.1"
+ARG CLOUDFLARED_VERSION="2025.9.0"
 
 # Copy root filesystem
 COPY rootfs /
