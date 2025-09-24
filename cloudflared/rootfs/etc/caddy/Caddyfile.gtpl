@@ -25,108 +25,123 @@ https://caddy.localhost {
 	respond 403
 }
 
-{{ .ha_external_hostname }} {
-	@cloudflared remote_ip 127.0.0.1
-
-	# --- Special handling for log streams (SSE) via Cloudflare ---
-	@hassioLogs {
-		path_regexp hassioLogs ^/api/hassio/.+/logs/follow(?:/.*)?$
+# -------- snippets --------
+# SSE response headers (no cache, event-stream)
+(sse_headers) {
+	header {
+		defer
+		Content-Type "text/event-stream; charset=utf-8"
+		Cache-Control "no-store, no-cache, must-revalidate, no-transform"
+		Pragma "no-cache"
 	}
-	handle @hassioLogs {
-		reverse_proxy {{ .ha_service_url }} {
-			# Disable response buffering/aggregation to allow live log streaming
-			flush_interval -1
-			# Prevent upstream compression to keep stream intact
-			header_up -Accept-Encoding
-			header_down -Content-Encoding
-			# Forward real client IP
-			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-			{{ if hasPrefix "https://" .ha_service_url }}
-			# Allow self-signed certificates if needed
-			transport http { tls_insecure_skip_verify }
-			{{ end }}
-		}
-		# Set headers required for SSE log streaming
-		header {
-			defer
-			Content-Type "text/event-stream; charset=utf-8"
-			Cache-Control "no-store, no-cache, must-revalidate, no-transform"
-			Pragma "no-cache"
-			Connection "keep-alive"
-		}
-	}
-	# --- End of special handling for log streams ---
-
-
-	reverse_proxy @cloudflared {{ .ha_service_url }} {
-		# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
-		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-		{{ if hasPrefix "https://" .ha_service_url }}
-		transport http {
-			tls_insecure_skip_verify
-		}
-		{{ end }}
-	}
-
-	reverse_proxy {{ .ha_service_url }} {{ if hasPrefix "https://" .ha_service_url }}{
-		transport http {
-			tls_insecure_skip_verify
-		}
-	}{{ end }}
 }
 
-{{ range $i, $e := .additional_hosts }}
-{{ $e.hostname }} {
-	@cloudflared remote_ip 127.0.0.1
-	{{ if $e.internalOnly }}
-	# Block connections from Cloudflared as service is internal only
-	handle @cloudflared {
-		respond 403
-	}
-	{{ else }}
-	reverse_proxy @cloudflared {{ $e.service }} {
-		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-		{{ if hasPrefix "https://" $e.service }}
-		transport http {
-			tls_insecure_skip_verify
-		}
-		{{ end }}
+# Helper: rp — generic reverse proxy
+# Note: if target is https://, TLS verify is skipped.
+{{ define "rp" -}}
+reverse_proxy {{ . }} {{ if hasPrefix "https://" . -}}{
+	transport http { tls_insecure_skip_verify }
+}{{- end }}
+{{- end }}
 
-		# --- Special handling for log streams (SSE) on internal hosts ---
-		@hassioLogs {
-			path_regexp hassioLogs ^/api/hassio/.+/logs/follow(?:/.*)?$
+# Helper: rp_sse — reverse proxy for Server-Sent Events
+# Disables compression and forces flush for SSE.
+{{ define "rp_sse" -}}
+reverse_proxy {{ . }} {
+	flush_interval -1
+	header_up -Accept-Encoding
+	header_down -Content-Encoding
+	{{ if hasPrefix "https://" . -}}
+	transport http { tls_insecure_skip_verify }
+	{{- end }}
+}
+{{- end }}
+
+# Helper: rp_cf — reverse proxy behind Cloudflared
+# Adds real client IP from CF-Connecting-IP.
+{{ define "rp_cf" -}}
+reverse_proxy {{ . }} {
+	header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+	{{ if hasPrefix "https://" . -}}
+	transport http { tls_insecure_skip_verify }
+	{{- end }}
+}
+{{- end }}
+
+# Helper: rp_sse_cf — SSE proxy behind Cloudflared
+# Combines SSE settings with CF client IP forwarding.
+{{ define "rp_sse_cf" -}}
+reverse_proxy {{ . }} {
+	flush_interval -1
+	header_up -Accept-Encoding
+	header_down -Content-Encoding
+	header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+	{{ if hasPrefix "https://" . -}}
+	transport http { tls_insecure_skip_verify }
+	{{- end }}
+}
+{{- end }}
+
+# ==================== Home Assistant host ====================
+{{ .ha_external_hostname }} {
+	route {
+		@cf remote_ip 127.0.0.1
+		@sse path_regexp sse ^/api/hassio/.+/logs/follow(?:/.*)?$
+		@cf_sse {
+			remote_ip 127.0.0.1
+			path_regexp sse ^/api/hassio/.+/logs/follow(?:/.*)?$
 		}
-		handle @hassioLogs {
-			reverse_proxy {{ $e.service }} {
-				# Disable response buffering/aggregation for real-time streaming
+		@local_sse {
+			not remote_ip 127.0.0.1
+			path_regexp sse ^/api/hassio/.+/logs/follow(?:/.*)?$
+		}
+
+		# SSE via Cloudflare
+		handle @cf_sse {
+			reverse_proxy {{ .ha_service_url }} {
 				flush_interval -1
-				# Prevent upstream compression to maintain SSE stream integrity
 				header_up -Accept-Encoding
 				header_down -Content-Encoding
-				# Forward real client IP
 				header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-				{{ if hasPrefix "https://" $e.service }}
-				# Allow self-signed certificates if necessary
-				transport http { tls_insecure_skip_verify }
-				{{ end }}
+				{{ if hasPrefix "https://" .ha_service_url }}transport http { tls_insecure_skip_verify }{{ end }}
 			}
-			# Set required SSE headers after proxying
 			header {
 				defer
 				Content-Type "text/event-stream; charset=utf-8"
 				Cache-Control "no-store, no-cache, must-revalidate, no-transform"
 				Pragma "no-cache"
-				Connection "keep-alive"
 			}
 		}
-		# --- End of special handling for log streams ---
 
-	}
-	{{ end }}
-	reverse_proxy {{ $e.service }} {{ if hasPrefix "https://" $e.service }}{
-		transport http {
-			tls_insecure_skip_verify
+		# SSE (local/direct)
+		handle @local_sse {
+			reverse_proxy {{ .ha_service_url }} {
+				flush_interval -1
+				header_up -Accept-Encoding
+				header_down -Content-Encoding
+				{{ if hasPrefix "https://" .ha_service_url }}transport http { tls_insecure_skip_verify }{{ end }}
+			}
+			header {
+				defer
+				Content-Type "text/event-stream; charset=utf-8"
+				Cache-Control "no-store, no-cache, must-revalidate, no-transform"
+				Pragma "no-cache"
+			}
 		}
-	}{{ end }}
+
+		# Other routes via Cloudflare
+		handle @cf {
+			reverse_proxy {{ .ha_service_url }} {
+				header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+				{{ if hasPrefix "https://" .ha_service_url }}transport http { tls_insecure_skip_verify }{{ end }}
+			}
+		}
+
+		# Fallback: direct proxy
+		handle {
+			reverse_proxy {{ .ha_service_url }} {{ if hasPrefix "https://" .ha_service_url }}{
+				transport http { tls_insecure_skip_verify }
+			}{{ end }}
+		}
+	}
 }
-{{ end }}
