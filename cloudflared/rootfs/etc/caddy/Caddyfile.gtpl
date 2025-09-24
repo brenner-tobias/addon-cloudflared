@@ -28,6 +28,36 @@ https://caddy.localhost {
 {{ .ha_external_hostname }} {
 	@cloudflared remote_ip 127.0.0.1
 
+	# --- Special handling for log streams (SSE) via Cloudflare ---
+	@hassioLogs {
+		path_regexp hassioLogs ^/api/hassio/.+/logs/follow(?:/.*)?$
+	}
+	handle @hassioLogs {
+		reverse_proxy {{ .ha_service_url }} {
+			# Disable response buffering/aggregation to allow live log streaming
+			flush_interval -1
+			# Prevent upstream compression to keep stream intact
+			header_up -Accept-Encoding
+			header_down -Content-Encoding
+			# Forward real client IP
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			{{ if hasPrefix "https://" .ha_service_url }}
+			# Allow self-signed certificates if needed
+			transport http { tls_insecure_skip_verify }
+			{{ end }}
+		}
+		# Set headers required for SSE log streaming
+		header {
+			defer
+			Content-Type "text/event-stream; charset=utf-8"
+			Cache-Control "no-store, no-cache, must-revalidate, no-transform"
+			Pragma "no-cache"
+			Connection "keep-alive"
+		}
+	}
+	# --- End of special handling for log streams ---
+
+
 	reverse_proxy @cloudflared {{ .ha_service_url }} {
 		# https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/#caddy
 		header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
@@ -61,6 +91,36 @@ https://caddy.localhost {
 			tls_insecure_skip_verify
 		}
 		{{ end }}
+
+		# --- Special handling for log streams (SSE) on internal hosts ---
+		@hassioLogs {
+			path_regexp hassioLogs ^/api/hassio/.+/logs/follow(?:/.*)?$
+		}
+		handle @hassioLogs {
+			reverse_proxy {{ $e.service }} {
+				# Disable response buffering/aggregation for real-time streaming
+				flush_interval -1
+				# Prevent upstream compression to maintain SSE stream integrity
+				header_up -Accept-Encoding
+				header_down -Content-Encoding
+				# Forward real client IP
+				header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+				{{ if hasPrefix "https://" $e.service }}
+				# Allow self-signed certificates if necessary
+				transport http { tls_insecure_skip_verify }
+				{{ end }}
+			}
+			# Set required SSE headers after proxying
+			header {
+				defer
+				Content-Type "text/event-stream; charset=utf-8"
+				Cache-Control "no-store, no-cache, must-revalidate, no-transform"
+				Pragma "no-cache"
+				Connection "keep-alive"
+			}
+		}
+		# --- End of special handling for log streams ---
+
 	}
 	{{ end }}
 	reverse_proxy {{ $e.service }} {{ if hasPrefix "https://" $e.service }}{
