@@ -40,10 +40,10 @@ configuration:
       Gebruikt de "Nginx-Proxy-Manager Community Add-Ons" add-on als de
       catch-all dienst.
   use_builtin_proxy:
-    name: Gebruik ingebouwde Nginx proxy
+    name: Gebruik ingebouwde Caddy proxy
     description: >-
       De verbinding met Home Assistant wordt gemaakt via de ingebouwde
-      Nginx proxy. (Workaround voor problemen met live logs).
+      Caddy proxy. (Workaround voor problemen met live logs).
       Deze optie is standaard ingeschakeld.
   tunnel_token:
     name: Cloudflare Tunnel Token

@@ -39,9 +39,9 @@ configuration:
     description: >-
       Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community Add-Ons".
   use_builtin_proxy:
-    name: Utiliser le proxy Nginx intégré
+    name: Utiliser le proxy Caddy intégré
     description: >-
-      La connexion à Home Assistant sera établie via le proxy Nginx intégré.
+      La connexion à Home Assistant sera établie via le proxy Caddy intégré.
       (Solution de contournement pour les problèmes avec les journaux en direct).
       Cette option est activée par défaut.
   tunnel_token:
