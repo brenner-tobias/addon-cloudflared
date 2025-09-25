@@ -39,9 +39,9 @@ configuration:
     description: >-
       Setzt das "Nginx-Proxy-Manager Add-on" als Catch-All-Dienst.
   use_builtin_proxy:
-    name: Eingebauten Nginx proxy verwenden
+    name: Eingebauten Caddy proxy verwenden
     description: >-
-      Die Verbindung zu Home Assistant wird über den eingebauten Nginx-Proxy
+      Die Verbindung zu Home Assistant wird über den eingebauten Caddy-Proxy
       hergestellt. (Workaround für Probleme mit den Live Logs).
       Diese Option ist standardmäßig aktiviert.
   tunnel_token:
