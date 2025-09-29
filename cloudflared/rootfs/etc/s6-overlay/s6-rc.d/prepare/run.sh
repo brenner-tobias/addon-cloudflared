@@ -18,7 +18,8 @@ checkConfig() {
 
     # Check for minimum configuration options
     if
-        bashio::config.is_empty 'external_hostname' &&
+        bashio::config.is_empty 'tunnel_token' &&
+            bashio::config.is_empty 'external_hostname' &&
             bashio::config.is_empty 'additional_hosts' &&
             bashio::config.is_empty 'catch_all_service' &&
             bashio::config.is_empty 'nginx_proxy_manager'
@@ -65,11 +66,6 @@ checkConfig() {
     # Check if 'catch_all_service' and 'nginx_proxy_manager' are both included in config.
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager'; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
-    fi
-
-    # Check if 'use_builtin_proxy' and 'tunnel_token' are both included in config.
-    if bashio::config.true 'use_builtin_proxy' && bashio::config.has_value 'tunnel_token'; then
-        bashio::exit.nok "'use_builtin_proxy' cannot be used together with 'tunnel_token'. Please remove one of them from the configuration"
     fi
 
     # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
@@ -414,12 +410,6 @@ configureCaddy() {
 
     if bashio::var.false "${use_builtin_proxy}"; then
         bashio::log.info "Using Cloudflared without the built-in Caddy proxy"
-        touch /dev/shm/no_built_in_proxy
-        return "${__BASHIO_EXIT_OK}"
-    fi
-
-    if bashio::var.is_empty "${external_hostname}"; then
-        bashio::log.warning "Using Cloudflared without the built-in Caddy proxy because 'external_hostname' is not set."
         touch /dev/shm/no_built_in_proxy
         return "${__BASHIO_EXIT_OK}"
     fi
