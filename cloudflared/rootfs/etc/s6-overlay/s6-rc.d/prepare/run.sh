@@ -410,7 +410,6 @@ configureCaddy() {
 
     if bashio::var.false "${use_builtin_proxy}"; then
         bashio::log.info "Using Cloudflared without the built-in Caddy proxy"
-        touch /dev/shm/no_built_in_proxy
         return "${__BASHIO_EXIT_OK}"
     fi
 
@@ -444,6 +443,9 @@ configureCaddy() {
 
     bashio::log.info "Adding host entry for communication between Cloudflared and Caddy..."
     echo "127.0.0.1 caddy.localhost" | tee -a /etc/hosts
+
+    # Signal Caddy service to run
+    touch /dev/shm/use_built_in_proxy
 }
 
 # ==============================================================================
