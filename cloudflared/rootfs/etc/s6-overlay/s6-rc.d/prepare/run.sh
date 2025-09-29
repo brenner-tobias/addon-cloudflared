@@ -66,6 +66,16 @@ checkConfig() {
     if bashio::config.has_value 'catch_all_service' && bashio::config.true 'nginx_proxy_manager'; then
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
+
+    # Check if 'use_builtin_proxy' and 'tunnel_token' are both included in config.
+    if bashio::config.true 'use_builtin_proxy' && bashio::config.has_value 'tunnel_token'; then
+        bashio::exit.nok "'use_builtin_proxy' cannot be used together with 'tunnel_token'. Please remove one of them from the configuration"
+    fi
+
+    # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
+    if bashio::config.true 'use_builtin_proxy' && bashio::config.is_empty 'external_hostname'; then
+        bashio::exit.nok "'use_builtin_proxy' can only be used if 'external_hostname' is set. Please set 'external_hostname' or disable 'use_builtin_proxy'"
+    fi
 }
 
 # ------------------------------------------------------------------------------
