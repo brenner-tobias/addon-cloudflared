@@ -53,4 +53,7 @@ configuration:
       Wird verwendet, wenn der Tunnel mit dem Cloudflare Dashboard
       eingerichtet wird.
 network:
-  36500/tcp: Web-Interface für Metriken (36500/tcp)
+  36500/tcp: Metriken-Web-Interface
+  80/tcp: Eingebaute Caddy-Proxy-HTTP-Schnittstelle
+  443/tcp: Eingebaute Caddy-Proxy-HTTPS-Schnittstelle
+  443/udp: Eingebaute Caddy-Proxy-HTTP/3-QUIC-Schnittstelle

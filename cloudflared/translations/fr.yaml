@@ -52,4 +52,7 @@ configuration:
       Lorsque cette option est définie, toutes les autres options seront ignorées.
       Utilisez cette option si vous avez configuré le tunnel via le tableau de bord Cloudflare.
 network:
-  36500/tcp: Interface web des métriques (36500/tcp)
+  36500/tcp: Interface Web des Métriques
+  80/tcp: Interface HTTP du Proxy Caddy Intégré
+  443/tcp: Interface HTTPS du Proxy Caddy Intégré
+  443/udp: Interface HTTP/3 QUIC du Proxy Caddy Intégré

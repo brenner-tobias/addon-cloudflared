@@ -53,4 +53,7 @@ configuration:
       Po ustawieniu wszystkie inne opcje zostaną zignorowane. Użyj tej opcji, jeśli skonfigurujesz
       tunel z Cloudflare Dashboard.
 network:
-  36500/tcp: Metrics Web Interface (36500/tcp)
+  36500/tcp: Interfejs Web Metryk
+  80/tcp: Interfejs HTTP Wbudowanego Proxy Caddy
+  443/tcp: Interfejs HTTPS Wbudowanego Proxy Caddy
+  443/udp: Interfejs HTTP/3 QUIC Wbudowanego Proxy Caddy

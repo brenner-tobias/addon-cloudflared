@@ -49,4 +49,7 @@ configuration:
       כאשר מוגדר, כל האפשרויות האחרות יתעלמו. יש להשתמש באפשרות זו
       בהגדרת המנהרה עם לוח המחוונים של Cloudflare.
 network:
-  36500/tcp: ממשק אינטרנט למדדים (36500/tcp)
+  36500/tcp: ממשק אינטרנט למדדים
+  80/tcp: ממשק HTTP של Caddy Proxy המובנה
+  443/tcp: ממשק HTTPS של Caddy Proxy המובנה
+  443/udp: ממשק HTTP/3 QUIC של Caddy Proxy המובנה

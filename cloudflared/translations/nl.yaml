@@ -54,4 +54,7 @@ configuration:
       Gebruik deze optie als je de tunel met het Cloudflare Dashboard
       instelt.
 network:
-  36500/tcp: Webinterface voor statistieken (36500/tcp)
+  36500/tcp: Webinterface voor Statistieken
+  80/tcp: Ingebouwde Caddy Proxy HTTP Interface
+  443/tcp: Ingebouwde Caddy Proxy HTTPS Interface
+  443/udp: Ingebouwde Caddy Proxy HTTP/3 QUIC Interface
