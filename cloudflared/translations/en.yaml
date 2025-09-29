@@ -43,10 +43,10 @@ configuration:
     name: Use built-in Caddy proxy
     description: >-
       The connection to Home Assistant and additional hosts will be made
-      through the built-in Caddy proxy. This works around issues with live logs
-      and allows an unified access to Home Assistant and additional hosts even
-      within your local network, read the documentation for more details.
-      This option is enabled by default.
+      through the built-in Caddy proxy. This allows a unified access to Home
+      Assistant and additional hosts even within your local network. Read the
+      documentation for more details.
+      This option is disabled by default.
   tunnel_token:
     name: Cloudflare Tunnel Token
     description: >-

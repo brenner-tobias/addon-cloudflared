@@ -41,9 +41,11 @@ configuration:
   use_builtin_proxy:
     name: Utiliser le proxy Caddy intégré
     description: >-
-      La connexion à Home Assistant sera établie via le proxy Caddy intégré.
-      (Solution de contournement pour les problèmes avec les journaux en direct).
-      Cette option est activée par défaut.
+      La connexion à Home Assistant et aux hôtes supplémentaires sera établie
+      via le proxy Caddy intégré. Cela permet un accès unifié à Home Assistant
+      et aux hôtes supplémentaires même au sein de votre réseau local. Lisez
+      la documentation pour plus de détails.
+      Cette option est désactivée par défaut.
   tunnel_token:
     name: Token du tunnel Cloudflare
     description: >-

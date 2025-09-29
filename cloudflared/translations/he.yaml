@@ -39,9 +39,10 @@ configuration:
   use_builtin_proxy:
     name: השתמש ב-Caddy proxy המובנה
     description: >-
-      החיבור ל-Home Assistant יתבצע דרך ה-Caddy proxy המובנה.
-      (פתרון בעיות עבור בעיות עם יומני חיים).
-      אפשרות זו מופעלת כברירת מחדל.
+      החיבור ל-Home Assistant ומארחים נוספים יתבצע דרך ה-Caddy proxy המובנה.
+      זה מאפשר גישה מאוחדת ל-Home Assistant ומארחים נוספים גם בתוך הרשת
+      המקומית שלך. קרא את התיעוד לפרטים נוספים.
+      אפשרות זו מושבתת כברירת מחדל.
   tunnel_token:
     name: אסימון מנהרת Cloudflare
     description: >-

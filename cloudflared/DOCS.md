@@ -232,13 +232,12 @@ them to wherever you like.
 ### Option: `use_builtin_proxy`
 
 If enabled, the connection to Home Assistant and additional hosts will be made
-through the built-in Caddy proxy. This works around issues with live logs ([#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744))
-and allows a unified access to Home Assistant and additional hosts even within
-your local network.
+through the built-in Caddy proxy. This allows a unified access to Home
+Assistant and additional hosts even within your local network.
 
-**Note**: _This option is enabled by default._
+**Note**: _This option is disabled by default._
 
-Here is how you can leverage the built-in proxy for local access:
+Here is how you can leverage the built-in Caddy proxy for local access:
 
 1. These additional add-on ports needs to be exposed through the add-on
    _Configuration_ page > _Network_:
