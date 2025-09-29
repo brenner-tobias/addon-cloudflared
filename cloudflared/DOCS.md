@@ -79,7 +79,6 @@ advanced config can be achieved using the remote tunnel setup.
 - [`tunnel_name`](#option-tunnel_name)
 - [`catch_all_service`](#option-catch_all_service)
 - [`nginx_proxy_manager`](#option-nginx_proxy_manager)
-- [`use_builtin_proxy`](#option-use_builtin_proxy)
 - [`post_quantum`](#option-post_quantum)
 - [`run_parameters`](#option-run_parameters)
 - [`log_level`](#option-log_level)
@@ -217,14 +216,6 @@ in Cloudflare by adding a CNAME record with `*` as name.
 
 Finally, you have to set-up your proxy hosts in Nginx Proxy Manager and forward
 them to wherever you like.
-
-### Option: `use_builtin_proxy`
-
-If enabled, the connection to Home Assistant will be made through the built-in
-Nginx proxy. Nginx was implemented as a workaround for issues with live logs.
-For reference, see discussion [#744](https://github.com/brenner-tobias/addon-cloudflared/discussions/744)
-
-**Note**: _This option is enabled by default._
 
 ### Option: `post_quantum`
 

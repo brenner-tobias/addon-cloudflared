@@ -8,8 +8,6 @@ ARG BUILD_ARCH="amd64"
 
 # renovate: datasource=repology depName=yq packageName=alpine_3_22/yq-go versioning=loose
 ARG YQ_VERSION="4.47.2-r0"
-# renovate: datasource=repology depName=nginx packageName=alpine_3_22/nginx versioning=loose
-ARG NGINX_VERSION="1.28.0-r3"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflare/cloudflared versioning=loose
 ARG CLOUDFLARED_VERSION="2025.9.1"
 
