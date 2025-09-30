@@ -38,12 +38,6 @@ configuration:
     name: Activer le service Catch-All de Nginx-Proxy-Manager
     description: >-
       Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community Add-Ons".
-  use_builtin_proxy:
-    name: Utiliser le proxy Nginx intégré
-    description: >-
-      La connexion à Home Assistant sera établie via le proxy Nginx intégré.
-      (Solution de contournement pour les problèmes avec les journaux en direct).
-      Cette option est activée par défaut.
   tunnel_token:
     name: Token du tunnel Cloudflare
     description: >-

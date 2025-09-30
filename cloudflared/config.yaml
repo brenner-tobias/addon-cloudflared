@@ -3,6 +3,7 @@ name: Cloudflared
 version: dev
 breaking_versions:
   - 5.3.7
+  - 6.0.0
 slug: cloudflared
 description: "Use a Cloudflare Tunnel to remotely
   connect to Home Assistant without opening any ports"
@@ -21,7 +22,6 @@ map:
 options:
   external_hostname: ""
   additional_hosts: []
-  use_builtin_proxy: true
 ports:
   36500/tcp: null
 schema:
@@ -33,7 +33,6 @@ schema:
   tunnel_name: str?
   catch_all_service: str?
   nginx_proxy_manager: bool?
-  use_builtin_proxy: bool?
   tunnel_token: str?
   post_quantum: bool?
   run_parameters:

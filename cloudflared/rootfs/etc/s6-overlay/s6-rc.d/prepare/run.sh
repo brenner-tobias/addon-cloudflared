@@ -237,11 +237,7 @@ createConfig() {
 
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
-        if bashio::config.true 'use_builtin_proxy'; then
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"http://localhost:8321\"}]")
-        else
-            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
-        fi
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
     fi
 
     # Check for configured additional hosts and add them if existing
