@@ -219,9 +219,11 @@ createConfig() {
 
     bashio::log.debug "Checking if SSL is used in Home Assistant..."
     local ha_config_file="/homeassistant/configuration.yaml"
+    local ha_port="8123"
     local ha_ssl="false"
     if yq . "${ha_config_file}" >/dev/null; then
         # https://www.home-assistant.io/integrations/http/#http-configuration-variables
+        ha_port=$(yq ".http.server_port // ${ha_port}" "${ha_config_file}")
         ha_ssl=$(yq '.http | (has("ssl_certificate") and has("ssl_key"))' "${ha_config_file}")
     else
         bashio::log.warning "No Home Assistant configuration file found, assuming no SSL"
@@ -237,7 +239,7 @@ createConfig() {
 
     # Add Service for Home Assistant if 'external_hostname' is set
     if bashio::config.has_value 'external_hostname'; then
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:$(bashio::core.port)\"}]")
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_service_protocol}://homeassistant:${ha_port}\"}]")
     fi
 
     # Check for configured additional hosts and add them if existing
