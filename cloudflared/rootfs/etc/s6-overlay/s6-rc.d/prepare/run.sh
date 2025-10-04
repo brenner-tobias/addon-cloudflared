@@ -27,7 +27,7 @@ validateConfigAndSetVars() {
         bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
-    # Set and validate external_hostname
+    # Set and validate 'external_hostname'
     if bashio::config.has_value 'external_hostname'; then
         external_hostname="$(bashio::config 'external_hostname')"
         if ! [[ ${external_hostname} =~ ${validHostnameRegex} ]]; then
@@ -38,7 +38,7 @@ validateConfigAndSetVars() {
     fi
     bashio::log.debug "external_hostname: ${external_hostname}"
 
-    # Set and validate use_builtin_proxy
+    # Set and validate 'use_builtin_proxy'
     if bashio::config.true 'use_builtin_proxy'; then
         use_builtin_proxy=true
         # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
@@ -80,7 +80,7 @@ validateConfigAndSetVars() {
         additional_hosts=()
     fi
 
-    # Validate catch_all_service
+    # Check 'catch_all_service'
     if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service'; then
         bashio::exit.nok "'catch_all_service' is defined as an empty String. Please remove 'catch_all_service' from the configuration or enter a valid String"
     fi
@@ -411,10 +411,6 @@ setCloudflaredLogLevel() {
 configureCaddy() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    if bashio::var.false "${use_builtin_proxy}"; then
-        return "${__BASHIO_EXIT_OK}"
-    fi
-
     bashio::log.info "Configuring built-in Caddy proxy..."
 
     if [[ "$(bashio::addon.port "443/tcp")" == "443" ]]; then
@@ -453,11 +449,14 @@ configureCaddy() {
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    validateConfigAndSetVars
-
-    configureCaddy
-
     setCloudflaredLogLevel
+
+    # Run service with tunnel token without creating config
+    if bashio::config.has_value 'tunnel_token'; then
+        bashio::log.info "Using Cloudflare Remote Management Tunnel"
+        bashio::log.info "All add-on configuration options except tunnel_token will be ignored."
+        bashio::exit.ok
+    fi
 
     # Run connectivity checks if debug mode activated
     if bashio::debug; then
@@ -465,11 +464,10 @@ main() {
         checkConnectivity
     fi
 
-    # Run service with tunnel token without creating config
-    if bashio::config.has_value 'tunnel_token'; then
-        bashio::log.info "Using Cloudflare Remote Management Tunnel"
-        bashio::log.info "All add-on configuration options except tunnel_token will be ignored."
-        bashio::exit.ok
+    validateConfigAndSetVars
+
+    if bashio::var.true "${use_builtin_proxy}"; then
+        configureCaddy
     fi
 
     if ! hasCertificate; then
