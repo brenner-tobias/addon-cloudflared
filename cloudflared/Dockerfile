@@ -2,6 +2,8 @@ FROM ghcr.io/hassio-addons/base:18.1.4
 
 # Set S6 verbosity level
 ENV S6_VERBOSITY="1"
+# Enable Caddy service only if enabled in config
+ENV S6_STAGE2_HOOK="/etc/s6-overlay/s6-rc.d/caddy/condition_caddy.sh"
 
 # Setup base
 ARG BUILD_ARCH="amd64"

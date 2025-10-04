@@ -5,11 +5,6 @@
 # Take down the S6 supervision tree when Caddy fails
 # ==============================================================================
 
-# Avoid halting container if the built-in proxy was not enabled
-if [[ ! -f /dev/shm/use_built_in_proxy ]]; then
-    exit 0
-fi
-
 readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
 exit_code_container=$(cat /run/s6-linux-init-container-results/exitcode)
