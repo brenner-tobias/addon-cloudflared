@@ -8,11 +8,11 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Checks if the config is valid
+# Validates configuration and sets global variables used in the script
 # ------------------------------------------------------------------------------
-checkConfig() {
+validateConfigAndSetVars() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Checking add-on config..."
+    bashio::log.info "Validating add-on configuration..."
 
     local validHostnameRegex="^(([a-z0-9äöüß]|[a-z0-9äöüß][a-z0-9äöüß\-]*[a-z0-9äöüß])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$"
 
@@ -27,18 +27,38 @@ checkConfig() {
         bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
     fi
 
-    # Check if 'external_hostname' includes a valid hostname
+    # Set and validate external_hostname
     if bashio::config.has_value 'external_hostname'; then
-        if ! [[ $(bashio::config 'external_hostname') =~ ${validHostnameRegex} ]]; then
-            bashio::exit.nok "'$(bashio::config 'external_hostname')' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'external_hostname'."
+        external_hostname="$(bashio::config 'external_hostname')"
+        if ! [[ ${external_hostname} =~ ${validHostnameRegex} ]]; then
+            bashio::exit.nok "'${external_hostname}' is not a valid hostname. Please make sure not to include the protocol (e.g. 'https://') nor the port (e.g. ':8123') and only use lowercase characters in the 'external_hostname'."
         fi
+    else
+        external_hostname=""
     fi
+    bashio::log.debug "external_hostname: ${external_hostname}"
 
-    # Check if all defined 'additional_hosts' have non-empty strings as hostname and service
+    # Set and validate use_builtin_proxy
+    if bashio::config.true 'use_builtin_proxy'; then
+        use_builtin_proxy=true
+        # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
+        if bashio::var.is_empty "${external_hostname}"; then
+            bashio::exit.nok "'use_builtin_proxy' can only be used if 'external_hostname' is set. Please set 'external_hostname' or disable 'use_builtin_proxy'"
+        fi
+    else
+        use_builtin_proxy=false
+    fi
+    bashio::log.debug "use_builtin_proxy: ${use_builtin_proxy}"
+
+    # Set and validate additional_hosts
     if bashio::config.has_value 'additional_hosts'; then
+        additional_hosts=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts[]")
+        readarray -t additional_hosts <<<"${additional_hosts}"
+
+        local additional_host
         local hostname
         local service
-        for additional_host in $(bashio::jq "/data/options.json" ".additional_hosts[]"); do
+        for additional_host in "${additional_hosts[@]}"; do
             bashio::log.debug "Checking host ${additional_host}..."
             hostname=$(bashio::jq "${additional_host}" ".hostname")
             service=$(bashio::jq "${additional_host}" ".service")
@@ -56,9 +76,11 @@ checkConfig() {
                 bashio::exit.nok "'service' in 'additional_hosts' for hostname ${hostname} is empty, please enter a valid String"
             fi
         done
+    else
+        additional_hosts=()
     fi
 
-    # Check if 'catch_all_service' is included in config with an empty String
+    # Validate catch_all_service
     if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service'; then
         bashio::exit.nok "'catch_all_service' is defined as an empty String. Please remove 'catch_all_service' from the configuration or enter a valid String"
     fi
@@ -68,19 +90,7 @@ checkConfig() {
         bashio::exit.nok "The config includes 'nginx_proxy_manager' and 'catch_all_service'. Please delete one of them since they are mutually exclusive"
     fi
 
-    # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
-    if bashio::config.true 'use_builtin_proxy' && bashio::config.is_empty 'external_hostname'; then
-        bashio::exit.nok "'use_builtin_proxy' can only be used if 'external_hostname' is set. Please set 'external_hostname' or disable 'use_builtin_proxy'"
-    fi
-}
-
-# ------------------------------------------------------------------------------
-# Sets global variables used in the script
-# ------------------------------------------------------------------------------
-setGlobalVars() {
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    default_config="/tmp/config.json"
+    # Set other global variables
     tunnel_uuid=""
     data_path="/data"
 
@@ -109,26 +119,12 @@ setGlobalVars() {
     ha_url="${ha_protocol}://homeassistant:${ha_port}"
     bashio::log.debug "ha_url: ${ha_url}"
 
-    if bashio::config.has_value 'external_hostname'; then
-        external_hostname="$(bashio::config 'external_hostname')"
-    else
-        external_hostname=""
-    fi
-    bashio::log.debug "external_hostname: ${external_hostname}"
-
     if bashio::config.has_value 'tunnel_name'; then
         tunnel_name="$(bashio::config 'tunnel_name')"
     else
         tunnel_name="homeassistant"
     fi
     bashio::log.debug "tunnel_name: ${tunnel_name}"
-
-    if bashio::config.true 'use_builtin_proxy'; then
-        use_builtin_proxy=true
-    else
-        use_builtin_proxy=false
-    fi
-    bashio::log.debug "use_builtin_proxy: ${use_builtin_proxy}"
 }
 
 # ------------------------------------------------------------------------------
@@ -239,7 +235,7 @@ hasTunnel() {
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
         bashio::log.error "Existing Cloudflare Tunnel name does not match add-on config."
         bashio::log.error "---------------------------------------"
-        bashio::log.error "Add-on Configuration tunnel name: ${tunnel_name}"
+        bashio::log.errorRUN "Add-on Configuration tunnel name: ${tunnel_name}"
         bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
         bashio::log.error "---------------------------------------"
         bashio::log.error "Align add-on configuration to match existing tunnel credential file"
@@ -289,31 +285,30 @@ createConfig() {
     fi
 
     # Check for configured additional hosts and add them if existing
-    if bashio::config.has_value 'additional_hosts'; then
-        # Loop additional_hosts to create json config
-        while read -r additional_host; do
-            # Check for originRequest configuration option: disableChunkedEncoding
-            disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
-            if ! [[ ${disableChunkedEncoding} == "" ]]; then
-                additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
-                additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
-            fi
+    local additional_host
+    local disableChunkedEncoding
+    for additional_host in "${additional_hosts[@]}"; do
+        # Make Cloudflared always reach the Caddy proxy if enabled
+        if bashio::var.true "${use_builtin_proxy}"; then
+            additional_host=$(bashio::jq "${additional_host}" '.service = "https://caddy.localhost"')
+        elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
+            # Avoid accidental exposure of internal services when not using Caddy
+            continue
+        fi
 
-            # Make Cloudflared always reach the Caddy proxy if enabled
-            if bashio::var.true "${use_builtin_proxy}"; then
-                additional_host=$(bashio::jq "${additional_host}" '.service = "https://caddy.localhost"')
-            elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
-                # Avoid accidental exposure of internal services when not using Caddy
-                continue
-            fi
+        # internalOnly is only relevant for Caddy, not for Cloudflared
+        additional_host=$(bashio::jq "${additional_host}" "del(.internalOnly)")
 
-            # internalOnly is only for Caddy, not for Cloudflared
-            additional_host=$(bashio::jq "${additional_host}" "del(.internalOnly)")
+        # Check for originRequest configuration option: disableChunkedEncoding
+        disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
+        if ! [[ ${disableChunkedEncoding} == "" ]]; then
+            additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
+            additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
+        fi
 
-            # Add additional_host config to ingress config
-            config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
-        done <<<"$(jq -c '.additional_hosts[]' /data/options.json)"
-    fi
+        # Add additional_host config to ingress config
+        config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
+    done
 
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager'; then
@@ -345,6 +340,7 @@ createConfig() {
     fi
 
     # Write content of config variable to config file for cloudflared
+    local default_config="/tmp/config.json"
     bashio::jq "${config}" "." >"${default_config}"
 
     # Validate config using cloudflared
@@ -370,13 +366,19 @@ createDNS() {
     fi
 
     # Check for configured additional hosts and create DNS entries for them if existing
-    if bashio::config.has_value 'additional_hosts'; then
-        for host in $(bashio::jq "/data/options.json" ".additional_hosts[].hostname"); do
-            bashio::log.info "Creating DNS entry ${host}..."
-            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${host}" ||
-                bashio::exit.nok "Failed to create DNS entry ${host}."
-        done
-    fi
+    local additional_host
+    local hostname
+    for additional_host in "${additional_hosts[@]}"; do
+        if bashio::var.false "${use_builtin_proxy}" && bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
+            # Avoid accidental exposure of internal services when not using Caddy
+            continue
+        fi
+
+        hostname=$(bashio::jq "${additional_host}" ".hostname")
+        bashio::log.info "Creating DNS entry ${hostname}..."
+        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${hostname}" ||
+            bashio::exit.nok "Failed to create DNS entry ${hostname}."
+    done
 }
 
 # ------------------------------------------------------------------------------
@@ -424,13 +426,13 @@ configureCaddy() {
     fi
 
     bashio::log.info "Generating Caddyfile..."
-    additional_hosts=$(bashio::jq "/data/options.json" ".additional_hosts")
+    additional_hosts_json=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts")
     tempio_input=$(
         jq -n \
             --argjson auto_https "${auto_https}" \
             --arg ha_external_hostname "${external_hostname}" \
             --arg ha_service_url "${ha_url}" \
-            --argjson additional_hosts "${additional_hosts}" \
+            --argjson additional_hosts "${additional_hosts_json}" \
             '{auto_https: $auto_https, ha_external_hostname: $ha_external_hostname, ha_service_url: $ha_service_url, additional_hosts: $additional_hosts}'
     )
     bashio::log.debug "Tempio input for generating Caddyfile:\n${tempio_input}"
@@ -451,9 +453,7 @@ configureCaddy() {
 main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
-    checkConfig
-
-    setGlobalVars
+    validateConfigAndSetVars
 
     configureCaddy
 
