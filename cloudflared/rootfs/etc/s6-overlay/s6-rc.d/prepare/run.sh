@@ -303,7 +303,8 @@ createConfig() {
             if bashio::var.true "${use_builtin_proxy}"; then
                 additional_host=$(bashio::jq "${additional_host}" '.service = "https://caddy.localhost"')
             elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
-                bashio::exit.nok "'additional_hosts.internalOnly' is only supported when using the built-in Caddy proxy. Please set 'use_builtin_proxy' to true or remove 'internalOnly' from the additional host configuration."
+                # Avoid accidental exposure of internal services when not using Caddy
+                continue
             fi
 
             # internalOnly is only for Caddy, not for Cloudflared
