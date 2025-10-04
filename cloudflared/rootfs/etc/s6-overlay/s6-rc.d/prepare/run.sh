@@ -254,7 +254,6 @@ createTunnel() {
 # Create Cloudflare config with variables from HA-Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
-    local ha_service_protocol
     local config
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating config file..."
