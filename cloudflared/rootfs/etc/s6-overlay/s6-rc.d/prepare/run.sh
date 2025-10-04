@@ -235,7 +235,7 @@ hasTunnel() {
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
         bashio::log.error "Existing Cloudflare Tunnel name does not match add-on config."
         bashio::log.error "---------------------------------------"
-        bashio::log.errorRUN "Add-on Configuration tunnel name: ${tunnel_name}"
+        bashio::log.error "Add-on Configuration tunnel name: ${tunnel_name}"
         bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
         bashio::log.error "---------------------------------------"
         bashio::log.error "Align add-on configuration to match existing tunnel credential file"
