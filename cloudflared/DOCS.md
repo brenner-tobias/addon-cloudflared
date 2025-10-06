@@ -69,14 +69,6 @@ Trust Dashboard and provide the token to the add-on.
 Your tunnel should now be associated with the Cloudflared add-on. Any
 configuration changes should be made in the Cloudflare Teams dashboard.
 
-If you would like to use the add-on built-in proxy, you should still set the
-`external_hostname` option and optionally the `additional_hosts` option because
-the built-in proxy needs to know the domain names to serve.
-
-In your remotely managed tunnel, you can then set the service URL to
-`https://caddy.localhost` if you wish to forward requests to the built-in
-proxy.
-
 ## Configuration
 
 **These configuration options only apply to the local tunnel setup**. More
@@ -115,8 +107,6 @@ to use to access Home Assistant on.
 
 This is optional, `additional_hosts` can be used instead to only expose other
 services.
-
-**Note**: _The tunnel name needs to be unique in your Cloudflare account._
 
 ```yaml
 external_hostname: ha.example.com

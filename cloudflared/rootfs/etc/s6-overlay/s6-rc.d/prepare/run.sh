@@ -18,8 +18,7 @@ validateConfigAndSetVars() {
 
     # Check for minimum configuration options
     if
-        bashio::config.is_empty 'tunnel_token' &&
-            bashio::config.is_empty 'external_hostname' &&
+        bashio::config.is_empty 'external_hostname' &&
             bashio::config.is_empty 'additional_hosts' &&
             bashio::config.is_empty 'catch_all_service' &&
             bashio::config.is_empty 'nginx_proxy_manager'
@@ -80,7 +79,7 @@ validateConfigAndSetVars() {
         additional_hosts=()
     fi
 
-    # Check 'catch_all_service'
+    # Check if 'catch_all_service' is included in config with an empty String
     if bashio::config.exists 'catch_all_service' && bashio::config.is_empty 'catch_all_service'; then
         bashio::exit.nok "'catch_all_service' is defined as an empty String. Please remove 'catch_all_service' from the configuration or enter a valid String"
     fi
@@ -314,7 +313,7 @@ createConfig() {
     if bashio::config.true 'nginx_proxy_manager'; then
 
         bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager\"}]")
+        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
     else
 
         # Check if catch all service is defined
@@ -450,6 +449,12 @@ main() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     setCloudflaredLogLevel
+
+    # Run connectivity checks if debug mode activated
+    if bashio::debug; then
+        bashio::log.debug "Checking connectivity to Cloudflare"
+        checkConnectivity
+    fi
 
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then

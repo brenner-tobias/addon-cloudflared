@@ -38,22 +38,6 @@ else
     options+=(run "$(bashio::config 'tunnel_name')")
 fi
 
-function wait_for_file() {
-    local file="$1"
-    local timeout="$2"
-    local interval=1
-    local elapsed=0
-
-    while [[ ! -f "${file}" && ${elapsed} -lt ${timeout} ]]; do
-        sleep "${interval}"
-        elapsed=$((elapsed + interval))
-    done
-
-    if [[ ! -f "${file}" ]]; then
-        bashio::exit.nok "Timed out waiting for ${file} to be created."
-    fi
-}
-
 bashio::log.info "Connecting Cloudflare Tunnel..."
 bashio::log.debug "cloudflared tunnel ${options[*]}"
 exec cloudflared tunnel "${options[@]}"
