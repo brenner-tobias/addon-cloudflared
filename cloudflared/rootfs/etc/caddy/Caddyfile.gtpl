@@ -17,7 +17,7 @@
 
 # Used for communication between Cloudflared and Caddy
 https://caddy.localhost {
-    tls internal
+  tls internal
 
 	# Used to ensure Caddy is ready before starting Cloudflared
 	respond /healthz 200
@@ -25,6 +25,7 @@ https://caddy.localhost {
 	respond 403
 }
 
+{{ if .ha_external_hostname }}
 {{ .ha_external_hostname }} {
 	@cloudflared remote_ip 127.0.0.1
 
@@ -44,6 +45,7 @@ https://caddy.localhost {
 		}
 	}{{ end }}
 }
+{{ end }}
 
 {{ range $i, $e := .additional_hosts }}
 {{ $e.hostname }} {

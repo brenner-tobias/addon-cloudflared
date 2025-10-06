@@ -40,10 +40,6 @@ validateConfigAndSetVars() {
     # Set and validate 'use_builtin_proxy'
     if bashio::config.true 'use_builtin_proxy'; then
         use_builtin_proxy=true
-        # Check if 'use_builtin_proxy' is true and 'external_hostname' is empty
-        if bashio::var.is_empty "${external_hostname}"; then
-            bashio::exit.nok "'use_builtin_proxy' can only be used if 'external_hostname' is set. Please set 'external_hostname' or disable 'use_builtin_proxy'"
-        fi
     else
         use_builtin_proxy=false
     fi
