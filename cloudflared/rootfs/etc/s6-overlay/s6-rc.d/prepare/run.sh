@@ -50,7 +50,7 @@ validateConfigAndSetVars() {
     fi
     bashio::log.debug "use_builtin_proxy: ${use_builtin_proxy}"
 
-    # Set and validate additional_hosts
+    # Set and validate 'additional_hosts'
     if bashio::config.has_value 'additional_hosts'; then
         additional_hosts=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts[]")
         readarray -t additional_hosts <<<"${additional_hosts}"
@@ -456,12 +456,6 @@ main() {
         bashio::log.info "Using Cloudflare Remote Management Tunnel"
         bashio::log.info "All add-on configuration options except tunnel_token will be ignored."
         bashio::exit.ok
-    fi
-
-    # Run connectivity checks if debug mode activated
-    if bashio::debug; then
-        bashio::log.debug "Checking connectivity to Cloudflare"
-        checkConnectivity
     fi
 
     validateConfigAndSetVars
