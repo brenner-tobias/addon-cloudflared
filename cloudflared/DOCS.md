@@ -108,8 +108,6 @@ to use to access Home Assistant on.
 This is optional, `additional_hosts` can be used instead to only expose other
 services.
 
-**Note**: _The tunnel name needs to be unique in your Cloudflare account._
-
 ```yaml
 external_hostname: ha.example.com
 ```
