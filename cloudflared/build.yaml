@@ -1,4 +1,0 @@
----
-codenotary:
-  base_image: codenotary@frenck.dev
-  signer: dev@brenner.tech

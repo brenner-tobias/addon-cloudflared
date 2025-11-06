@@ -26,12 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       architectures: ${{ steps.information.outputs.architectures }}
-      base_image_signer: ${{ steps.information.outputs.codenotary_base_image }}
       build: ${{ steps.information.outputs.build }}
       description: ${{ steps.information.outputs.description }}
       environment: ${{ steps.release.outputs.environment }}
       name: ${{ steps.information.outputs.name }}
-      signer: ${{ steps.information.outputs.codenotary_signer }}
       slug: ${{ steps.override.outputs.slug }}
       target: ${{ steps.information.outputs.target }}
       version: ${{ steps.release.outputs.version }}
