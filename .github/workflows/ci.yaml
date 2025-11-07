@@ -51,7 +51,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v5
       - name: 🚀 Run Add-on Lint
-        uses: frenck/action-addon-linter@v2.18
+        uses: frenck/action-addon-linter@v2.20
         with:
           community: true
           path: "./${{ needs.information.outputs.target }}"
