@@ -50,7 +50,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v5
       - name: 🚀 Run Add-on Lint
-        uses: elcajon/action-addon-linter@v3
+        uses: elcajon/action-addon-linter@v3.1
         with:
           community: true
           path: "./${{ needs.information.outputs.target }}"
