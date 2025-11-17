@@ -88,7 +88,7 @@ SOFTWARE.
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
+[armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
 [commits-shield]: https://img.shields.io/github/commit-activity/y/brenner-tobias/addon-cloudflared.svg
 [commits]: https://github.com/brenner-tobias/addon-cloudflared/commits/main
