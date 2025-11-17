@@ -14,7 +14,6 @@ hassio_api: true
 arch:
   - aarch64
   - amd64
-  - armv7
 map:
   - addon_config:rw
   - homeassistant_config

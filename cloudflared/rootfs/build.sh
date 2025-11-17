@@ -17,9 +17,6 @@ case "${BUILD_ARCH}" in
 "aarch64")
     cloudflared_arch="arm64"
     ;;
-"armv7")
-    cloudflared_arch="arm"
-    ;;
 *)
     cloudflared_arch="${BUILD_ARCH}"
     ;;
