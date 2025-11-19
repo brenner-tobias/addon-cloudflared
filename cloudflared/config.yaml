@@ -8,14 +8,12 @@ slug: cloudflared
 description: "Use a Cloudflare Tunnel to remotely
   connect to Home Assistant without opening any ports"
 url: "https://github.com/brenner-tobias/addon-cloudflared/"
-codenotary: dev@brenner.tech
 startup: services
 init: false
 hassio_api: true
 arch:
   - aarch64
   - amd64
-  - armv7
 map:
   - addon_config:rw
   - homeassistant_config

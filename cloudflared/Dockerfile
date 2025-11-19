@@ -1,4 +1,4 @@
-FROM ghcr.io/hassio-addons/base:18.2.1
+FROM ghcr.io/hassio-addons/base:19.0.0
 
 # Set S6 verbosity level
 ENV S6_VERBOSITY="1"
@@ -13,7 +13,7 @@ ARG YQ_VERSION="4.47.2-r1"
 # renovate: datasource=github-releases depName=caddy packageName=caddyserver/caddy
 ARG CADDY_VERSION="2.10.2"
 # renovate: datasource=github-releases depName=cloudflared packageName=cloudflare/cloudflared versioning=loose
-ARG CLOUDFLARED_VERSION="2025.10.0"
+ARG CLOUDFLARED_VERSION="2025.11.1"
 
 # Copy root filesystem
 COPY rootfs /
