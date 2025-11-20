@@ -35,7 +35,7 @@ jobs:
       version: ${{ steps.release.outputs.version }}
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: 🚀 Run add-on information action
         id: information
         uses: elcajon/action-addon-information@v2
@@ -75,7 +75,7 @@ jobs:
         architecture: ${{ fromJson(needs.information.outputs.architectures) }}
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v3.7.0
       - name: 🏗 Set up Docker Buildx
