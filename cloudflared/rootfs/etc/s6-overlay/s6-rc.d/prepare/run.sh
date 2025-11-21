@@ -37,6 +37,14 @@ validateConfigAndSetVars() {
     fi
     bashio::log.debug "external_hostname: ${external_hostname}"
 
+    # Set and validate 'use_builtin_proxy'
+    if bashio::config.true 'use_builtin_proxy'; then
+        use_builtin_proxy=true
+    else
+        use_builtin_proxy=false
+    fi
+    bashio::log.debug "use_builtin_proxy: ${use_builtin_proxy}"
+
     # Set and validate 'additional_hosts'
     if bashio::config.has_value 'additional_hosts'; then
         additional_hosts=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts[]")
@@ -265,14 +273,29 @@ createConfig() {
     config=$(bashio::jq "${config}" ".\"credentials-file\" += \"${data_path}/tunnel.json\"")
 
     # Add Service for Home Assistant if 'external_hostname' is set
-    if bashio::config.has_value 'external_hostname'; then
-        config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_url}\"}]")
+    if bashio::var.has_value "${external_hostname}"; then
+        if bashio::var.true "${use_builtin_proxy}"; then
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"https://caddy.localhost\"}]")
+        else
+            config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_url}\"}]")
+        fi
     fi
 
     # Check for configured additional hosts and add them if existing
     local additional_host
     local disableChunkedEncoding
     for additional_host in "${additional_hosts[@]}"; do
+        # Make Cloudflared always reach the Caddy proxy if enabled
+        if bashio::var.true "${use_builtin_proxy}"; then
+            additional_host=$(bashio::jq "${additional_host}" '.service = "https://caddy.localhost"')
+        elif bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
+            # Avoid accidental exposure of internal services when not using Caddy
+            continue
+        fi
+
+        # internalOnly is only relevant for Caddy, not for Cloudflared
+        additional_host=$(bashio::jq "${additional_host}" "del(.internalOnly)")
+
         # Check for originRequest configuration option: disableChunkedEncoding
         disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
         if ! [[ ${disableChunkedEncoding} == "" ]]; then
@@ -303,8 +326,15 @@ createConfig() {
         fi
     fi
 
-    # Deactivate TLS verification for all services
-    config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
+    if bashio::var.true "${use_builtin_proxy}"; then
+        # With Caddy we can avoid noTLSVerify and also can use HTTP/2
+        # Even HTTP/3 is possible, but Cloudflared does not support it yet:
+        # https://developers.cloudflare.com/speed/optimization/protocol/http3/
+        config=$(bashio::jq "${config}" '(.ingress[] | select(.service == "https://caddy.localhost") | .originRequest) += {"caPool": "/data/caddy/pki/authorities/local/root.crt", "http2Origin": true}')
+    else
+        # Deactivate TLS verification for all services
+        config=$(bashio::jq "${config}" ".ingress[].originRequest += {\"noTLSVerify\": true}")
+    fi
 
     # Write content of config variable to config file for cloudflared
     local default_config="/tmp/config.json"
@@ -336,6 +366,11 @@ createDNS() {
     local additional_host
     local hostname
     for additional_host in "${additional_hosts[@]}"; do
+        if bashio::var.false "${use_builtin_proxy}" && bashio::var.true "$(bashio::jq "${additional_host}" ".internalOnly")"; then
+            # Avoid accidental exposure of internal services when not using Caddy
+            continue
+        fi
+
         hostname=$(bashio::jq "${additional_host}" ".hostname")
         bashio::log.info "Creating DNS entry ${hostname}..."
         cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${hostname}" ||
@@ -367,6 +402,44 @@ setCloudflaredLogLevel() {
 
 }
 
+# ------------------------------------------------------------------------------
+# Configure the built-in Caddy proxy
+# ------------------------------------------------------------------------------
+configureCaddy() {
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    bashio::log.info "Configuring built-in Caddy proxy..."
+
+    if [[ "$(bashio::addon.port "443/tcp")" == "443" ]]; then
+        bashio::log.info "Internal port 443/tcp is exposed to host port 443, enabling automatic HTTPS for local proxy"
+        local auto_https=true
+    else
+        bashio::log.info "Internal port 443/tcp is not exposed to host port 443, not enabling automatic HTTPS for local proxy"
+        local auto_https=false
+    fi
+
+    bashio::log.info "Generating Caddyfile..."
+    additional_hosts_json=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts")
+    tempio_input=$(
+        jq -n \
+            --argjson auto_https "${auto_https}" \
+            --arg ha_external_hostname "${external_hostname}" \
+            --arg ha_service_url "${ha_url}" \
+            --argjson additional_hosts "${additional_hosts_json}" \
+            '{auto_https: $auto_https, ha_external_hostname: $ha_external_hostname, ha_service_url: $ha_service_url, additional_hosts: $additional_hosts}'
+    )
+    bashio::log.debug "Tempio input for generating Caddyfile:\n${tempio_input}"
+    tempio -template /etc/caddy/Caddyfile.gtpl -out /etc/caddy/Caddyfile <<<"${tempio_input}"
+    bashio::log.debug "Generated Caddyfile:\n$(cat /etc/caddy/Caddyfile)"
+
+    bashio::log.info "Validating Caddyfile..."
+    caddy fmt --overwrite --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile formatting failed, please check the logs above."
+    caddy validate --config /etc/caddy/Caddyfile || bashio::exit.nok "Caddyfile validation failed, please check the logs above."
+
+    bashio::log.info "Adding host entry for communication between Cloudflared and Caddy..."
+    echo "127.0.0.1 caddy.localhost" | tee -a /etc/hosts
+}
+
 # ==============================================================================
 # RUN LOGIC
 # ------------------------------------------------------------------------------
@@ -389,6 +462,10 @@ main() {
     fi
 
     validateConfigAndSetVars
+
+    if bashio::var.true "${use_builtin_proxy}"; then
+        configureCaddy
+    fi
 
     if ! hasCertificate; then
         createCertificate
