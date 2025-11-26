@@ -1,6 +1,6 @@
 ---
 name: Cloudflared
-version: dev
+version: 7.0.0-caddy.0
 breaking_versions:
   - 5.3.7
   - 6.0.0
