@@ -36,10 +36,20 @@ configuration:
     name: הפעלת Catch-All Nginx-Proxy-Manager
     description: >-
       מגדיר את שירות catch-all להרחבה "Nginx-Proxy-Manager Community Add-ons".
+  use_builtin_proxy:
+    name: השתמש ב-Caddy proxy המובנה
+    description: >-
+      החיבור ל-Home Assistant ומארחים נוספים יתבצע דרך ה-Caddy proxy המובנה.
+      זה מאפשר גישה מאוחדת ל-Home Assistant ומארחים נוספים גם בתוך הרשת
+      המקומית שלך. קרא את התיעוד לפרטים נוספים.
+      אפשרות זו מושבתת כברירת מחדל.
   tunnel_token:
     name: אסימון מנהרת Cloudflare
     description: >-
       כאשר מוגדר, כל האפשרויות האחרות יתעלמו. יש להשתמש באפשרות זו
       בהגדרת המנהרה עם לוח המחוונים של Cloudflare.
 network:
-  36500/tcp: ממשק אינטרנט למדדים (36500/tcp)
+  36500/tcp: ממשק אינטרנט למדדים
+  80/tcp: ממשק HTTP של Caddy Proxy המובנה
+  443/tcp: ממשק HTTPS של Caddy Proxy המובנה
+  443/udp: ממשק HTTP/3 QUIC של Caddy Proxy המובנה

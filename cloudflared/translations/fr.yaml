@@ -38,10 +38,21 @@ configuration:
     name: Activer le service Catch-All de Nginx-Proxy-Manager
     description: >-
       Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community Add-Ons".
+  use_builtin_proxy:
+    name: Utiliser le proxy Caddy intégré
+    description: >-
+      La connexion à Home Assistant et aux hôtes supplémentaires sera établie
+      via le proxy Caddy intégré. Cela permet un accès unifié à Home Assistant
+      et aux hôtes supplémentaires même au sein de votre réseau local. Lisez
+      la documentation pour plus de détails.
+      Cette option est désactivée par défaut.
   tunnel_token:
     name: Token du tunnel Cloudflare
     description: >-
       Lorsque cette option est définie, toutes les autres options seront ignorées.
       Utilisez cette option si vous avez configuré le tunnel via le tableau de bord Cloudflare.
 network:
-  36500/tcp: Interface web des métriques (36500/tcp)
+  36500/tcp: Interface Web des Métriques
+  80/tcp: Interface HTTP du Proxy Caddy Intégré
+  443/tcp: Interface HTTPS du Proxy Caddy Intégré
+  443/udp: Interface HTTP/3 QUIC du Proxy Caddy Intégré
