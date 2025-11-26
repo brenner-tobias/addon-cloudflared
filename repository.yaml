@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
+name: Cloudflared Caddy Home Assistant add-on repository
+url: https://github.com/felipecrs/cloudflared-caddy-hass-addon
+maintainer: Felipe Santos <felipecassiors@gmail.com>

@@ -1,4 +1,4 @@
-# Home Assistant Add-on: Cloudflared
+# Home Assistant Add-on: Cloudflared Caddy
 
 Cloudflared connects your Home Assistant Instance via a secure tunnel to a domain
 or subdomain at Cloudflare. This allows you to expose your Home Assistant

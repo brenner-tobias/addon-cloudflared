@@ -1,5 +1,5 @@
 ---
-name: Cloudflared
+name: Cloudflared Caddy
 version: 7.0.0-caddy.0
 breaking_versions:
   - 5.3.7
@@ -7,7 +7,7 @@ breaking_versions:
 slug: cloudflared
 description: "Use a Cloudflare Tunnel to remotely
   connect to Home Assistant without opening any ports"
-url: "https://github.com/brenner-tobias/addon-cloudflared/"
+url: "https://github.com/felipecrs/cloudflared-caddy-hass-addon/"
 startup: services
 init: false
 hassio_api: true
