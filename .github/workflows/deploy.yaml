@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v6
       - name: 🚀 Run add-on information action
         id: information
-        uses: elcajon/action-addon-information@v2
+        uses: homeassistant-apps/action-app-information@v2
       - name: 🚀 Process possible slug override
         id: override
         run: |
