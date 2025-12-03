@@ -108,6 +108,6 @@ SOFTWARE.
 [tobias]: https://github.com/brenner-tobias
 [my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
 [my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fhomeassistant-apps%2Frepository
-[wiki]: https://github.com/homeassistant-apps/addon-cloudflared/wiki/How-tos
+[wiki]: https://github.com/homeassistant-apps/app-cloudflared/wiki/How-tos
 [installations-shield-stable]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fanalytics.home-assistant.io%2Faddons.json&query=%24%5B%229074a9fa_cloudflared%22%5D.total&label=Reported%20Installations&link=https%3A%2F%2Fanalytics.home-assistant.io/add-ons
 [github-org]: https://github.com/homeassistant-apps
