@@ -26,8 +26,8 @@ instance and other services to the Internet without opening ports on your router
 Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this app (add-on), you have to own a domain name (e.g. example.com) that is
-using Cloudflare for its DNS entries. You can find more information about that
+**To use this app (add-on), you have to own a domain name (e.g. example.com) that
+is using Cloudflare for its DNS entries. You can find more information about that
 in our [Wiki][wiki].**
 
 **Please be aware that domains from _Freenom_ do not work anymore, so

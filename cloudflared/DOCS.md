@@ -298,9 +298,10 @@ you are troubleshooting.
 ### configuration.yaml
 
 Since Home Assistant blocks requests from proxies/reverse proxies, you need to
-tell your instance to allow requests from the Cloudflared app (add-on). The app (add-on) runs
-locally, so HA has to trust the docker network. In order to do so, add the
-following lines to your `/config/configuration.yaml`:
+tell your instance to allow requests from the Cloudflared app (add-on).
+The app (add-on) runs locally, so HA has to trust the docker network.
+In order to do so, add the following lines to your
+`/config/configuration.yaml`:
 
 **Note**: _There is no need to adapt anything in these lines since the IP range
 of the docker network is always the same._
@@ -316,13 +317,13 @@ http:
 might have to add another IP(range) here. Check your HA logs
 after attempting to connect to find the correct IP.**
 
-**Important**: The app (add-on) reads your `configuration.yaml` to detect your Home
-Assistant port and if SSL is used. **If you have changed the default port or
-enabled SSL in the [HTTP integration][http-integration]**, you must keep the
-entire `http:` block directly in `configuration.yaml`. Do **not** move it to a
-[`!include`][homeassistant-config-splitting] file or a
-[`!include_dir_*`][homeassistant-config-packages] directory, as the app (add-on) does
-not follow additional YAML files.
+**Important**: The app (add-on) reads your `configuration.yaml` to detect your
+Home Assistant port and if SSL is used. **If you have changed the
+default port or enabled SSL in the [HTTP integration][http-integration]**,
+you must keep the entire `http:` block directly in `configuration.yaml`.
+Do **not** move it to a [`!include`][homeassistant-config-splitting] file or a
+[`!include_dir_*`][homeassistant-config-packages] directory, as the
+app (add-on) does not follow additional YAML files.
 
 Remember to restart Home Assistant when the configuration is changed.
 
