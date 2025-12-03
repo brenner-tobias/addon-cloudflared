@@ -92,7 +92,7 @@ SOFTWARE.
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
 [commits-shield]: https://img.shields.io/github/commit-activity/y/homeassistant-apps/addon-cloudflared.svg
 [commits]: https://github.com/homeassistant-apps/addon-cloudflared/commits/main
-[contributors]: https://github.com/homeassistant-apps/addon-cloudflared/graphs/contributors
+[contributors]: https://github.com/homeassistant-apps/app-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [github-actions-shield]: https://github.com/homeassistant-apps/addon-cloudflared/workflows/CI/badge.svg
