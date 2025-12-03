@@ -287,7 +287,7 @@ createConfig() {
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager'; then
 
-        bashio::log.warning "Runing with Nginxproxymanager support, make sure the app (add-on) is installed and running."
+        bashio::log.warning "Running with Nginxproxymanager support, make sure the app (add-on) is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
     else
 
