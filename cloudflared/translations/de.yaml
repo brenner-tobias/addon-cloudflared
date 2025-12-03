@@ -3,7 +3,7 @@ configuration:
   log_level:
     name: Log Level
     description: >-
-      Legt das Log-Level für das Add-on fest.
+      Legt das Log-Level für die App / das Add-on fest.
   external_hostname:
     name: Externer Hostname von Home Assistant
     description: >-
@@ -37,7 +37,7 @@ configuration:
   nginx_proxy_manager:
     name: Nginx-Proxy-Manager als Catch-All aktivieren
     description: >-
-      Setzt das "Nginx-Proxy-Manager Add-on" als Catch-All-Dienst.
+      Setzt das "Nginx-Proxy-Manager App/Add-on" als Catch-All-Dienst.
   tunnel_token:
     name: Cloudflare Tunnel Token
     description: >-

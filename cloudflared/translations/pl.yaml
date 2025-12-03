@@ -38,7 +38,7 @@ configuration:
     name: Włącz opcje Catch-All Nginx-Proxy-Manager
     description: >-
       Ustawia usługę catch-all na dodatek "Nginx-Proxy-Manager Community
-      Add-Ons"
+      App/Add-Ons"
   tunnel_token:
     name: Token Tunelu Cloudflare
     description: >-

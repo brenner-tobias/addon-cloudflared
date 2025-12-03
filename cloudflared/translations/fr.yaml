@@ -37,7 +37,7 @@ configuration:
   nginx_proxy_manager:
     name: Activer le service Catch-All de Nginx-Proxy-Manager
     description: >-
-      Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community Add-Ons".
+      Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community App/Add-Ons".
   tunnel_token:
     name: Token du tunnel Cloudflare
     description: >-
