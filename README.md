@@ -99,8 +99,8 @@ SOFTWARE.
 [github-actions]: https://github.com/homeassistant-apps/addon-cloudflared//actions
 [repository]: https://github.com/homeassistant-apps/repository
 [i386-shield]: https://img.shields.io/badge/i386-no-red.svg
-[issue]: https://github.com/homeassistant-apps/addon-cloudflared/issues
-[license-shield]: https://img.shields.io/github/license/homeassistant-apps/addon-cloudflared
+[issue]: https://github.com/homeassistant-apps/app-cloudflared/issues
+[license-shield]: https://img.shields.io/github/license/homeassistant-apps/app-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
 [releases-shield]: https://img.shields.io/github/v/release/homeassistant-apps/addon-cloudflared?include_prereleases
