@@ -103,8 +103,8 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/homeassistant-apps/app-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[releases-shield]: https://img.shields.io/github/v/release/homeassistant-apps/addon-cloudflared?include_prereleases
-[releases]: https://github.com/homeassistant-apps/addon-cloudflared/releases
+[releases-shield]: https://img.shields.io/github/v/release/homeassistant-apps/app-cloudflared?include_prereleases
+[releases]: https://github.com/homeassistant-apps/app-cloudflared/releases
 [tobias]: https://github.com/brenner-tobias
 [my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
 [my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fhomeassistant-apps%2Frepository
