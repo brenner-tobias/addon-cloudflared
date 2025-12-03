@@ -95,8 +95,8 @@ SOFTWARE.
 [contributors]: https://github.com/homeassistant-apps/app-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
 [domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
-[github-actions-shield]: https://github.com/homeassistant-apps/addon-cloudflared/workflows/CI/badge.svg
-[github-actions]: https://github.com/homeassistant-apps/addon-cloudflared//actions
+[github-actions-shield]: https://github.com/homeassistant-apps/app-cloudflared/workflows/CI/badge.svg
+[github-actions]: https://github.com/homeassistant-apps/app-cloudflared/actions
 [repository]: https://github.com/homeassistant-apps/repository
 [i386-shield]: https://img.shields.io/badge/i386-no-red.svg
 [issue]: https://github.com/homeassistant-apps/app-cloudflared/issues
