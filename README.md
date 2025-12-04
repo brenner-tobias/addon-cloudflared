@@ -94,7 +94,6 @@ SOFTWARE.
 [commits]: https://github.com/homeassistant-apps/app-cloudflared/commits/main
 [contributors]: https://github.com/homeassistant-apps/app-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
-[domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
 [github-actions-shield]: https://github.com/homeassistant-apps/app-cloudflared/workflows/CI/badge.svg
 [github-actions]: https://github.com/homeassistant-apps/app-cloudflared/actions
 [repository]: https://github.com/homeassistant-apps/repository

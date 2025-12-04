@@ -8,11 +8,11 @@
   "extends": ["customManagers:dockerfileVersions"],
   "packageRules": [
     {
-      "groupName": "Add-on base image",
+      "groupName": "App (Add-on) base image",
       "matchDatasources": ["docker"]
     },
     {
-      "groupName": "Add-on base image",
+      "groupName": "App (Add-on) base image",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true

@@ -1,6 +1,6 @@
 ---
-name: Report an issue with Home Assistant Add-On Cloudflared
-description: Report an issue with Home Assistant Add-On Cloudflared.
+name: Report an issue with Home Assistant App (Add-On) Cloudflared
+description: Report an issue with Home Assistant App (Add-On) Cloudflared.
 body:
   - type: markdown
     attributes:
@@ -50,9 +50,9 @@ body:
       value: "# Details"
   - type: textarea
     attributes:
-      label: Add-on YAML Configuration
+      label: App (Add-on) YAML Configuration
       description: |
-        Please provide your whole add-on configuration as YAML, you can hide any sensitive information.
+        Please provide your whole app (add-on) configuration as YAML, you can hide any sensitive information.
       render: yaml
   - type: textarea
     attributes:
