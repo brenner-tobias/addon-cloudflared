@@ -17,7 +17,7 @@ on:
 
 jobs:
   information:
-    name: Gather add-on information
+    name: Gather app (add-on) information
     runs-on: ubuntu-latest
     outputs:
       architectures: ${{ steps.information.outputs.architectures }}
@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v6
-      - name: 🚀 Run add-on information action
+      - name: 🚀 Run app (add-on) information action
         id: information
         uses: homeassistant-apps/action-app-information@v2
       - name: 🚀 Process possible slug override
@@ -42,7 +42,7 @@ jobs:
           echo "slug=$slug" >> $GITHUB_OUTPUT
 
   lint-addon:
-    name: Lint Add-on
+    name: Lint App (Add-on)
     needs:
       - information
     runs-on: ubuntu-latest

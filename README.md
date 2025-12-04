@@ -1,4 +1,4 @@
-# Home Assistant Add-on: Cloudflared
+# Home Assistant App (Add-on): Cloudflared
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -26,25 +26,25 @@ instance and other services to the Internet without opening ports on your router
 Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this add-on, you have to own a domain name (e.g. example.com) that is
-using Cloudflare for its DNS entries. You can find more information about that
+**To use this app (add-on), you have to own a domain name (e.g. example.com) that
+is using Cloudflare for its DNS entries. You can find more information about that
 in our [Wiki][wiki].**
 
 **Please be aware that domains from _Freenom_ do not work anymore, so
 you have to chose / migrate to another registrar.**
 
-[:books: Read the full add-on documentation][docs]
+[:books: Read the full app (add-on) documentation][docs]
 
 ## Disclaimer
 
 Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-add-on.
+app (add-on).
 
 ## Installation
 
-To install this add-on, manually add my HA-Addons repository to Home Assistant
-using [this GitHub repository][ha-addons] or by clicking the button below.
+To install this app (add-on), manually add our repository to Home Assistant
+using [this link][repository] or by clicking the button below.
 
 [![Add Repository to HA][my-ha-badge]][my-ha-url]
 
@@ -65,7 +65,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2025 Tobias Brenner
+Copyright (c) 2025 [homeassistant-apps][github-org]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -90,23 +90,23 @@ SOFTWARE.
 [armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
 [cloudflare-sssa]: https://www.cloudflare.com/terms/
-[commits-shield]: https://img.shields.io/github/commit-activity/y/brenner-tobias/addon-cloudflared.svg
-[commits]: https://github.com/brenner-tobias/addon-cloudflared/commits/main
-[contributors]: https://github.com/brenner-tobias/addon-cloudflared/graphs/contributors
+[commits-shield]: https://img.shields.io/github/commit-activity/y/homeassistant-apps/addon-cloudflared.svg
+[commits]: https://github.com/homeassistant-apps/app-cloudflared/commits/main
+[contributors]: https://github.com/homeassistant-apps/app-cloudflared/graphs/contributors
 [docs]: cloudflared/DOCS.md
-[domainarticle]: https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article
-[github-actions-shield]: https://github.com/brenner-tobias/addon-cloudflared/workflows/CI/badge.svg
-[github-actions]: https://github.com/brenner-tobias/addon-cloudflared//actions
-[ha-addons]: https://github.com/brenner-tobias/ha-addons
+[github-actions-shield]: https://github.com/homeassistant-apps/app-cloudflared/workflows/CI/badge.svg
+[github-actions]: https://github.com/homeassistant-apps/app-cloudflared/actions
+[repository]: https://github.com/homeassistant-apps/repository
 [i386-shield]: https://img.shields.io/badge/i386-no-red.svg
-[issue]: https://github.com/brenner-tobias/addon-cloudflared/issues
-[license-shield]: https://img.shields.io/github/license/brenner-tobias/addon-cloudflared
+[issue]: https://github.com/homeassistant-apps/app-cloudflared/issues
+[license-shield]: https://img.shields.io/github/license/homeassistant-apps/app-cloudflared
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[releases-shield]: https://img.shields.io/github/v/release/brenner-tobias/addon-cloudflared?include_prereleases
-[releases]: https://github.com/brenner-tobias/addon-cloudflared/releases
+[releases-shield]: https://img.shields.io/github/v/release/homeassistant-apps/app-cloudflared?include_prereleases
+[releases]: https://github.com/homeassistant-apps/app-cloudflared/releases
 [tobias]: https://github.com/brenner-tobias
 [my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
-[my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fbrenner-tobias%2Fha-addons
-[wiki]: https://github.com/brenner-tobias/addon-cloudflared/wiki/How-tos
+[my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fhomeassistant-apps%2Frepository
+[wiki]: https://github.com/homeassistant-apps/app-cloudflared/wiki/How-tos
 [installations-shield-stable]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fanalytics.home-assistant.io%2Faddons.json&query=%24%5B%229074a9fa_cloudflared%22%5D.total&label=Reported%20Installations&link=https%3A%2F%2Fanalytics.home-assistant.io/add-ons
+[github-org]: https://github.com/homeassistant-apps

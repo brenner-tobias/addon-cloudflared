@@ -3,7 +3,7 @@ configuration:
   log_level:
     name: Log Level
     description: >-
-      Beschrijft het log level voor de add-on.
+      Beschrijft het log level voor de app/add-on.
   external_hostname:
     name: Externe Hostname voor Home Assistant
     description: >-
@@ -37,7 +37,7 @@ configuration:
   nginx_proxy_manager:
     name: Schakel Catch-All Nginx-Proxy-Manager in
     description: >-
-      Gebruikt de "Nginx-Proxy-Manager Community Add-Ons" add-on als de
+      Gebruikt de "Nginx-Proxy-Manager Community App/Add-Ons" app/add-on als de
       catch-all dienst.
   tunnel_token:
     name: Cloudflare Tunnel Token

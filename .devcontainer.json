@@ -1,5 +1,5 @@
 {
-  "name": "Devcontainer for Cloudflared Add-On",
+  "name": "Devcontainer for Cloudflared App (Add-On)",
   "image": "ghcr.io/home-assistant/devcontainer:addons",
   "appPort": ["7123:8123", "7357:4357", "36500:36500"],
   "postStartCommand": "bash devcontainer_bootstrap",

@@ -1,6 +1,6 @@
 #!/bin/sh
 # ==============================================================================
-# Home Assistant Add-on: Cloudflared
+# Home Assistant App (Add-on): Cloudflared
 #
 # Container build of Cloudflared
 # ==============================================================================
