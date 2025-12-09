@@ -55,5 +55,7 @@ version-resolver:
   default: patch
 
 template: |
-  ## What’s changed
   $CHANGES
+
+category-template: |
+  ### $TITLE
