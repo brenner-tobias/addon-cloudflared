@@ -173,7 +173,7 @@ jobs:
             BUILD_VERSION=edge
 
   update_release_draft:
-    name: ✏️ Draft release
+    name: Draft release
     needs:
       - build
     if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
