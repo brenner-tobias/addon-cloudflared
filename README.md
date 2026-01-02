@@ -61,7 +61,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2025 Unofficial Home Assistant Apps (Add-ons)
+Copyright (c) 2026 Unofficial Home Assistant Apps (Add-ons)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +91,7 @@ SOFTWARE.
 [repository]: https://github.com/homeassistant-apps/repository
 [issue]: https://github.com/homeassistant-apps/app-cloudflared/issues
 [license-shield]: https://img.shields.io/github/license/homeassistant-apps/app-cloudflared
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2026.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
 [releases-shield]: https://img.shields.io/github/v/release/homeassistant-apps/app-cloudflared?include_prereleases
 [releases]: https://github.com/homeassistant-apps/app-cloudflared/releases
