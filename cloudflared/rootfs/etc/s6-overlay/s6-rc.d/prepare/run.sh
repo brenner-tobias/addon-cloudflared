@@ -165,6 +165,40 @@ checkConnectivity() {
 }
 
 # ------------------------------------------------------------------------------
+# Waits for internet connectivity before proceeding
+# ------------------------------------------------------------------------------
+waitForConnectivity() {
+    local connectivity_timeout
+    local wait_interval=5
+    local max_attempts
+    local attempt=1
+
+    connectivity_timeout=$(bashio::config 'connectivity_timeout')
+    max_attempts=$((connectivity_timeout / wait_interval))
+
+    # Quick check - if already connected, skip waiting
+    if nc -z -w 2 api.cloudflare.com 443 &>/dev/null; then
+        bashio::log.debug "Internet connectivity already available"
+        return 0
+    fi
+
+    bashio::log.info "Waiting for internet connectivity (timeout: ${connectivity_timeout}s)..."
+
+    while [[ ${attempt} -le ${max_attempts} ]]; do
+        if nc -z -w 2 api.cloudflare.com 443 &>/dev/null; then
+            bashio::log.info "Internet connectivity established after ${attempt} attempts"
+            return 0
+        fi
+
+        bashio::log.info "No internet yet, retrying... (${attempt}/${max_attempts})"
+        sleep ${wait_interval}
+        ((attempt++))
+    done
+
+    bashio::exit.nok "Could not establish internet connectivity after ${connectivity_timeout} seconds. Please check your network connection."
+}
+
+# ------------------------------------------------------------------------------
 # Check if Cloudflared certificate (authorization) is available
 # ------------------------------------------------------------------------------
 hasCertificate() {
@@ -387,6 +421,9 @@ main() {
         bashio::log.info "All app (add-on) configuration options except tunnel_token will be ignored."
         bashio::exit.ok
     fi
+
+    # Wait for internet before making API calls (local tunnel mode)
+    waitForConnectivity
 
     validateConfigAndSetVars
 

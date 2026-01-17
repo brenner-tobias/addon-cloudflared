@@ -44,5 +44,11 @@ configuration:
     description: >-
       When set all other options will be ignored. Use this option if you set up
       the tunnel with the Cloudflare Dashboard.
+  connectivity_timeout:
+    name: Connectivity Timeout
+    description: >-
+      Maximum time in seconds to wait for internet connectivity on startup.
+      Useful when router takes longer to establish internet after a reboot.
+      Default is 300 seconds (5 minutes).
 network:
   36500/tcp: Metrics Web Interface (36500/tcp)
