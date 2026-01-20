@@ -1,7 +1,7 @@
 #!/command/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
-# Home Assistant Add-on: Cloudflared
+# Home Assistant App (Add-on): Cloudflared
 #
 # Configures the Cloudflare Tunnel and creates the needed DNS entry under the
 # given hostname(s)
@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 validateConfigAndSetVars() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::log.info "Validating add-on configuration..."
+    bashio::log.info "Validating app (add-on) configuration..."
 
     local validHostnameRegex="^(([a-z0-9äöüß]|[a-z0-9äöüß][a-z0-9äöüß\-]*[a-z0-9äöüß])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$"
 
@@ -23,7 +23,7 @@ validateConfigAndSetVars() {
             bashio::config.is_empty 'catch_all_service' &&
             bashio::config.is_empty 'nginx_proxy_manager'
     then
-        bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these add-on options."
+        bashio::exit.nok "Cannot run without tunnel_token, external_hostname, additional_hosts, catch_all_service or nginx_proxy_manager. Please set at least one of these app (add-on) options."
     fi
 
     # Set and validate 'external_hostname'
@@ -230,13 +230,13 @@ hasTunnel() {
         list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
     bashio::log.debug "Existing Cloudflare Tunnel name: $existing_tunnel_name"
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
-        bashio::log.error "Existing Cloudflare Tunnel name does not match add-on config."
+        bashio::log.error "Existing Cloudflare Tunnel name does not match app (add-on) config."
         bashio::log.error "---------------------------------------"
-        bashio::log.error "Add-on Configuration tunnel name: ${tunnel_name}"
+        bashio::log.error "App (Add-on) Configuration tunnel name: ${tunnel_name}"
         bashio::log.error "Tunnel credentials file tunnel name: ${existing_tunnel_name}"
         bashio::log.error "---------------------------------------"
-        bashio::log.error "Align add-on configuration to match existing tunnel credential file"
-        bashio::log.error "or re-install the add-on."
+        bashio::log.error "Align app (add-on) configuration to match existing tunnel credential file"
+        bashio::log.error "or re-install the app (add-on)."
         bashio::exit.nok
     fi
     bashio::log.info "Existing Cloudflare Tunnel name matches config, proceeding with existing tunnel file"
@@ -245,7 +245,7 @@ hasTunnel() {
 }
 
 # ------------------------------------------------------------------------------
-# Create Cloudflare Tunnel with name from HA-Add-on-Config
+# Create Cloudflare Tunnel with name from HA-App/Add-On-Config
 # ------------------------------------------------------------------------------
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -261,7 +261,7 @@ createTunnel() {
 }
 
 # ------------------------------------------------------------------------------
-# Create Cloudflare config with variables from HA-Add-on-Config
+# Create Cloudflare config with variables from HA-App/Add-on-Config
 # ------------------------------------------------------------------------------
 createConfig() {
     local config
@@ -310,7 +310,7 @@ createConfig() {
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager'; then
 
-        bashio::log.warning "Runing with Nginxproxymanager support, make sure the add-on is installed and running."
+        bashio::log.warning "Running with Nginxproxymanager support, make sure the app (add-on) is installed and running."
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"service\": \"http://a0d7b954-nginxproxymanager:80\"}]")
     else
 
@@ -457,7 +457,7 @@ main() {
     # Run service with tunnel token without creating config
     if bashio::config.has_value 'tunnel_token'; then
         bashio::log.info "Using Cloudflare Remote Management Tunnel"
-        bashio::log.info "All add-on configuration options except tunnel_token will be ignored."
+        bashio::log.info "All app (add-on) configuration options except tunnel_token will be ignored."
         bashio::exit.ok
     fi
 

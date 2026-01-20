@@ -17,7 +17,7 @@ on:
 
 jobs:
   information:
-    name: Gather add-on information
+    name: Gather app (add-on) information
     runs-on: ubuntu-latest
     outputs:
       architectures: ${{ steps.information.outputs.architectures }}
@@ -29,9 +29,9 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v6
-      - name: 🚀 Run add-on information action
+      - name: 🚀 Run app (add-on) information action
         id: information
-        uses: elcajon/action-addon-information@v2
+        uses: homeassistant-apps/action-app-information@v2
       - name: 🚀 Process possible slug override
         id: override
         run: |
@@ -42,7 +42,7 @@ jobs:
           echo "slug=$slug" >> $GITHUB_OUTPUT
 
   lint-addon:
-    name: Lint Add-on
+    name: Lint App (Add-on)
     needs:
       - information
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v6
       - name: 🚀 Run Add-on Lint
-        uses: elcajon/action-addon-linter@v3.1
+        uses: homeassistant-apps/action-app-linter@v3.1
         with:
           community: true
           path: "./${{ needs.information.outputs.target }}"
@@ -140,7 +140,7 @@ jobs:
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v3.7.0
       - name: 🏗 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@v3.12.0
       - name: ℹ️ Compose build flags
         id: flags
         run: |
@@ -171,3 +171,15 @@ jobs:
             BUILD_REF=${{ github.sha }}
             BUILD_REPOSITORY=${{ github.repository }}
             BUILD_VERSION=edge
+
+  update_release_draft:
+    name: Draft release
+    needs:
+      - build
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Run Release Drafter
+        uses: homeassistant-apps/action-release-drafter@v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

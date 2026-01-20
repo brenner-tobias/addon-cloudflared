@@ -1,7 +1,7 @@
 #!/command/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
-# Home Assistant Add-on: Cloudflared
+# Home Assistant App (Add-on): Cloudflared
 # Runs the Cloudflare Tunnel for Home Assistant
 # ==============================================================================
 declare config_file="/tmp/config.json"

@@ -3,7 +3,7 @@ configuration:
   log_level:
     name: Log Level
     description: >-
-      Legt das Log-Level für das Add-on fest.
+      Legt das Log-Level für die App / das Add-on fest.
   external_hostname:
     name: Externer Hostname von Home Assistant
     description: >-

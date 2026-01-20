@@ -3,7 +3,7 @@ configuration:
   log_level:
     name: Log Level
     description: >-
-      Defines the log level for the add-on.
+      Defines the log level for the app/add-on.
   external_hostname:
     name: External Home Assistant Hostname
     description: >-
@@ -37,7 +37,7 @@ configuration:
   nginx_proxy_manager:
     name: Enable Catch-All Nginx-Proxy-Manager
     description: >-
-      Sets the catch-all service to the "Nginx-Proxy-Manager Community Add-Ons"
+      Sets the catch-all service to the "Nginx-Proxy-Manager Community App/Add-Ons"
       Add-on.
   use_builtin_proxy:
     name: Use built-in Caddy proxy

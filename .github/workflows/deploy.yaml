@@ -22,7 +22,7 @@ jobs:
         github.event_name == 'workflow_run'
         && github.event.workflow_run.conclusion == 'success'
       )
-    name: ℹ️ Gather add-on information
+    name: ℹ️ Gather app (add-on) information
     runs-on: ubuntu-latest
     outputs:
       architectures: ${{ steps.information.outputs.architectures }}
@@ -36,9 +36,9 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v6
-      - name: 🚀 Run add-on information action
+      - name: 🚀 Run app (add-on) information action
         id: information
-        uses: elcajon/action-addon-information@v2
+        uses: homeassistant-apps/action-app-information@v2
       - name: 🚀 Process possible slug override
         id: override
         run: |
@@ -79,7 +79,7 @@ jobs:
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v3.7.0
       - name: 🏗 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@v3.12.0
       - name: ℹ️ Compose build flags
         id: flags
         run: |
@@ -138,11 +138,24 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Dispatch repository updater update signal
+      - name: 🚀 Dispatch update signal - homeassistant-apps/repository-edge
         uses: peter-evans/repository-dispatch@v4
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/ha-addons-edge
+          token: ${{ secrets.PAT_BRENNER_BOT }}
+          repository: ${{ github.repository_owner }}/repository-edge
+          event-type: update
+          client-payload: >
+            {
+              "addon": "${{ needs.information.outputs.slug }}",
+              "name": "${{ needs.information.outputs.name }}",
+              "repository": "${{ github.repository }}",
+              "version": "${{ needs.information.outputs.version }}"
+            }
+      - name: 🚀 Dispatch repository updater update signal - brenner-tobias/ha-addons-edge
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.PAT_BRENNER_BOT }}
+          repository: brenner-tobias/ha-addons-edge
           event-type: update
           client-payload: >
             {
@@ -162,11 +175,24 @@ jobs:
       name: ${{ needs.information.outputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Dispatch repository updater update signal
+      - name: 🚀 Dispatch repository updater update signal - homeassistant-apps/repository
         uses: peter-evans/repository-dispatch@v4
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/ha-addons
+          token: ${{ secrets.PAT_BRENNER_BOT }}
+          repository: ${{ github.repository_owner }}/repository
+          event-type: update
+          client-payload: >
+            {
+              "addon": "${{ needs.information.outputs.slug }}",
+              "name": "${{ needs.information.outputs.name }}",
+              "repository": "${{ github.repository }}",
+              "version": "${{ github.event.release.tag_name }}"
+            }
+      - name: 🚀 Dispatch repository updater update signal - brenner-tobias/ha-addons
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.PAT_BRENNER_BOT }}
+          repository: brenner-tobias/ha-addons
           event-type: update
           client-payload: >
             {
