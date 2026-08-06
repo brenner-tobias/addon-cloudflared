@@ -87,14 +87,20 @@ validateConfigAndSetVars() {
     local ha_port="8123"
     local ha_ssl="false"
     if bashio::var.is_empty "${external_hostname}"; then
-      bashio::log.debug "No external_hostname configured, skipping check of Home Assistant port and SSL"
+        bashio::log.debug "No external_hostname configured, skipping check of Home Assistant port and SSL"
     elif [[ -f "${ha_storage_http}" ]]; then
-      local ha_port_from_storage
-      ha_port_from_storage=$(yq '.data.stable.server_port // empty' "${ha_storage_http}" 2>/dev/null || true)
-      if [[ -n "${ha_port_from_storage}" && "${ha_port_from_storage}" != "null" ]]; then
-        ha_port="${ha_port_from_storage}"
-        bashio::log.debug "Read Home Assistant port from ${ha_storage_http}: ${ha_port}"
-      fi
+        local ha_port_from_storage
+        local ha_ssl_from_storage
+        ha_port_from_storage=$(yq '.data.stable.server_port' "${ha_storage_http}" 2>/dev/null || true)
+        ha_ssl_from_storage=$(yq '.data.stable | (has("ssl_certificate") and has("ssl_key"))' "${ha_storage_http}" 2>/dev/null || true)
+        if [[ -n "${ha_port_from_storage}" && "${ha_port_from_storage}" != "null" ]]; then
+            ha_port="${ha_port_from_storage}"
+            bashio::log.debug "Read Home Assistant port from ${ha_storage_http}: ${ha_port}"
+        fi
+        if [[ -n "${ha_ssl_from_storage}" && "${ha_ssl_from_storage}" != "null" ]]; then
+            ha_ssl="${ha_ssl_from_storage}"
+            bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl}"
+        fi
     fi
 
     if yq . "${ha_config_file}" >/dev/null; then
