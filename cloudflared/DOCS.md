@@ -300,11 +300,11 @@ you are troubleshooting.
 Since Home Assistant blocks requests from proxies/reverse proxies, you need to
 tell your instance to allow requests from the Cloudflared app (add-on).
 The app (add-on) runs locally, so HA has to trust the docker network.
-In order to do so, add the `HTTP server` section under 
+In order to do so, add the following in the `HTTP server` section under 
 `Settings - System - Network`:
 
-**Note**: _There is no need to adapt anything in these lines since the IP range
-of the docker network is always the same._
+**Note**: _There is usually no need to adapt anything in these lines since the IP
+range of the docker network is always the same._
 
 - `Reverse proxy - Trust X-Forwarded-For`: true
 - `Reverse proxy - Add trusted proxies`: 172.30.33.0/24
