@@ -38,7 +38,7 @@ If you only want to expose other services, you can leave `external_hostname`
 empty and set `additional_hosts` as [described below](#configuration).
 
 1. Configure the `HTTP server` in your in your Home Assistant settings as
-   [described below](#httpserver)
+   [described below](#http-server)
 1. Set `external_hostname` app (add-on) option to the domain/subdomain
    you want to use for remote access e.g. `ha.example.com`
 1. Start the app (add-on) (this will overwrite any existing DNS entries matching
@@ -314,9 +314,6 @@ might have to add another IP(range) here. Check your HA logs
 after attempting to connect to find the correct IP.**
 
 Remember to restart Home Assistant after those changes.
-
-If you need assistance changing the config, please follow the
-[Advanced Configuration Tutorial][advancedconfiguration].
 
 ## App (Add-On) Wiki
 
