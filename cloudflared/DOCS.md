@@ -37,8 +37,8 @@ app (add-on) to expose your Home Assistant instance.
 If you only want to expose other services, you can leave `external_hostname`
 empty and set `additional_hosts` as [described below](#configuration).
 
-1. Configure the `http` integration in your Home Assistant config as
-   [described below](#configurationyaml)
+1. Configure the `HTTP server` in your in your Home Assistant settings as
+   [described below](#http-server)
 1. Set `external_hostname` app (add-on) option to the domain/subdomain
    you want to use for remote access e.g. `ha.example.com`
 1. Start the app (add-on) (this will overwrite any existing DNS entries matching
@@ -295,40 +295,25 @@ you are troubleshooting.
 
 ## Home Assistant configuration
 
-### configuration.yaml
+### HTTP server
 
 Since Home Assistant blocks requests from proxies/reverse proxies, you need to
 tell your instance to allow requests from the Cloudflared app (add-on).
 The app (add-on) runs locally, so HA has to trust the docker network.
-In order to do so, add the following lines to your
-`/config/configuration.yaml`:
+In order to do so, add the following in the `HTTP server` section under 
+`Settings - System - Network`:
 
-**Note**: _There is no need to adapt anything in these lines since the IP range
-of the docker network is always the same._
+**Note**: _There is usually no need to adapt anything in these lines since the IP
+range of the docker network is always the same._
 
-```yaml
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-```
+- `Reverse proxy - Trust X-Forwarded-For`: true
+- `Reverse proxy - Add trusted proxies`: 172.30.33.0/24
 
 **If you are using non-standard hosting methods of HA (e.g. Proxmox), you
 might have to add another IP(range) here. Check your HA logs
 after attempting to connect to find the correct IP.**
 
-**Important**: The app (add-on) reads your `configuration.yaml` to detect your
-Home Assistant port and if SSL is used. **If you have changed the
-default port or enabled SSL in the [HTTP integration][http-integration]**,
-you must keep the entire `http:` block directly in `configuration.yaml`.
-Do **not** move it to a [`!include`][homeassistant-config-splitting] file or a
-[`!include_dir_*`][homeassistant-config-packages] directory, as the
-app (add-on) does not follow additional YAML files.
-
-Remember to restart Home Assistant when the configuration is changed.
-
-If you need assistance changing the config, please follow the
-[Advanced Configuration Tutorial][advancedconfiguration].
+Remember to restart Home Assistant after those changes.
 
 ## App (Add-On) Wiki
 
