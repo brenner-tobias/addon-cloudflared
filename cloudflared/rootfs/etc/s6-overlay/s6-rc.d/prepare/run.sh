@@ -111,13 +111,15 @@ validateConfigAndSetVars() {
         if yq . "${ha_config_file}" >/dev/null 2>&1; then
             if [[ -z "${ha_port_from_storage}" || "${ha_port_from_storage}" == "null" ]]; then
                 ha_port=$(yq ".http.server_port // ${ha_port}" "${ha_config_file}")
+                bashio::log.debug "Read Home Assistant port from ${ha_config_file}: ${ha_port}"
             fi
 
             if [[ -z "${ha_ssl_from_storage}" || "${ha_ssl_from_storage}" == "null" ]]; then
                 ha_ssl=$(yq '.http | (has("ssl_certificate") and has("ssl_key"))' "${ha_config_file}")
+                bashio::log.debug "Read Home Assistant SSL from ${ha_config_file}: ${ha_ssl}"
             fi
         else
-            bashio::log.warning "Unable to parse Home Assistant configuration file at ${ha_config_file} or ${ha_storage_http}, assuming port ${ha_port} and no SSL"
+            bashio::log.warning "Unable to parse Home Assistant configuration file at ${ha_config_file}, assuming port ${ha_port} and no SSL"
         fi
     fi
 
