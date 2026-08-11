@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "http",
+  "data": {
+    "server_port": 80,
+    "ssl_certificate": null,
+    "ssl_key": null
+  }
+}

@@ -82,8 +82,8 @@ validateConfigAndSetVars() {
     data_path="/data"
 
     bashio::log.debug "Checking Home Assistant port and if SSL is used..."
-    local ha_config_file="/homeassistant/configuration.yaml"
-    local ha_storage_http="/homeassistant/.storage/http"
+    local ha_config_file="${HOMEASSISTANT_CONFIG_FILE:-/homeassistant/configuration.yaml}"
+    local ha_storage_http="${HOMEASSISTANT_STORAGE_HTTP:-/homeassistant/.storage/http}"
     local ha_port="8123"
     local ha_ssl="false"
 
@@ -94,17 +94,54 @@ validateConfigAndSetVars() {
         local ha_ssl_from_storage=""
 
         if [[ -f "${ha_storage_http}" ]]; then
-            ha_port_from_storage=$(yq '.data.stable.server_port' "${ha_storage_http}" 2>/dev/null || true)
-            ha_ssl_from_storage=$(yq '.data.stable | (has("ssl_certificate") and has("ssl_key"))' "${ha_storage_http}" 2>/dev/null || true)
+            local storage_base=".data"
+            local storage_version=""
+            storage_version=$(yq '.version' "${ha_storage_http}" 2>/dev/null || true)
+            case "${storage_version}" in
+                1)
+                    storage_base=".data"
+                    ;;
+                2)
+                    storage_base=".data.stable"
+                    ;;
+                *)
+                    bashio::log.warning "Unknown Home Assistant storage version '${storage_version}' in ${ha_storage_http}, falling back to version 2 behavior"
+                    storage_base=".data.stable"
+                    ;;
+            esac
+
+            ha_port_from_storage=$(yq "${storage_base}.server_port" "${ha_storage_http}" 2>/dev/null || true)
+            local ha_ssl_from_storage=""
+            local ha_ssl_cert_from_storage=""
+            local ha_ssl_key_from_storage=""
+            local storage_is_map=""
+            storage_is_map=$(yq "${storage_base} | select(type == \"!!map\")" "${ha_storage_http}" 2>/dev/null || true)
+
+            if [[ -n "${storage_is_map}" ]]; then
+                ha_ssl_cert_from_storage=$(yq "${storage_base}.ssl_certificate" "${ha_storage_http}" 2>/dev/null || true)
+                ha_ssl_key_from_storage=$(yq "${storage_base}.ssl_key" "${ha_storage_http}" 2>/dev/null || true)
+
+                if [[ -n "${ha_ssl_cert_from_storage}" || -n "${ha_ssl_key_from_storage}" ]]; then
+                    if [[ "${ha_ssl_cert_from_storage}" != "null" && -n "${ha_ssl_cert_from_storage}" ]] && \
+                        [[ "${ha_ssl_key_from_storage}" != "null" && -n "${ha_ssl_key_from_storage}" ]]; then
+                        ha_ssl_from_storage="true"
+                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
+                    else
+                        ha_ssl_from_storage="false"
+                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
+                    fi
+                fi
+            fi
 
             if [[ -n "${ha_port_from_storage}" && "${ha_port_from_storage}" != "null" ]]; then
                 ha_port="${ha_port_from_storage}"
                 bashio::log.debug "Read Home Assistant port from ${ha_storage_http}: ${ha_port}"
             fi
 
-            if [[ -n "${ha_ssl_from_storage}" && "${ha_ssl_from_storage}" != "null" ]]; then
-                ha_ssl="${ha_ssl_from_storage}"
-                bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl}"
+            if [[ "${ha_ssl_from_storage}" == "true" ]]; then
+                ha_ssl="true"
+            elif [[ "${ha_ssl_from_storage}" == "false" ]]; then
+                ha_ssl="false"
             fi
         fi
 
@@ -433,4 +470,7 @@ main() {
 
     bashio::log.info "Finished setting up the Cloudflare Tunnel"
 }
-main "$@"
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

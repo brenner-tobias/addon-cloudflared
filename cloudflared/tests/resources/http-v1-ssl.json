@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "http",
+  "data": {
+    "server_port": 443,
+    "ssl_certificate": "/ssl/fullchain.pem",
+    "ssl_key": "/ssl/privkey.pem"
+  }
+}

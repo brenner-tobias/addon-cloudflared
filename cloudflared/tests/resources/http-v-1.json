@@ -1,0 +1,14 @@
+{
+  "version": -1,
+  "minor_version": 2,
+  "key": "http",
+  "data": {
+    "stable": {
+      "server_port": 80,
+      "ssl_certificate": null,
+      "ssl_key": null
+    },
+    "pending": null,
+    "yaml_migration_done": true
+  }
+}
