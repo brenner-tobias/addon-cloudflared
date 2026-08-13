@@ -119,6 +119,15 @@ jobs:
         with:
           prettier_options: --write **/*.{json,js,md,yaml}
 
+  test-shell:
+    name: Shell tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v7
+      - name: 🚀 Run shell test suite
+        run: bash ./cloudflared/tests/test_config_and_set_vars.sh
+
   build:
     name: Build ${{ matrix.architecture }}
     needs:
@@ -130,6 +139,7 @@ jobs:
       - lint-prettier
       - lint-shellcheck
       - lint-yamllint
+      - test-shell
     runs-on: ubuntu-latest
     strategy:
       matrix:
