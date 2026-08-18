@@ -32,7 +32,7 @@ LABEL \
     io.hass.name="${BUILD_NAME}" \
     io.hass.description="${BUILD_DESCRIPTION}" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     maintainer="homeassistant-apps <https://github.com/homeassistant-apps>" \
     org.opencontainers.image.title="${BUILD_NAME}" \
