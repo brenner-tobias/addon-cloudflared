@@ -15,7 +15,7 @@ arch:
   - aarch64
   - amd64
 map:
-  - addon_config:rw
+  - app_config:rw
   - homeassistant_config
 options:
   external_hostname: ""
