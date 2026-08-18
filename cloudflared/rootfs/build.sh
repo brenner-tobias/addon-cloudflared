@@ -1,6 +1,6 @@
 #!/bin/sh
 # ==============================================================================
-# Home Assistant App (Add-on): Cloudflared
+# Home Assistant App: Cloudflared
 #
 # Container build of Cloudflared
 # ==============================================================================
@@ -11,8 +11,6 @@ set -eux
 apk add --no-cache yq-go="${YQ_VERSION}"
 
 # Adapt the architecture to the cloudflared specific names if needed
-# see HA archs: https://developers.home-assistant.io/docs/add-ons/configuration/#:~:text=the%20add%2Don.-,arch,-list
-# see Cloudflared archs: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation
 case "${BUILD_ARCH}" in
 "aarch64")
     cloudflared_arch="arm64"
