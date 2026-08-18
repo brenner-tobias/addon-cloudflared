@@ -364,7 +364,7 @@ SOFTWARE.
 [cloudflare-websockets]: https://developers.cloudflare.com/network/websockets/
 [contributors]: https://github.com/homeassistant-apps/app-cloudflared/graphs/contributors
 [how-tos]: https://github.com/homeassistant-apps/app-cloudflared/wiki/How-tos
-[nginx_proxy_manager]: https://github.com/hassio-addons/app-nginx-proxy-manager
+[nginx_proxy_manager]: https://github.com/hassio-addons/addon-nginx-proxy-manager
 [tobias]: https://github.com/homeassistant-apps
 [troubleshooting]: https://github.com/homeassistant-apps/app-cloudflared/wiki/Troubleshooting
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
