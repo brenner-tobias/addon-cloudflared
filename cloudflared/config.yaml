@@ -18,6 +18,7 @@ map:
   - type: app_config
     read_only: false
   - type: homeassistant_config
+    read_only: true
 options:
   external_hostname: ""
   additional_hosts: []
