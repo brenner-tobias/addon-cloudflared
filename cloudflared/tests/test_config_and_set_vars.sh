@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SC1091: sourced test helpers are loaded dynamically and ShellCheck cannot resolve them here.
 # SC2034: TEST_CONFIG is used via indirect associative-array access in the Bashio mock layer.
-# SC2154: variables like ha_url/tunnel_name are populated by validateConfigAndSetVars in the sourced add-on script.
+# SC2154: variables like ha_url/tunnel_name are populated by validateConfigAndSetVars in the sourced app script.
 # shellcheck disable=SC1091,SC2034,SC2154
 set -euo pipefail
 

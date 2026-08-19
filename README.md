@@ -1,4 +1,4 @@
-# Home Assistant App (Add-on): Cloudflared
+# Home Assistant App: Cloudflared
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -22,24 +22,24 @@ instance and other services to the Internet without opening ports on your router
 Additionally, you can utilize Cloudflare Zero Trust to further secure your
 connection.
 
-**To use this app (add-on), you have to own a domain name (e.g. example.com) that
+**To use this app, you have to own a domain name (e.g. example.com) that
 is using Cloudflare for its DNS entries. You can find more information about that
 in our [Wiki][wiki].**
 
 **Please be aware that domains from _Freenom_ do not work anymore, so
 you have to chose / migrate to another registrar.**
 
-[:books: Read the full app (add-on) documentation][docs]
+[:books: Read the full app documentation][docs]
 
 ## Disclaimer
 
 Please make sure you comply with the
 [Cloudflare Self-Serve Subscription Agreement][cloudflare-sssa] when using this
-app (add-on).
+app.
 
 ## Installation
 
-To install this app (add-on), manually add our repository to Home Assistant
+To install this app, manually add our repository to Home Assistant
 using [this link][repository] or by clicking the button below.
 
 [![Add Repository to HA][my-ha-badge]][my-ha-url]
@@ -61,7 +61,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2026 Unofficial Home Assistant Apps (Add-ons)
+Copyright (c) 2026 Unofficial Home Assistant Apps
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

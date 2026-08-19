@@ -1,5 +1,5 @@
 {
-  "name": "Devcontainer for Cloudflared App (Add-On)",
+  "name": "Devcontainer for Cloudflared App",
   "image": "ghcr.io/home-assistant/devcontainer:6-apps",
   "overrideCommand": false,
   "remoteUser": "vscode",

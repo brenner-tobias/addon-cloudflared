@@ -35,7 +35,7 @@ configuration:
   nginx_proxy_manager:
     name: הפעלת Catch-All Nginx-Proxy-Manager
     description: >-
-      מגדיר את שירות catch-all להרחבה "Nginx-Proxy-Manager Community Add-ons".
+      מגדיר את שירות catch-all להרחבה "Nginx-Proxy-Manager Community App".
   tunnel_token:
     name: אסימון מנהרת Cloudflare
     description: >-

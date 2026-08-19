@@ -1,6 +1,6 @@
 ---
-name: Report an issue with Home Assistant App (Add-On) Cloudflared
-description: Report an issue with Home Assistant App (Add-On) Cloudflared.
+name: Report an issue with Home Assistant App Cloudflared
+description: Report an issue with Home Assistant App Cloudflared.
 body:
   - type: markdown
     attributes:
@@ -26,7 +26,7 @@ body:
       placeholder: 2.x.x
       description: >-
         Can be found in:
-        [Settings -> Add-ons ->
+        [Settings -> Apps ->
         Cloudflared](https://my.home-assistant.io/redirect/supervisor_addon/?addon=9074a9fa_cloudflared).
   - type: input
     attributes:
@@ -50,9 +50,9 @@ body:
       value: "# Details"
   - type: textarea
     attributes:
-      label: App (Add-on) YAML Configuration
+      label: App YAML Configuration
       description: |
-        Please provide your whole app (add-on) configuration as YAML, you can hide any sensitive information.
+        Please provide your whole app configuration as YAML, you can hide any sensitive information.
       render: yaml
   - type: textarea
     attributes:
