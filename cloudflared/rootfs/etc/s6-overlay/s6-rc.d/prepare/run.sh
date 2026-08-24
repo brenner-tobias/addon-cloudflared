@@ -115,27 +115,44 @@ validateConfigAndSetVars() {
     else
         local ha_port_from_storage=""
         local ha_ssl_from_storage=""
-        local ha_ssl_cert_from_storage=""
-        local ha_ssl_key_from_storage=""
 
-        # Consolidated single yq evaluation for Home Assistant storage HTTP configuration
         if [[ -f "${ha_storage_http}" ]]; then
-            eval "$(yq eval '
-                .version as $v |
-                (if $v == 1 then .data else .data.stable end) as $d |
-                "ha_port_from_storage=" + ($d.server_port // "" | quote) + "\n" +
-                "ha_ssl_cert_from_storage=" + ($d.ssl_certificate // "" | quote) + "\n" +
-                "ha_ssl_key_from_storage=" + ($d.ssl_key // "" | quote)
-            ' "${ha_storage_http}" 2>/dev/null || true)"
+            local storage_base=".data"
+            local storage_version=""
+            storage_version=$(yq '.version' "${ha_storage_http}" 2>/dev/null || true)
+            case "${storage_version}" in
+                1)
+                    storage_base=".data"
+                    ;;
+                2)
+                    storage_base=".data.stable"
+                    ;;
+                *)
+                    bashio::log.warning "Unknown Home Assistant storage version '${storage_version}' in ${ha_storage_http}, falling back to version 2 behavior"
+                    storage_base=".data.stable"
+                    ;;
+            esac
 
-            if [[ -n "${ha_ssl_cert_from_storage}" || -n "${ha_ssl_key_from_storage}" ]]; then
-                if [[ "${ha_ssl_cert_from_storage}" != "null" && -n "${ha_ssl_cert_from_storage}" ]] && \
-                    [[ "${ha_ssl_key_from_storage}" != "null" && -n "${ha_ssl_key_from_storage}" ]]; then
-                    ha_ssl_from_storage="true"
-                else
-                    ha_ssl_from_storage="false"
+            ha_port_from_storage=$(yq "${storage_base}.server_port" "${ha_storage_http}" 2>/dev/null || true)
+            local ha_ssl_cert_from_storage=""
+            local ha_ssl_key_from_storage=""
+            local storage_is_map=""
+            storage_is_map=$(yq "${storage_base} | select(type == \"!!map\")" "${ha_storage_http}" 2>/dev/null || true)
+
+            if [[ -n "${storage_is_map}" ]]; then
+                ha_ssl_cert_from_storage=$(yq "${storage_base}.ssl_certificate" "${ha_storage_http}" 2>/dev/null || true)
+                ha_ssl_key_from_storage=$(yq "${storage_base}.ssl_key" "${ha_storage_http}" 2>/dev/null || true)
+
+                if [[ -n "${ha_ssl_cert_from_storage}" || -n "${ha_ssl_key_from_storage}" ]]; then
+                    if [[ "${ha_ssl_cert_from_storage}" != "null" && -n "${ha_ssl_cert_from_storage}" ]] && \
+                        [[ "${ha_ssl_key_from_storage}" != "null" && -n "${ha_ssl_key_from_storage}" ]]; then
+                        ha_ssl_from_storage="true"
+                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
+                    else
+                        ha_ssl_from_storage="false"
+                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
+                    fi
                 fi
-                bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
             fi
 
             if [[ -n "${ha_port_from_storage}" && "${ha_port_from_storage}" != "null" ]]; then
@@ -353,18 +370,20 @@ createConfig() {
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_url}\"}]")
     fi
 
-    # Batch process all additional_hosts in a single jq evaluation
-    if bashio::config.has_value 'additional_hosts'; then
-        local formatted_hosts
-        formatted_hosts=$(bashio::jq "$(bashio::addon.config)" '
-            .additional_hosts // [] | map(
-                if .disableChunkedEncoding != null then
-                    .originRequest = (.originRequest // {}) + {"disableChunkedEncoding": .disableChunkedEncoding} | del(.disableChunkedEncoding)
-                else . end
-            )
-        ')
-        config=$(bashio::jq "${config}" --argjson hosts "${formatted_hosts}" '."ingress" += $hosts')
-    fi
+    # Check for configured additional hosts and add them if existing
+    local additional_host
+    local disableChunkedEncoding
+    for additional_host in "${additional_hosts[@]}"; do
+        # Check for originRequest configuration option: disableChunkedEncoding
+        disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
+        if ! [[ ${disableChunkedEncoding} == "" ]]; then
+            additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
+            additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
+        fi
+
+        # Add additional_host config to ingress config
+        config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
+    done
 
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager'; then
@@ -391,7 +410,6 @@ createConfig() {
     # Write content of config variable to config file for cloudflared
     local default_config="/tmp/config.json"
     bashio::jq "${config}" "." >"${default_config}"
-    chmod 600 "${default_config}"
 
     # Validate config using cloudflared
     bashio::log.info "Validating config file..."
