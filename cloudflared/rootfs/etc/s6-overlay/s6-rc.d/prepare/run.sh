@@ -8,6 +8,29 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Helper: Executes a command with exponential backoff retry logic
+# ------------------------------------------------------------------------------
+runWithRetry() {
+    local max_retries="${1:-4}"
+    local retry_delay="${2:-2}"
+    local description="$3"
+    shift 3
+
+    local attempt=1
+    while [ $attempt -le $max_retries ]; do
+        if "$@"; then
+            return 0
+        fi
+        bashio::log.warning "Failed to ${description} (Attempt ${attempt}/${max_retries}). Retrying in ${retry_delay}s..."
+        sleep "$retry_delay"
+        attempt=$((attempt + 1))
+        retry_delay=$((retry_delay * 2))
+    done
+
+    return 1
+}
+
+# ------------------------------------------------------------------------------
 # Validates configuration and sets global variables used in the script
 # ------------------------------------------------------------------------------
 validateConfigAndSetVars() {
@@ -92,45 +115,27 @@ validateConfigAndSetVars() {
     else
         local ha_port_from_storage=""
         local ha_ssl_from_storage=""
+        local ha_ssl_cert_from_storage=""
+        local ha_ssl_key_from_storage=""
 
+        # Consolidated single yq evaluation for Home Assistant storage HTTP configuration
         if [[ -f "${ha_storage_http}" ]]; then
-            local storage_base=".data"
-            local storage_version=""
-            storage_version=$(yq '.version' "${ha_storage_http}" 2>/dev/null || true)
-            case "${storage_version}" in
-                1)
-                    storage_base=".data"
-                    ;;
-                2)
-                    storage_base=".data.stable"
-                    ;;
-                *)
-                    bashio::log.warning "Unknown Home Assistant storage version '${storage_version}' in ${ha_storage_http}, falling back to version 2 behavior"
-                    storage_base=".data.stable"
-                    ;;
-            esac
+            eval "$(yq eval '
+                .version as $v |
+                (if $v == 1 then .data else .data.stable end) as $d |
+                "ha_port_from_storage=" + ($d.server_port // "" | quote) + "\n" +
+                "ha_ssl_cert_from_storage=" + ($d.ssl_certificate // "" | quote) + "\n" +
+                "ha_ssl_key_from_storage=" + ($d.ssl_key // "" | quote)
+            ' "${ha_storage_http}" 2>/dev/null || true)"
 
-            ha_port_from_storage=$(yq "${storage_base}.server_port" "${ha_storage_http}" 2>/dev/null || true)
-            local ha_ssl_from_storage=""
-            local ha_ssl_cert_from_storage=""
-            local ha_ssl_key_from_storage=""
-            local storage_is_map=""
-            storage_is_map=$(yq "${storage_base} | select(type == \"!!map\")" "${ha_storage_http}" 2>/dev/null || true)
-
-            if [[ -n "${storage_is_map}" ]]; then
-                ha_ssl_cert_from_storage=$(yq "${storage_base}.ssl_certificate" "${ha_storage_http}" 2>/dev/null || true)
-                ha_ssl_key_from_storage=$(yq "${storage_base}.ssl_key" "${ha_storage_http}" 2>/dev/null || true)
-
-                if [[ -n "${ha_ssl_cert_from_storage}" || -n "${ha_ssl_key_from_storage}" ]]; then
-                    if [[ "${ha_ssl_cert_from_storage}" != "null" && -n "${ha_ssl_cert_from_storage}" ]] && \
-                        [[ "${ha_ssl_key_from_storage}" != "null" && -n "${ha_ssl_key_from_storage}" ]]; then
-                        ha_ssl_from_storage="true"
-                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
-                    else
-                        ha_ssl_from_storage="false"
-                        bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
-                    fi
+            if [[ -n "${ha_ssl_cert_from_storage}" || -n "${ha_ssl_key_from_storage}" ]]; then
+                if [[ "${ha_ssl_cert_from_storage}" != "null" && -n "${ha_ssl_cert_from_storage}" ]] && \
+                    [[ "${ha_ssl_key_from_storage}" != "null" && -n "${ha_ssl_key_from_storage}" ]]; then
+                    ha_ssl_from_storage="true"
+                else
+                    ha_ssl_from_storage="false"
                 fi
+                bashio::log.debug "Read Home Assistant SSL from ${ha_storage_http}: ${ha_ssl_from_storage}"
             fi
 
             if [[ -n "${ha_port_from_storage}" && "${ha_port_from_storage}" != "null" ]]; then
@@ -266,6 +271,12 @@ createCertificate() {
 # ------------------------------------------------------------------------------
 # Check if Cloudflare Tunnel is existing
 # ------------------------------------------------------------------------------
+_get_tunnel_name() {
+    set -o pipefail
+    cloudflared --origincert="${data_path}/cert.pem" tunnel \
+        list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name'
+}
+
 hasTunnel() {
     bashio::log.trace "${FUNCNAME[0]}:"
     bashio::log.info "Checking for existing tunnel..."
@@ -281,12 +292,17 @@ hasTunnel() {
 
     bashio::log.info "Existing tunnel with ID ${tunnel_uuid} found"
 
-    # Get tunnel name from Cloudflare API by tunnel id and chek if it matches config value
+    # Get tunnel name from Cloudflare API by tunnel id with exponential retry logic
     bashio::log.info "Checking if existing tunnel matches name given in config"
+
     local existing_tunnel_name
-    existing_tunnel_name=$(cloudflared --origincert="${data_path}/cert.pem" tunnel \
-        list --output="json" --id="${tunnel_uuid}" | jq -er '.[].name')
-    bashio::log.debug "Existing Cloudflare Tunnel name: $existing_tunnel_name"
+    if existing_tunnel_name=$(runWithRetry 4 2 "query Cloudflare API for tunnel name" _get_tunnel_name); then
+        bashio::log.debug "Existing Cloudflare Tunnel name: $existing_tunnel_name"
+    else
+        bashio::log.error "Could not verify tunnel name due to a persistent network or API error."
+        bashio::exit.nok
+    fi
+
     if [[ $tunnel_name != "$existing_tunnel_name" ]]; then
         bashio::log.error "Existing Cloudflare Tunnel name does not match app config."
         bashio::log.error "---------------------------------------"
@@ -308,10 +324,12 @@ hasTunnel() {
 createTunnel() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::log.info "Creating new tunnel..."
-    cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}" ||
-        bashio::exit.nok "Failed to create tunnel.
+
+    if ! runWithRetry 4 2 "create tunnel" cloudflared --origincert="${data_path}/cert.pem" --cred-file="${data_path}/tunnel.json" tunnel --loglevel "${CLOUDFLARED_LOG}" create "${tunnel_name}"; then
+        bashio::exit.nok "Failed to create tunnel after multiple attempts.
     Please check the Cloudflare Zero Trust Dashboard for an existing tunnel with the name ${tunnel_name} and delete it:
     Visit https://one.dash.cloudflare.com, then click on Networks -> Tunnels"
+    fi
 
     bashio::log.debug "Created new tunnel: $(cat "${data_path}"/tunnel.json)"
 
@@ -335,20 +353,18 @@ createConfig() {
         config=$(bashio::jq "${config}" ".\"ingress\" += [{\"hostname\": \"${external_hostname}\", \"service\": \"${ha_url}\"}]")
     fi
 
-    # Check for configured additional hosts and add them if existing
-    local additional_host
-    local disableChunkedEncoding
-    for additional_host in "${additional_hosts[@]}"; do
-        # Check for originRequest configuration option: disableChunkedEncoding
-        disableChunkedEncoding=$(bashio::jq "${additional_host}" ". | select(.disableChunkedEncoding != null) | .disableChunkedEncoding ")
-        if ! [[ ${disableChunkedEncoding} == "" ]]; then
-            additional_host=$(bashio::jq "${additional_host}" "del(.disableChunkedEncoding)")
-            additional_host=$(bashio::jq "${additional_host}" ".originRequest += {\"disableChunkedEncoding\": ${disableChunkedEncoding}}")
-        fi
-
-        # Add additional_host config to ingress config
-        config=$(bashio::jq "${config}" ".ingress[.ingress | length ] |= . + ${additional_host}")
-    done
+    # Batch process all additional_hosts in a single jq evaluation
+    if bashio::config.has_value 'additional_hosts'; then
+        local formatted_hosts
+        formatted_hosts=$(bashio::jq "$(bashio::addon.config)" '
+            .additional_hosts // [] | map(
+                if .disableChunkedEncoding != null then
+                    .originRequest = (.originRequest // {}) + {"disableChunkedEncoding": .disableChunkedEncoding} | del(.disableChunkedEncoding)
+                else . end
+            )
+        ')
+        config=$(bashio::jq "${config}" --argjson hosts "${formatted_hosts}" '."ingress" += $hosts')
+    fi
 
     # Check if NGINX Proxy Manager is used to finalize configuration
     if bashio::config.true 'nginx_proxy_manager'; then
@@ -375,6 +391,7 @@ createConfig() {
     # Write content of config variable to config file for cloudflared
     local default_config="/tmp/config.json"
     bashio::jq "${config}" "." >"${default_config}"
+    chmod 600 "${default_config}"
 
     # Validate config using cloudflared
     bashio::log.info "Validating config file..."
@@ -394,7 +411,8 @@ createDNS() {
     # Create DNS entry for external hostname of Home Assistant if 'external_hostname' is set
     if bashio::var.has_value "${external_hostname}"; then
         bashio::log.info "Creating DNS entry ${external_hostname}..."
-        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" ||
+        runWithRetry 4 2 "create DNS entry for ${external_hostname}" \
+            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${external_hostname}" ||
             bashio::exit.nok "Failed to create DNS entry ${external_hostname}."
     fi
 
@@ -404,7 +422,8 @@ createDNS() {
     for additional_host in "${additional_hosts[@]}"; do
         hostname=$(bashio::jq "${additional_host}" ".hostname")
         bashio::log.info "Creating DNS entry ${hostname}..."
-        cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${hostname}" ||
+        runWithRetry 4 2 "create DNS entry for ${hostname}" \
+            cloudflared --origincert="${data_path}/cert.pem" tunnel --loglevel "${CLOUDFLARED_LOG}" route dns -f "${tunnel_uuid}" "${hostname}" ||
             bashio::exit.nok "Failed to create DNS entry ${hostname}."
     done
 }
