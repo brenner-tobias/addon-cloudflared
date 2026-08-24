@@ -17,7 +17,7 @@ runWithRetry() {
     shift 3
 
     local attempt=1
-    while [ $attempt -le $max_retries ]; do
+    while [ $attempt -le "$max_retries" ]; do
         if "$@"; then
             return 0
         fi
