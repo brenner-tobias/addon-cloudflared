@@ -62,7 +62,7 @@ validateConfigAndSetVars() {
 
     # Set and validate 'additional_hosts'
     if bashio::config.has_value 'additional_hosts'; then
-        additional_hosts=$(bashio::jq "$(bashio::addon.config)" ".additional_hosts[]")
+        additional_hosts=$(bashio::jq "$(bashio::app.config)" ".additional_hosts[]")
         readarray -t additional_hosts <<<"${additional_hosts}"
 
         local additional_host
