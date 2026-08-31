@@ -1,47 +1,46 @@
 ---
 configuration:
   log_level:
-    name: Niveau de journalisation
+    name: Nível de logging
     description: >-
-      Définit le niveau de journalisation du module complémentaire.
+      Define o nivel de registo de logging da app.
   external_hostname:
-    name: Nom d'hôte externe de Home Assistant
+    name: Nome externo do seu servidor do  Home Assistant
     description: >-
-      Définissez ceci sur votre nom de domaine ou sous-domaine que
-      vous souhaitez utiliser pour accéder à Home Assistant.
+      Defina aqui o nome com o dominio ou subdominio que
+      pretende utilizar ppara aceder ao seu Home Assistant.
   tunnel_name:
-    name: Nom du tunnel Cloudflare
+    name: Nome do túnel da Cloudflare
     description: >-
-      Définit le nom du tunnel créé pour la communication entre ce
-      service et le serveur Edge de Cloudflare. La valeur par défaut
-      devrait convenir dans la plupart des cas.
+      Defina o nome do túnel criado para comunicação entre este
+      serviço et o servidor Edge da Cloudflare. O valor por defeito
+      deverá ser adequado na maioria dos casos.
   additional_hosts:
-    name: Hôtes supplémentaires
+    name: Servidores adicionais
     description: >-
-      Définissez une liste d'hôtes supplémentaires devant être acheminés
-      par le tunnel Cloudflare.
+      Defina uma lista de servidores adicionais para aceder e encaminhar através do Túnel Cloudflare.
   post_quantum:
-    name: Utiliser la cryptographie post-quantique
+    name: Utilizar criptografia pós-quântica
     description: >-
-      Cochez pour que le tunnel utilise la cryptographie post-quantique.
-      Avertissement : cela restreint également le tunnel au protocole QUIC,
-      ce qui pourrait entraîner des problèmes pour certains utilisateurs.
+      Selecione esta opção para que o túnel utilize criptografia pós-quântica.
+      Aviso: esta opção também restringe o túnel ao protocolo QUIC, o que poderá
+      causar problemas a alguns utilizadores.
   run_parameters:
-    name: Ajouter des paramètres d'exécution
+    name: Adicionar parâmetros de execução
     description: >-
-      Possibilité d'ajouter des paramètres d'exécution à Cloudflared
+      Possibilidade de adicionar parâmetros de execução ao Cloudflared
   catch_all_service:
-    name: Service Catch-All
+    name: Serviço Catch-All
     description: >-
-      Définissez un service Catch-All qui sera appelé pour les services non configurés directement.
+      Define um serviço Catch-All será utilizado para serviços que não estejam configurados diretamente.
   nginx_proxy_manager:
-    name: Activer le service Catch-All de Nginx-Proxy-Manager
+    name: Activar serviço Catch-All do Nginx-Proxy-Manager
     description: >-
-      Définir le service Catch-All sur le module complémentaire "Nginx-Proxy-Manager Community App".
+      Define o serviço Catch-All da app como "Nginx-Proxy-Manager Community App".
   tunnel_token:
-    name: Token du tunnel Cloudflare
+    name: Token do túnel Cloudflare
     description: >-
-      Lorsque cette option est définie, toutes les autres options seront ignorées.
-      Utilisez cette option si vous avez configuré le tunnel via le tableau de bord Cloudflare.
+      Quando esta opção estiver definida, todas as outras opções serão ignoradas.
+      Utilize esta opção se tiver configurado o túnel através do Painel da Cloudflare.
 network:
-  36500/tcp: Interface web des métriques (36500/tcp)
+  36500/tcp: Interface web para as métricas (36500/tcp)
