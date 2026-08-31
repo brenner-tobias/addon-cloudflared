@@ -8,12 +8,12 @@ configuration:
     name: Nome externo do seu servidor do  Home Assistant
     description: >-
       Defina aqui o nome com o dominio ou subdominio que
-      pretende utilizar ppara aceder ao seu Home Assistant.
+      pretende utilizar para aceder ao seu Home Assistant.
   tunnel_name:
     name: Nome do túnel da Cloudflare
     description: >-
       Defina o nome do túnel criado para comunicação entre este
-      serviço et o servidor Edge da Cloudflare. O valor por defeito
+      serviço e o servidor Edge da Cloudflare. O valor por defeito
       deverá ser adequado na maioria dos casos.
   additional_hosts:
     name: Servidores adicionais
