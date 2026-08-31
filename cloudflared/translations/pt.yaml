@@ -14,7 +14,7 @@ configuration:
     description: >-
       Defina o nome do túnel criado para comunicação entre este
       serviço e o servidor Edge da Cloudflare. O valor por defeito
-      deverá ser adequado na maioria dos casos.
+      deverá ser adequado para a maioria dos casos.
   additional_hosts:
     name: Servidores adicionais
     description: >-
