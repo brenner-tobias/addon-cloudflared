@@ -40,8 +40,8 @@ bashio::config() {
     printf '%s' "${TEST_CONFIG[$key]:-}"
 }
 
-bashio::addon.config() {
-    printf '%s' "${TEST_ADDON_CONFIG:-{}}"
+bashio::app.config() {
+    printf '%s' "${TEST_APP_CONFIG:-{}}"
 }
 
 bashio::var.is_empty() {
