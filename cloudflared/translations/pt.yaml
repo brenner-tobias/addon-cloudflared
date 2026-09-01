@@ -5,7 +5,7 @@ configuration:
     description: >-
       Define o nivel de registo de logging da app.
   external_hostname:
-    name: Nome externo do seu servidor do  Home Assistant
+    name: Nome externo do seu servidor do Home Assistant
     description: >-
       Defina aqui o nome com o dominio ou subdominio que
       pretende utilizar para aceder ao seu Home Assistant.
@@ -32,7 +32,7 @@ configuration:
   catch_all_service:
     name: Serviço Catch-All
     description: >-
-      Define um serviço Catch-All será utilizado para serviços que não estejam configurados diretamente.
+      Define um serviço Catch-All que será utilizado para serviços que não estejam configurados diretamente.
   nginx_proxy_manager:
     name: Activar serviço Catch-All do Nginx-Proxy-Manager
     description: >-
