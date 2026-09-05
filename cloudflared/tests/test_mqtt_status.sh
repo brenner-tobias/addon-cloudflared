@@ -40,16 +40,74 @@ run_test() {
     fi
 }
 
-test_http_code_to_state_connected() {
-    assert_eq "ON" "$(httpCodeToState "200")" "200 maps to ON"
+test_ready_connections_from_json_connected() {
+    assert_eq "4" "$(readyConnectionsFromJson '{"status":200,"readyConnections":4,"connectorId":"x"}')" "readyConnections extracted"
 }
 
-test_http_code_to_state_disconnected() {
-    assert_eq "OFF" "$(httpCodeToState "503")" "503 maps to OFF"
+test_ready_connections_from_json_disconnected() {
+    assert_eq "0" "$(readyConnectionsFromJson '{"status":503,"readyConnections":0,"connectorId":"x"}')" "readyConnections zero when disconnected"
 }
 
-test_http_code_to_state_unreachable() {
-    assert_eq "OFF" "$(httpCodeToState "")" "unreachable metrics endpoint maps to OFF"
+test_ready_connections_from_json_unreachable() {
+    assert_eq "0" "$(readyConnectionsFromJson "")" "unreachable /ready defaults to 0"
+}
+
+test_state_from_ready_json_connected() {
+    assert_eq "ON" "$(stateFromReadyJson '{"status":200,"readyConnections":4,"connectorId":"x"}')" "connected maps to ON"
+}
+
+test_state_from_ready_json_disconnected() {
+    assert_eq "OFF" "$(stateFromReadyJson '{"status":503,"readyConnections":0,"connectorId":"x"}')" "disconnected maps to OFF"
+}
+
+test_state_from_ready_json_unreachable() {
+    assert_eq "OFF" "$(stateFromReadyJson "")" "unreachable /ready maps to OFF"
+}
+
+test_extract_metrics_counter() {
+    local metrics_text
+    metrics_text=$'cloudflared_tunnel_total_requests 42\ncloudflared_tunnel_request_errors 3\n'
+
+    assert_eq "42" "$(extractMetricsCounter "${metrics_text}" "cloudflared_tunnel_total_requests")" "total_requests extracted"
+    assert_eq "3" "$(extractMetricsCounter "${metrics_text}" "cloudflared_tunnel_request_errors")" "request_errors extracted"
+}
+
+test_extract_metrics_counter_missing() {
+    assert_eq "" "$(extractMetricsCounter "" "cloudflared_tunnel_total_requests")" "missing metric extracts empty"
+}
+
+test_extract_edge_locations() {
+    local metrics_text
+    metrics_text=$'cloudflared_tunnel_server_locations{connection_id="0",edge_location="sjc08"} 0\ncloudflared_tunnel_server_locations{connection_id="0",edge_location="lax11"} 1\ncloudflared_tunnel_server_locations{connection_id="1",edge_location="sjc07"} 1\n'
+
+    local -a locations
+    mapfile -t locations < <(extractEdgeLocations "${metrics_text}")
+
+    assert_eq "2" "${#locations[@]}" "only current (value 1) locations extracted"
+    assert_eq "lax11" "${locations[0]}" "first current location"
+    assert_eq "sjc07" "${locations[1]}" "second current location"
+}
+
+test_extract_edge_locations_none() {
+    local -a locations
+    mapfile -t locations < <(extractEdgeLocations "")
+
+    assert_eq "0" "${#locations[@]}" "no locations when metrics unreachable"
+}
+
+test_build_attributes_payload() {
+    local payload
+    payload=$(buildAttributesPayload "sjc08" "lax11")
+
+    assert_eq "sjc08" "$(echo "${payload}" | jq -r '.edge_locations[0]')" "first edge location in attributes"
+    assert_eq "lax11" "$(echo "${payload}" | jq -r '.edge_locations[1]')" "second edge location in attributes"
+}
+
+test_build_attributes_payload_empty() {
+    local payload
+    payload=$(buildAttributesPayload)
+
+    assert_eq "[]" "$(echo "${payload}" | jq -c '.edge_locations')" "empty edge_locations when no connections"
 }
 
 test_discovery_payload_is_valid_json() {
@@ -71,14 +129,38 @@ test_discovery_payload_fields() {
     assert_eq "cloudflared/tunnel_connected/availability" "$(echo "${payload}" | jq -r '.availability_topic')" "discovery availability_topic"
     assert_eq "online" "$(echo "${payload}" | jq -r '.payload_available')" "discovery payload_available"
     assert_eq "offline" "$(echo "${payload}" | jq -r '.payload_not_available')" "discovery payload_not_available"
+    assert_eq "cloudflared/tunnel_connected/attributes" "$(echo "${payload}" | jq -r '.json_attributes_topic')" "discovery json_attributes_topic"
+}
+
+test_sensor_discovery_payload_fields() {
+    local payload
+    payload=$(buildSensorDiscoveryPayload "Active Connections" "active_connections" "cloudflared/active_connections/state" "connections" "measurement")
+
+    assert_eq "Active Connections" "$(echo "${payload}" | jq -r '.name')" "sensor discovery name"
+    assert_eq "cloudflared_active_connections" "$(echo "${payload}" | jq -r '.unique_id')" "sensor discovery unique_id"
+    assert_eq "cloudflared/active_connections/state" "$(echo "${payload}" | jq -r '.state_topic')" "sensor discovery state_topic"
+    assert_eq "connections" "$(echo "${payload}" | jq -r '.unit_of_measurement')" "sensor discovery unit_of_measurement"
+    assert_eq "measurement" "$(echo "${payload}" | jq -r '.state_class')" "sensor discovery state_class"
+    assert_eq "diagnostic" "$(echo "${payload}" | jq -r '.entity_category')" "sensor discovery entity_category"
+    assert_eq "cloudflared" "$(echo "${payload}" | jq -r '.device.identifiers[0]')" "sensor discovery device identifier"
 }
 
 main() {
-    run_test test_http_code_to_state_connected
-    run_test test_http_code_to_state_disconnected
-    run_test test_http_code_to_state_unreachable
+    run_test test_ready_connections_from_json_connected
+    run_test test_ready_connections_from_json_disconnected
+    run_test test_ready_connections_from_json_unreachable
+    run_test test_state_from_ready_json_connected
+    run_test test_state_from_ready_json_disconnected
+    run_test test_state_from_ready_json_unreachable
+    run_test test_extract_metrics_counter
+    run_test test_extract_metrics_counter_missing
+    run_test test_extract_edge_locations
+    run_test test_extract_edge_locations_none
+    run_test test_build_attributes_payload
+    run_test test_build_attributes_payload_empty
     run_test test_discovery_payload_is_valid_json
     run_test test_discovery_payload_fields
+    run_test test_sensor_discovery_payload_fields
 
     if [[ ${TEST_FAILURES} -ne 0 ]]; then
         echo "${TEST_FAILURES} test(s) failed."

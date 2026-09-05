@@ -104,7 +104,12 @@ bashio::fs.file_exists() {
 }
 
 bashio::jq() {
-    if [[ $# -gt 0 ]]; then
-        printf '%s' "${1}"
-    fi
+    local json_input="${1}"
+    local filter="${2:-.}"
+
+    jq --raw-output -c -M "${filter}" <<<"${json_input}"
+}
+
+bashio::var.json_array() {
+    jq -cn '$ARGS.positional' --args -- "$@"
 }

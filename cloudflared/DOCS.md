@@ -320,22 +320,33 @@ Remember to restart Home Assistant after those changes.
 
 If you have an MQTT broker configured in Home Assistant (for example via the
 [Mosquitto broker][mosquitto-broker] app), set `mqtt_status` to `true` to have
-Cloudflared publish a `Tunnel Connected` binary sensor via
-[MQTT Discovery][mqtt-discovery]. The entity appears on its own once enabled,
-no further setup required.
+Cloudflared publish tunnel status entities via [MQTT Discovery][mqtt-discovery].
+The entities appear on their own once enabled, no further setup required.
 
 ```yaml
 mqtt_status: true
 ```
 
-The sensor reflects whether cloudflared currently has an active connection to
-Cloudflare's edge, checked every 30 seconds via cloudflared's local metrics
-endpoint. Disabled by default. If enabled without an MQTT broker configured,
-this feature is silently skipped.
+This creates a **Cloudflare Tunnel** device in Home Assistant with the
+following entities, all checked every 30 seconds via cloudflared's local
+metrics endpoint:
 
-If the app is stopped, restarted, or crashes, the sensor is marked
-**unavailable** in Home Assistant rather than showing a stale "Connected"
-state, using MQTT's Last Will and Testament mechanism.
+- **Tunnel Connected** (binary sensor): whether cloudflared currently has an
+  active connection to Cloudflare's edge. Also carries a `edge_locations`
+  attribute listing which Cloudflare datacenters (e.g. `sjc08`, `lax11`) each
+  active connection is currently using.
+- **Active Connections** (sensor): number of currently active edge
+  connections (0-4).
+- **Total Requests** / **Request Errors** (sensors): cumulative count of
+  requests proxied through the tunnel, and how many of those failed reaching
+  the origin.
+
+Disabled by default. If enabled without an MQTT broker configured, this
+feature is silently skipped.
+
+If the app is stopped, restarted, or crashes, all of these entities are
+marked **unavailable** in Home Assistant rather than showing stale values,
+using MQTT's Last Will and Testament mechanism.
 
 ## App Wiki
 
