@@ -83,6 +83,7 @@ advanced config can be achieved using the remote tunnel setup.
 - [`run_parameters`](#option-run_parameters)
 - [`log_level`](#option-log_level)
 - [`mqtt_status`](#option-mqtt_status)
+- [`mqtt_extra_stats`](#option-mqtt_extra_stats)
 
 ### Overview: App configuration
 
@@ -320,33 +321,43 @@ Remember to restart Home Assistant after those changes.
 
 If you have an MQTT broker configured in Home Assistant (for example via the
 [Mosquitto broker][mosquitto-broker] app), set `mqtt_status` to `true` to have
-Cloudflared publish tunnel status entities via [MQTT Discovery][mqtt-discovery].
-The entities appear on their own once enabled, no further setup required.
+Cloudflared publish a **Tunnel Connected** binary sensor via
+[MQTT Discovery][mqtt-discovery], checked every 30 seconds via cloudflared's
+local metrics endpoint. The entity appears on its own once enabled, no
+further setup required.
 
 ```yaml
 mqtt_status: true
 ```
 
-This creates a **Cloudflare Tunnel** device in Home Assistant with the
-following entities, all checked every 30 seconds via cloudflared's local
-metrics endpoint:
+Disabled by default. If enabled without an MQTT broker configured, this
+feature is silently skipped.
 
-- **Tunnel Connected** (binary sensor): whether cloudflared currently has an
-  active connection to Cloudflare's edge. Also carries a `edge_locations`
-  attribute listing which Cloudflare datacenters (e.g. `sjc08`, `lax11`) each
-  active connection is currently using.
+If the app is stopped, restarted, or crashes, the entity is marked
+**unavailable** in Home Assistant rather than showing a stale value, using
+MQTT's Last Will and Testament mechanism.
+
+### Option: `mqtt_extra_stats`
+
+Requires `mqtt_status` to also be enabled. Adds three more entities to the
+same **Cloudflare Tunnel** device:
+
+```yaml
+mqtt_status: true
+mqtt_extra_stats: true
+```
+
 - **Active Connections** (sensor): number of currently active edge
   connections (0-4).
 - **Total Requests** / **Request Errors** (sensors): cumulative count of
   requests proxied through the tunnel, and how many of those failed reaching
   the origin.
 
-Disabled by default. If enabled without an MQTT broker configured, this
-feature is silently skipped.
+The **Tunnel Connected** sensor also gains an `edge_locations` attribute
+listing which Cloudflare datacenters (e.g. `sjc08`, `lax11`) each active
+connection is currently using.
 
-If the app is stopped, restarted, or crashes, all of these entities are
-marked **unavailable** in Home Assistant rather than showing stale values,
-using MQTT's Last Will and Testament mechanism.
+Disabled by default.
 
 ## App Wiki
 

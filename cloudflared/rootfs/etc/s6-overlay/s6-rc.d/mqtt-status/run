@@ -72,18 +72,24 @@ buildDiscoveryPayload() {
     local device
     device=$(buildDeviceJson)
 
-    bashio::var.json \
-        name "Tunnel Connected" \
-        unique_id "${device_id}_tunnel_connected" \
-        state_topic "${state_topic}" \
-        payload_on "ON" \
-        payload_off "OFF" \
-        device_class "connectivity" \
-        json_attributes_topic "${attributes_topic}" \
-        availability_topic "${availability_topic}" \
-        payload_available "online" \
-        payload_not_available "offline" \
+    local -a fields=(
+        name "Tunnel Connected"
+        unique_id "${device_id}_tunnel_connected"
+        state_topic "${state_topic}"
+        payload_on "ON"
+        payload_off "OFF"
+        device_class "connectivity"
+        availability_topic "${availability_topic}"
+        payload_available "online"
+        payload_not_available "offline"
         device "^${device}"
+    )
+
+    if bashio::config.true 'mqtt_extra_stats'; then
+        fields+=(json_attributes_topic "${attributes_topic}")
+    fi
+
+    bashio::var.json "${fields[@]}"
 }
 
 # ------------------------------------------------------------------------------
@@ -96,6 +102,7 @@ buildSensorDiscoveryPayload() {
     local sensor_state_topic="$3"
     local unit="$4"
     local state_class="$5"
+    local icon="$6"
     local device
     device=$(buildDeviceJson)
 
@@ -105,6 +112,7 @@ buildSensorDiscoveryPayload() {
         state_topic "${sensor_state_topic}" \
         unit_of_measurement "${unit}" \
         state_class "${state_class}" \
+        icon "${icon}" \
         entity_category "diagnostic" \
         availability_topic "${availability_topic}" \
         payload_available "online" \
@@ -247,28 +255,42 @@ cleanup() {
 }
 
 # ------------------------------------------------------------------------------
-# Publishes the MQTT Discovery config for every entity once
+# Publishes the MQTT Discovery config for every entity once. The extra
+# diagnostic sensors are only published when 'mqtt_extra_stats' is enabled,
+# so 'mqtt_status' alone just gives the base connectivity sensor
 # ------------------------------------------------------------------------------
 publishDiscoveryConfigs() {
     mqttPublish "${discovery_topic}" "$(buildDiscoveryPayload)"
+
+    if ! bashio::config.true 'mqtt_extra_stats'; then
+        return
+    fi
+
     mqttPublish "${active_connections_discovery_topic}" \
-        "$(buildSensorDiscoveryPayload "Active Connections" "active_connections" "${active_connections_topic}" "connections" "measurement")"
+        "$(buildSensorDiscoveryPayload "Active Connections" "active_connections" "${active_connections_topic}" "connections" "measurement" "mdi:connection")"
     mqttPublish "${total_requests_discovery_topic}" \
-        "$(buildSensorDiscoveryPayload "Total Requests" "total_requests" "${total_requests_topic}" "requests" "total_increasing")"
+        "$(buildSensorDiscoveryPayload "Total Requests" "total_requests" "${total_requests_topic}" "requests" "total_increasing" "mdi:web")"
     mqttPublish "${request_errors_discovery_topic}" \
-        "$(buildSensorDiscoveryPayload "Request Errors" "request_errors" "${request_errors_topic}" "errors" "total_increasing")"
+        "$(buildSensorDiscoveryPayload "Request Errors" "request_errors" "${request_errors_topic}" "errors" "total_increasing" "mdi:alert-circle-outline")"
 }
 
 # ------------------------------------------------------------------------------
 # Fetches current tunnel status and publishes it to every entity's state
 # topic. Missing/unreachable metrics are skipped for this cycle rather than
-# overwriting the last known good, retained value
+# overwriting the last known good, retained value. The extra diagnostic
+# sensors and edge_locations attribute are only published when
+# 'mqtt_extra_stats' is enabled
 # ------------------------------------------------------------------------------
 publishTunnelStatus() {
     local ready_json
     ready_json=$(fetchReadyJson)
 
     mqttPublish "${state_topic}" "$(stateFromReadyJson "${ready_json}")"
+
+    if ! bashio::config.true 'mqtt_extra_stats'; then
+        return
+    fi
+
     mqttPublish "${active_connections_topic}" "$(readyConnectionsFromJson "${ready_json}")"
 
     local metrics_text

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # SC1091: sourced test helpers are loaded dynamically and ShellCheck cannot resolve them here.
-# shellcheck disable=SC1091
+# SC2034: TEST_CONFIG is used via indirect associative-array access in the Bashio mock layer.
+# SC2154: TEST_CONFIG keys like mqtt_extra_stats look like undefined variable references to
+# ShellCheck, but are just associative-array literal keys.
+# shellcheck disable=SC1091,SC2034,SC2154
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -118,6 +121,7 @@ test_discovery_payload_is_valid_json() {
 }
 
 test_discovery_payload_fields() {
+    TEST_CONFIG=()
     local payload
     payload=$(buildDiscoveryPayload)
 
@@ -129,18 +133,35 @@ test_discovery_payload_fields() {
     assert_eq "cloudflared/tunnel_connected/availability" "$(echo "${payload}" | jq -r '.availability_topic')" "discovery availability_topic"
     assert_eq "online" "$(echo "${payload}" | jq -r '.payload_available')" "discovery payload_available"
     assert_eq "offline" "$(echo "${payload}" | jq -r '.payload_not_available')" "discovery payload_not_available"
-    assert_eq "cloudflared/tunnel_connected/attributes" "$(echo "${payload}" | jq -r '.json_attributes_topic')" "discovery json_attributes_topic"
+}
+
+test_discovery_payload_no_attributes_when_extra_stats_disabled() {
+    TEST_CONFIG=()
+    local payload
+    payload=$(buildDiscoveryPayload)
+
+    assert_eq "null" "$(echo "${payload}" | jq -r '.json_attributes_topic // "null"')" "no json_attributes_topic when mqtt_extra_stats is disabled"
+}
+
+test_discovery_payload_has_attributes_when_extra_stats_enabled() {
+    TEST_CONFIG=([mqtt_extra_stats]="true")
+    local payload
+    payload=$(buildDiscoveryPayload)
+    TEST_CONFIG=()
+
+    assert_eq "cloudflared/tunnel_connected/attributes" "$(echo "${payload}" | jq -r '.json_attributes_topic')" "json_attributes_topic present when mqtt_extra_stats is enabled"
 }
 
 test_sensor_discovery_payload_fields() {
     local payload
-    payload=$(buildSensorDiscoveryPayload "Active Connections" "active_connections" "cloudflared/active_connections/state" "connections" "measurement")
+    payload=$(buildSensorDiscoveryPayload "Active Connections" "active_connections" "cloudflared/active_connections/state" "connections" "measurement" "mdi:connection")
 
     assert_eq "Active Connections" "$(echo "${payload}" | jq -r '.name')" "sensor discovery name"
     assert_eq "cloudflared_active_connections" "$(echo "${payload}" | jq -r '.unique_id')" "sensor discovery unique_id"
     assert_eq "cloudflared/active_connections/state" "$(echo "${payload}" | jq -r '.state_topic')" "sensor discovery state_topic"
     assert_eq "connections" "$(echo "${payload}" | jq -r '.unit_of_measurement')" "sensor discovery unit_of_measurement"
     assert_eq "measurement" "$(echo "${payload}" | jq -r '.state_class')" "sensor discovery state_class"
+    assert_eq "mdi:connection" "$(echo "${payload}" | jq -r '.icon')" "sensor discovery icon"
     assert_eq "diagnostic" "$(echo "${payload}" | jq -r '.entity_category')" "sensor discovery entity_category"
     assert_eq "cloudflared" "$(echo "${payload}" | jq -r '.device.identifiers[0]')" "sensor discovery device identifier"
 }
@@ -160,6 +181,8 @@ main() {
     run_test test_build_attributes_payload_empty
     run_test test_discovery_payload_is_valid_json
     run_test test_discovery_payload_fields
+    run_test test_discovery_payload_no_attributes_when_extra_stats_disabled
+    run_test test_discovery_payload_has_attributes_when_extra_stats_enabled
     run_test test_sensor_discovery_payload_fields
 
     if [[ ${TEST_FAILURES} -ne 0 ]]; then
