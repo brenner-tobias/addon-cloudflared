@@ -331,6 +331,19 @@ settings first.
 **Note**: _This endpoint is not authenticated. Anything with network access
 to the app can read it._
 
+### Auto-discovery for companion integrations
+
+This app also announces its metrics endpoint via Home Assistant's built-in
+Supervisor Discovery mechanism on startup. If you have a companion
+integration installed that knows how to receive this (for example a
+`cloudflare_tunnel_monitor` custom integration configured to listen for
+it), it can pick up the metrics URL automatically, without you having to
+look up the app's hostname or type anything in by hand.
+
+This is a one-way announcement: the app doesn't know or care whether
+anything is listening for it, so there is nothing to configure here either
+way.
+
 ### `/ready`
 
 Returns a small JSON object describing whether the tunnel currently has an
