@@ -325,7 +325,7 @@ To reach it from other apps, or from Home Assistant itself, use the app's intern
 
 ### Auto-discovery for companion integrations
 
-This app also announces its metrics endpoint via Home Assistant's built-in Supervisor Discovery mechanism on startup. If you have a companion integration installed that knows how to receive this (for example a `cloudflare_tunnel_monitor` custom integration configured to listen for it), it can pick up the metrics URL automatically, without you having to look up the app's hostname or type anything in by hand.
+This app also announces its metrics endpoint via Home Assistant's built-in Supervisor Discovery mechanism on startup. Only the `cloudflare_tunnel_monitor` integration domain currently listens for this. If you have it installed, it can pick up the metrics URL automatically, without you having to look up the app's hostname or type anything in by hand.
 
 This is a one-way announcement: the app doesn't know or care whether anything is listening for it, so there is nothing to configure here either way.
 
