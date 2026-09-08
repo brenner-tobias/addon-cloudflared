@@ -386,8 +386,8 @@ configuration needed.
 **Disclosure**: _the linked fork is maintained by the same person as this
 change. It's a fork of
 [deadbeef3137/ha-cloudflare-tunnel-monitor][cloudflare-tunnel-monitor-upstream]
-adding local-only setup (no Cloudflare API token needed, just this metrics
-endpoint) and a reconfigure flow._
+adding local-only setup, no Cloudflare API token needed, just this
+metrics endpoint._
 
 **Prefer to do it yourself?** You can build the same basic sensors directly
 with a `rest` sensor, no extra integration required. Add to your
