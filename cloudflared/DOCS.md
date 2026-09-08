@@ -358,10 +358,8 @@ build a "is my tunnel up" sensor.
 ### `/metrics`
 
 Returns cloudflared's full [Prometheus metrics][cloudflared-metrics] output.
-This is genuinely a lot of data — hundreds of lines including low-level
-QUIC protocol internals and per-frame counters most people will never
-touch. If you're parsing it yourself for a minimal setup, these four are
-the simplest starting point:
+This has tons of data.If you're parsing it yourself for a minimal setup,
+these four arethe simplest starting point:
 
 - `cloudflared_tunnel_total_requests`: total requests proxied through the tunnel
 - `cloudflared_tunnel_request_errors`: count of failed requests reaching
@@ -375,7 +373,7 @@ the simplest starting point:
 
 There's a much larger set of genuinely useful metrics beyond these four
 (QUIC RTT, throughput, congestion window, GC pauses, process health, and
-more) — parsing all of that yourself is a lot of work, which is exactly
+more) and parsing all of that yourself is a lot of work, which is exactly
 what the integration below already does.
 
 ### Turning this into sensors
@@ -388,8 +386,7 @@ it's installed, it will pick this app up automatically via
 [auto-discovery](#auto-discovery-for-companion-integrations), no
 configuration needed.
 
-**Disclosure**: _the linked fork is maintained by the same person as this
-change. It's a fork of
+**Disclosure**: The integration shown here is a fork of
 [deadbeef3137/ha-cloudflare-tunnel-monitor][cloudflare-tunnel-monitor-upstream]
 adding local-only setup, no Cloudflare API token needed, just this
 metrics endpoint._
