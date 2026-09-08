@@ -384,12 +384,10 @@ installed, it will pick this app up automatically via
 configuration needed.
 
 **Disclosure**: _the linked fork is maintained by the same person as this
-change. The
-[original project][cloudflare-tunnel-monitor-upstream] appears
-unmaintained (no commits in 6+ months, an unreviewed PR, and an
-unanswered "is this still active?" issue at the time of writing) — this
-fork adds local-only setup (no Cloudflare API token needed, just this
-metrics endpoint) and a reconfigure flow on top of it._
+change. It's a fork of
+[deadbeef3137/ha-cloudflare-tunnel-monitor][cloudflare-tunnel-monitor-upstream]
+adding local-only setup (no Cloudflare API token needed, just this metrics
+endpoint) and a reconfigure flow._
 
 **Prefer to do it yourself?** You can build the same basic sensors directly
 with a `rest` sensor, no extra integration required. Add to your
