@@ -358,8 +358,8 @@ build a "is my tunnel up" sensor.
 ### `/metrics`
 
 Returns cloudflared's full [Prometheus metrics][cloudflared-metrics] output.
-This has tons of data.If you're parsing it yourself for a minimal setup,
-these four arethe simplest starting point:
+This has tons of data. If you're parsing it yourself for a minimal setup,
+these four are the simplest starting point:
 
 - `cloudflared_tunnel_total_requests`: total requests proxied through the tunnel
 - `cloudflared_tunnel_request_errors`: count of failed requests reaching
@@ -389,7 +389,7 @@ configuration needed.
 **Disclosure**: The integration shown here is a fork of
 [deadbeef3137/ha-cloudflare-tunnel-monitor][cloudflare-tunnel-monitor-upstream]
 adding local-only setup, no Cloudflare API token needed, just this
-metrics endpoint._
+metrics endpoint.
 
 **Prefer to do it yourself?** You can build the same basic sensors
 directly with a `rest` sensor, no extra integration required. Add to
