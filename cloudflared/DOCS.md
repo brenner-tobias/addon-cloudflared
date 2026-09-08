@@ -373,10 +373,28 @@ counters, and more); most people will only care about a handful of lines:
   current location for that connection, `0` means a location it has since
   moved away from
 
-### Example: Home Assistant sensors
+### Turning this into sensors
 
-Add to your `configuration.yaml` (adjust the hostname/IP to match your
-network), then restart Home Assistant:
+**Recommended**: [Cloudflare Tunnel Monitor][cloudflare-tunnel-monitor] is a
+custom integration that reads this metrics endpoint and creates the
+sensors for you, including tunnel status, active connections, and ~50
+metrics covering QUIC RTT, throughput, latency, and process health. If it's
+installed, it will pick this app up automatically via
+[auto-discovery](#auto-discovery-for-companion-integrations), no
+configuration needed.
+
+**Disclosure**: _the linked fork is maintained by the same person as this
+change. The
+[original project][cloudflare-tunnel-monitor-upstream] appears
+unmaintained (no commits in 6+ months, an unreviewed PR, and an
+unanswered "is this still active?" issue at the time of writing) — this
+fork adds local-only setup (no Cloudflare API token needed, just this
+metrics endpoint) and a reconfigure flow on top of it._
+
+**Prefer to do it yourself?** You can build the same basic sensors directly
+with a `rest` sensor, no extra integration required. Add to your
+`configuration.yaml` (adjust the hostname/IP to match your network), then
+restart Home Assistant:
 
 ```yaml
 rest:
@@ -447,4 +465,6 @@ SOFTWARE.
 [disablechunkedencoding]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress#disablechunkedencoding
 [create-remote-managed-tunnel]: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/#1-create-a-tunnel
 [github-org]: https://github.com/homeassistant-apps
+[cloudflare-tunnel-monitor]: https://github.com/vemboy200/ha-cloudflare-tunnel-monitor
+[cloudflare-tunnel-monitor-upstream]: https://github.com/deadbeef3137/ha-cloudflare-tunnel-monitor
 [cloudflared-metrics]: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/monitor-tunnels/metrics/
